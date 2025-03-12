@@ -1,6 +1,6 @@
-package cs308.backhend;
+package cs308.backhend.repository;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import cs308.backhend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

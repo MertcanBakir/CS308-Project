@@ -1,18 +1,22 @@
-package cs308.backhend;
+package cs308.backhend.controller;
 
 
+import cs308.backhend.model.User;
+import cs308.backhend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//@CrossOrigin(origins = "http://localhost:3000") // React ile bağlantıyı açıyoruz
-@RestController()
+
+@RestController
 @RequiredArgsConstructor
-public class Controller {
+public class RegisterController {
 
     private final UserService userService;
 
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
         return userService.registerUser(user);
     }
 }
+

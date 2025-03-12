@@ -1,4 +1,4 @@
-package cs308.backhend;
+package cs308.backhend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,7 +17,16 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String fullName;
+
+    @Column(nullable = false)
     private String address;
-    private String creditcardnum;
+
+    @Column(nullable = true)
+    private String creditCardLast4Digits;
+
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
