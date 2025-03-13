@@ -1,0 +1,107 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+  position: relative;
+}
+
+body.login-page {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+}
+
+.arrow-left {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-top: 3px solid #DB1F6E;
+  border-left: 3px solid #DB1F6E;
+  transform: rotate(-45deg);
+  cursor: pointer;
+}
+
+.arrow-left:hover {
+  border-color: #A11C55;
+}
+
+.login-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+  min-height: 40px; 
+}
+
+.sephora-logo {
+  max-width: 120px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #DB1F6E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #A11C55;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  text-align: center;
+}
+ 
+.create-account {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.create-account a {
+  color: #DB1F6E;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.create-account a:hover {
+  text-decoration: underline;
+}
