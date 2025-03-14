@@ -23,23 +23,26 @@ const Home = () => {
           onClick={() => navigate("/")}
         />
 
-        <SearchBar /> 
-        
-        <div className="login-container" onClick={() => navigate("/login_register")}>
-          <img src={LoginImage} alt="Login" className="logologin" />
-          <span className="login-text">Login / Register</span>
-        </div>
+        <SearchBar />
 
-        <div className="cart-container" onClick={() => navigate("/cart")}>
-          <img src={CartImage} alt="Cart" className="cart-logo" />
-          <span className="cart-text">Cart</span>
+        <div className="right-tools">
+          <div className="header-login-container" onClick={() => navigate("/login")}>
+            <img src={LoginImage} alt="Login" className="logologin" />
+            <span className="login-text">Login / Register</span>
+          </div>
+
+          <div className="cart-container" onClick={() => navigate("/cart")}>
+            <img src={CartImage} alt="Cart" className="cart-logo" />
+            <span className="cart-text">Cart</span>
+          </div>
         </div>
       </div>
+
       <div className="main-container">
-        <Categories /> {}
+        <Categories />
         <div className="products-container">
           <h2>Featured Products</h2>
-          <Products />  {}
+          <Products />
         </div>
       </div>
     </div>

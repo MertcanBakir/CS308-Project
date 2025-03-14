@@ -1,83 +1,85 @@
 .home {
-    padding-top: 20px;    
-    text-align: center;
-  }
-  
-  .tools {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    padding: 10px;
-  }
-  
+  padding-top: 20px;    
+  text-align: center;
+}
 
-  .logo {
-    width: 150px; 
-    padding-left: 20px;
-    cursor: pointer;
-  }
+.tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.right-tools {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 150px; 
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.search-bar {
+  flex-grow: 1;
+  max-width: 700px; 
+}
+
+.header-login-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.header-login-container:hover {
+  color: #545454;
+}
+
+.logologin {
+  width: 30px;
   
-  .search-bar {
-    flex-grow: 1;
-    max-width: 700px; 
-  }
-  
-  .login-container {
-    display: flex;
-    align-items: center;
-    gap: 8px; 
-    cursor: pointer;
-    color: black;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .login-container:hover {
-    color: #545454;
-  }
-  
-  .logologin {
-    width: 30px;
-    height: auto;
-  }
-  
-  .login-text {
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .cart-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    color: black;
-    font-size: 14px;
-    font-weight: bold;
-    padding-right: 20px;
-  }
-  
-  .cart-container:hover {
-    color: #545454;
-  }
-  
-  .cart-logo {
-    width: 50px;
-    height: auto;
-  }
-  
-  .cart-text {
-    font-size: 14px;
-    font-weight: bold;
-  }
-  .main-container {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-  }
-  .products-container {
-    flex-grow: 1;
-    padding: 20px;
-    text-align: left;
-    margin-top: -25px; 
-  }
+  height: auto;
+}
+
+.login-text {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.cart-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  padding-right: 20px;
+}
+
+.cart-container:hover {
+  color: #545454;
+}
+
+.cart-logo {
+  width: 50px;
+  height: auto;
+}
+
+.main-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.products-container {
+  flex-grow: 1;
+  padding: 20px;
+  text-align: left;
+  margin-top: -25px;
+}
