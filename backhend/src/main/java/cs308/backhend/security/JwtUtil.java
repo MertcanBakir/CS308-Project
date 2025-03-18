@@ -1,24 +1,32 @@
 package cs308.backhend.security;
 
+import cs308.backhend.model.User;
+import cs308.backhend.repository.UserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
-    private static final String SECRET_KEY = "SuperDuperExtraSuperAmazingOMGSecretExtraJesusSuperDuperKey";
+
+    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return SECRET_KEY;
     }
+
+    private final UserRepo userRepo;
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -33,26 +41,27 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid or malformed JWT token!");
+        }
     }
 
     public String generateToken(String email, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
-        return createToken(claims, email);
-    }
-
-    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
+                .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -62,5 +71,16 @@ public class JwtUtil {
 
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+    public Long getUserIdFromToken(String token) {
+        try {
+            String email = extractEmail(token);
+            return userRepo.findByEmail(email)
+                    .map(User::getId)
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
+        } catch (Exception e) {
+            throw new RuntimeException("Database error while fetching user ID: " + e.getMessage());
+        }
     }
 }
