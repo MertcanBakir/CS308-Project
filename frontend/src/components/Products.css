@@ -1,41 +1,64 @@
 .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-    gap: 30px; 
-    margin-top: 20px;
-    justify-content: center;
-  }
-  
-  .product-card {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 220px; 
-    min-height: 270px;
-  }
-  
-  .product-card:hover {
-    transform: scale(1.05);
-  }
-  
-  .product-image {
-    width: 100%;
-    border-radius: 5px;
-    object-fit: cover;
-  }
-  
-  .product-name {
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 10px;
-    text-align: center;
-    white-space: nowrap; 
-    overflow: hidden;
-    text-overflow: ellipsis; 
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+  gap: 30px; 
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.product-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 220px; 
+  min-height: 320px; 
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+}
+
+.product-image {
+  width: 100%;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px; 
+}
+
+.product-price {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+}
+
+.add-to-cart-button {
+  background-color: #000000;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: auto; 
+  width: 100%;
+}
+
+.add-to-cart-button:hover {
+  background-color: #ff0f83;
+}

@@ -1,22 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Products.css";
 
 const Products = () => {
-  const [products] = useState([
-    { id: 1, name: "Lipstick", image: "https://pyxis.nymag.com/v1/imgs/4cd/b96/07ab7833b6c043aa3264cab69b7dcce0b4-lipstick-29.rsquare.w600.jpg" },
-    { id: 2, name: "Mertcan", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmbiVneJHGeQuF0eKrxmUTX_TwTP7IlmRKPA&s" },
-    { id: 3, name: "Perfume", image: "data:image/jpeg;base64,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" },
-    { id: 4, name: "Shampoo", image: "https://i5.walmartimages.com/seo/Head-and-Shoulders-Dandruff-Shampoo-Classic-Clean-8-45-fl-oz_216cf88e-960a-41e0-b221-3cd78061db26.8a830739f18cc9dab17956d7ac7918d9.jpeg" },
-    { id: 5, name: "Moisturizer", image: "https://productimages.hepsiburada.net/s/777/375-375/110000810657839.jpg" },
-    { id: 6, name: "Hair Spray", image: "https://cdn.kozmela.com/8698655380046-1/medium" },
-  ]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/products");
+        if (!response.ok) {
+          throw new Error("Ürünleri getirirken hata oluştu!");
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <p>Ürünler yükleniyor...</p>;
+  if (error) return <p>Hata: {error}</p>;
 
   return (
     <div className="products-grid">
       {products.map((product) => (
         <div key={product.id} className="product-card">
-          <img src={product.image} alt={product.name} className="product-image" />
+          <img
+            src={product.imageUrl} 
+            alt={product.name}
+            className="product-image"
+          />
           <p className="product-name">{product.name}</p>
+          <p className="product-price">{product.price.toFixed(2)}₺</p>
+          <button className="add-to-cart-button">Sepete Ekle</button>
         </div>
       ))}
     </div>
