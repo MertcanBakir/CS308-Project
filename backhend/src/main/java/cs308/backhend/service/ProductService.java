@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -20,5 +21,10 @@ public class ProductService {
     // Tüm ürünleri getir
     public List<Product> getAllProducts() {
         return productRepo.findAll();
+    }
+
+    public Product getProductById(Long id) {
+        return productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 }

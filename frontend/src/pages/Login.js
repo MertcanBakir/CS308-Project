@@ -30,7 +30,6 @@ function Login() {
       const data = await response.json();
 
       if (!response.ok) {
-        // 401 hatasında özel hata mesajı göster
         if (response.status === 401) {
           setError('Invalid email or password. Please try again.');
         } else {

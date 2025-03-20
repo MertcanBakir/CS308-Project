@@ -14,11 +14,12 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
     Optional<Product> findByName(String name);
 
     // Belirli bir kategoriye ait ürünleri getir
-    List<Product> findByCategories(Category category);
+    List<Product> findByCategories_Id(Long categoryId);
 
     // Stok miktarı 0 olan ürünleri getir (Tükendi)
-    List<Product> findByQuantityInStock(int quantity);
+    List<Product> findByQuantityInStockEquals(int quantity);
 
-    List<Product> findByid(Long id);
+    Optional<Product> findById(Long id);
+
 
 }
