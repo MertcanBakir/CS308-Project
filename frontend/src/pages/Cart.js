@@ -11,6 +11,22 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const mergeCarts = (backendCart, localCart) => {
+    const mergedCart = [...backendCart];
+
+    localCart.forEach(localItem => {
+      const existingItem = mergedCart.find(item => item.id === localItem.id);
+      
+      if (existingItem) {
+        existingItem.quantity += localItem.quantity;
+      } else {
+        mergedCart.push(localItem);
+      }
+    });
+
+    return mergedCart;
+  };
+
   useEffect(() => {
     const getCartProducts = async () => {
       if (isLoggedIn) {
@@ -19,18 +35,19 @@ const Cart = () => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
             },
           });
-  
+
           if (!response.ok) {
             throw new Error("Ürünleri getirirken hata oluştu!");
           }
-  
+
           const data = await response.json();
-          let backendProducts = data.products || []; 
-  
+          let backendProducts = data.products || [];
+
           const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+
           if (localCart.length > 0) {
             for (const product of localCart) {
               await fetch("http://localhost:8080/add_to_cart", {
@@ -39,13 +56,14 @@ const Cart = () => {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ product_id: product.id }),
+                body: JSON.stringify({ product_id: product.id, quantity: product.quantity }),
               });
             }
             localStorage.removeItem("cart");
           }
-  
-          setProducts([...backendProducts, ...localCart]);
+
+          const finalCart = mergeCarts(backendProducts, localCart);
+          setProducts(finalCart);
         } catch (err) {
           setError(err.message);
         } finally {
@@ -57,7 +75,7 @@ const Cart = () => {
         setLoading(false);
       }
     };
-  
+
     getCartProducts();
   }, [isLoggedIn, token]);
 
@@ -76,7 +94,6 @@ const Cart = () => {
   const handleQuantityChange = async (index, selectedQuantity) => {
     const updatedQuantity = Number(selectedQuantity);
   
-    // Önce local state ve localStorage güncelle
     setProducts((prevProducts) => {
       const updated = [...prevProducts];
       updated[index].quantity = updatedQuantity;
@@ -87,8 +104,7 @@ const Cart = () => {
   
       return updated;
     });
-  
-    // Giriş yapılmışsa backend'e yeni quantity'i gönder
+
     if (isLoggedIn) {
       try {
         const response = await fetch("http://localhost:8080/change_quantity", {
@@ -102,12 +118,10 @@ const Cart = () => {
             quantity: updatedQuantity,
           }),
         });
-  
+
         const data = await response.json();
         if (!response.ok || !data.message) {
           console.error("Quantity güncelleme başarısız:", data.message);
-        } else {
-          console.log("Quantity başarıyla güncellendi.");
         }
       } catch (error) {
         console.error("Backend'e quantity güncellerken hata:", error);
@@ -119,7 +133,7 @@ const Cart = () => {
     (total, product) => total + product.price * (product.quantity || 1),
     0
   );
-  
+
   const totalItems = products.reduce(
     (count, product) => count + (product.quantity || 1),
     0
@@ -148,13 +162,13 @@ const Cart = () => {
 
               <div className="productInfoWrapper">
                 <div className="productName">
-                  <span >{product.name}</span>
+                  <span>{product.name}</span>
                 </div>
                 
                 <div className="productPriceDist">
                   <span className="productInfos"><strong>Model:</strong> {product.model}</span>
                   <span className="productInfos"><strong>Price: </strong>{product.price.toFixed(2)}₺</span>
-                  <span className="productInfos"><strong>Distributor:</strong>{product.distributorInfo}</span>
+                  <span className="productInfos"><strong>Distributor:</strong> {product.distributorInfo}</span>
                   <span className="productInfos"><strong>Guarantee:</strong>
                     {product.warrantyStatus ? " Var" : " Yok"}
                   </span>

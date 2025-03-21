@@ -5,9 +5,12 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Data
 @Table(name = "products")
+@JsonIgnoreProperties({"categories"})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +30,7 @@ public class Product {
     @Column(nullable = false)
     private int quantityInStock;
 
-    @Column(nullable = false, precision = 10, scale = 2) // 10 basamak sayı, 2 basamak ondalık
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(nullable = false)
@@ -38,10 +41,11 @@ public class Product {
 
     @ManyToMany
     @JoinTable(
-        name = "product_categories",
-        joinColumns = @JoinColumn(name = "product_id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id")
+            name = "product_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @JsonIgnoreProperties("products")
     private Set<Category> categories;
 
     @Column(columnDefinition = "TEXT", nullable = true)
