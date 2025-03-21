@@ -1,0 +1,39 @@
+.add-to-cart-button {
+    background-color: #e60023;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    margin-top: 10px;
+    min-width: 120px;
+  }
+  
+  .add-to-cart-button:hover {
+    background-color: #c4001a;
+  }
+  
+  .add-to-cart-button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+  
+
+  .add-to-cart-button:disabled,
+  .add-to-cart-button.added {
+    background-color: green;
+    color: white;
+  }
+  
+
+  .add-to-cart-button.error {
+    background-color: darkred;
+    color: white;
+  }
+  
+
+  .add-to-cart-button {
+    transition: all 0.3s ease-in-out;
+  }

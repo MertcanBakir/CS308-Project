@@ -21,4 +21,9 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepo.findAll();
     }
+
+    public Product getProductById(Long id) {
+        return productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
 }

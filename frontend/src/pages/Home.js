@@ -7,11 +7,13 @@ import sephoraLogo from "../assets/images/sephoraLogo.png";
 import LoginImage from "../assets/images/LoginImage.png"; 
 import CartImage from "../assets/images/cart.png"; 
 import Products from "../components/Products";
-
+import { useAuth } from "../context/AuthContext"; 
 import "./Home.css";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { isLoggedIn, logout } = useAuth(); 
+
   return (
     <div className="home">
       <TopBanner />
@@ -26,10 +28,17 @@ const Home = () => {
         <SearchBar />
 
         <div className="right-tools">
-          <div className="header-login-container" onClick={() => navigate("/login")}>
-            <img src={LoginImage} alt="Login" className="logologin" />
-            <span className="login-text">Login / Register</span>
-          </div>
+          {isLoggedIn ? ( 
+            <div className="header-login-container" onClick={logout}>
+              <img src={LoginImage} alt="Logout" className="logologin" />
+              <span className="login-text">Logout</span>
+            </div>
+          ) : (
+            <div className="header-login-container" onClick={() => navigate("/login")}>
+              <img src={LoginImage} alt="Login" className="logologin" />
+              <span className="login-text">Login / Register</span>
+            </div>
+          )}
 
           <div className="cart-container" onClick={() => navigate("/cart")}>
             <img src={CartImage} alt="Cart" className="cart-logo" />

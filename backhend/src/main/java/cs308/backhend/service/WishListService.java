@@ -10,6 +10,8 @@ import cs308.backhend.repository.WishListRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class WishListService {
 
@@ -24,8 +26,7 @@ public class WishListService {
         this.productRepo = productRepo;
     }
 
-
-    public Wishlist addToWishlist(Long userId, Long productId) {
+    public Wishlist addToWishlist(Long userId, Long productId, Long quantity) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -40,13 +41,19 @@ public class WishListService {
         Wishlist wishlist = new Wishlist();
         wishlist.setUser(user);
         wishlist.setProduct(product);
+        wishlist.setQuantity(quantity);
         return wishListRepo.save(wishlist);
     }
 
-    public void deleteFromWishlist(Long wishlistId) {
-        Wishlist wishlist = wishListRepo.findById(wishlistId)
-                .orElseThrow(() -> new RuntimeException("Wishlist item not found"));
+    public Long getQuantity(Long userId, Long productId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        wishListRepo.delete(wishlist);
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Optional<Wishlist> wishlistItem = wishListRepo.findByUserAndProduct(user, product);
+        return wishlistItem.map(Wishlist::getQuantity).orElse(0L);
     }
+
 }

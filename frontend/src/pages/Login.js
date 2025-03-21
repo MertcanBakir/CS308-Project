@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; 
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,7 +32,6 @@ function Login() {
       const data = await response.json();
 
       if (!response.ok) {
-        // 401 hatasında özel hata mesajı göster
         if (response.status === 401) {
           setError('Invalid email or password. Please try again.');
         } else {
@@ -40,8 +41,8 @@ function Login() {
       }
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        navigate('/');
+        login(data.token); 
+        navigate('/'); 
       } else {
         setError('Login successful, but no token received.');
       }

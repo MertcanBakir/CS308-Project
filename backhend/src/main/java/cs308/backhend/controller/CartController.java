@@ -79,6 +79,8 @@ public class CartController {
                     productDetails.put("distributorInfo", product.getDistributorInfo());
                     productDetails.put("imageUrl", product.getImageUrl());
 
+                    productDetails.put("quantity", wishListService.getQuantity(user.getId(),product.getId()));
+
                     Set<Category> categories = new HashSet<>(product.getCategories());
                     List<String> categoryNames = new ArrayList<>();
                     for (Category category : categories) {
@@ -100,19 +102,59 @@ public class CartController {
         }
     }
 
+    @PutMapping("/change_quantity")
+    public ResponseEntity<Map<String,Object>> ChangeTheQuantity( @RequestBody Map<String, Object> requestBody,@RequestHeader("Authorization") String token) {
+        Map<String, Object> response = new HashMap<>();
+
+        String userEmail = jwtUtil.extractEmail(token);
+        User user = userRepo.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!jwtUtil.validateToken(token, userEmail)) {
+            response.put("success", false);
+            response.put("message", "Invalid or expired token!");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        long productId = Long.parseLong(requestBody.get("product_id").toString());
+        long quantityToAdd = Long.parseLong(requestBody.get("quantity").toString());
+
+        if (quantityToAdd <= 0) {
+            response.put("success", false);
+            response.put("message", "Invalid quantity!");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Optional<Wishlist> wishlistItemOpt = wishListRepo.findByUserAndProduct(user, product);
+
+        if (wishlistItemOpt.isPresent()) {
+            Wishlist wishlistItem = wishlistItemOpt.get();
+            wishlistItem.setQuantity(quantityToAdd);
+            wishListRepo.save(wishlistItem);
+            response.put("message", "Product quantity updated in wishlist!");
+            return ResponseEntity.status(200).body(response);
+        }
+
+        response.put("success", false);
+        response.put("message", "Hata");
+        return ResponseEntity.status(404).body(response);
+    }
 
 
     @PostMapping("/add_to_cart")
-    public ResponseEntity<Map<String,Object>> add_product_to_cart(@RequestBody Map<String, Object> requestBody, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Map<String, Object>> addProductToCart(
+            @RequestBody Map<String, Object> requestBody,
+            @RequestHeader("Authorization") String token) {
+
         Map<String, Object> response = new HashMap<>();
+
         try {
             String userEmail = jwtUtil.extractEmail(token);
-            Optional<User> userOptional = userRepo.findByEmail(userEmail);
-            if (userOptional.isEmpty()) {
-                response.put("success", false);
-                response.put("message", "User not found!");
-                return ResponseEntity.status(401).body(response);
-            }
+            User user = userRepo.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
             if (!jwtUtil.validateToken(token, userEmail)) {
                 response.put("success", false);
@@ -120,33 +162,53 @@ public class CartController {
                 return ResponseEntity.status(401).body(response);
             }
 
-            long user_id = jwtUtil.getUserIdFromToken(token);
-            long product_id = Long.parseLong(requestBody.get("product_id").toString());
+            long productId = Long.parseLong(requestBody.get("product_id").toString());
+            long quantityToAdd = Long.parseLong(requestBody.get("quantity").toString());
 
-            try {
-                wishListService.addToWishlist(user_id, product_id);
-                response.put("success", true);
-                response.put("message", "Product added to wishlist!");
-                return ResponseEntity.ok(response);
-            } catch (RuntimeException e) {
+            if (quantityToAdd <= 0) {
                 response.put("success", false);
-                response.put("message", e.getMessage());
+                response.put("message", "Invalid quantity!");
                 return ResponseEntity.status(400).body(response);
             }
+
+            Product product = productRepo.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            Optional<Wishlist> wishlistItemOpt = wishListRepo.findByUserAndProduct(user, product);
+
+            if (wishlistItemOpt.isPresent()) {
+                Wishlist wishlistItem = wishlistItemOpt.get();
+                wishlistItem.setQuantity(wishlistItem.getQuantity() + quantityToAdd);
+                wishListRepo.save(wishlistItem);
+                response.put("message", "Product quantity updated in wishlist!");
+            } else {
+                Wishlist newWishlistItem = new Wishlist();
+                newWishlistItem.setUser(user);
+                newWishlistItem.setProduct(product);
+                newWishlistItem.setQuantity(quantityToAdd);
+                wishListRepo.save(newWishlistItem);
+                response.put("message", "Product added to wishlist!");
+            }
+
+            response.put("success", true);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Unexpected error occurred: " + e.getMessage());
-            System.out.println(e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
-
     }
 
     @DeleteMapping("/delete_from_cart")
-    public ResponseEntity<Map<String, Object>> delete_product_from_cart(@RequestBody Map<String, Object> requestBody, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Map<String, Object>> delete_product_from_cart(
+            @RequestBody Map<String, Object> requestBody,
+            @RequestHeader("Authorization") String token) {
+
         Map<String, Object> response = new HashMap<>();
+
         try {
+
             String userEmail = jwtUtil.extractEmail(token);
             Optional<User> userOptional = userRepo.findByEmail(userEmail);
             if (userOptional.isEmpty()) {
@@ -161,24 +223,28 @@ public class CartController {
                 return ResponseEntity.status(401).body(response);
             }
 
-            long wish_list_id = Long.parseLong(requestBody.get("wish_list_id").toString());
+            long product_id = Long.parseLong(requestBody.get("product_id").toString());
 
-            try{
-                wishListService.deleteFromWishlist(wish_list_id);
-                response.put("success", true);
-                return ResponseEntity.ok(response);
-            }
-            catch(RuntimeException e){
+            Optional<Wishlist> wishlistItem = wishListRepo.findByUserAndProduct(userOptional.get(),
+                    productRepo.findById(product_id)
+                            .orElseThrow(() -> new RuntimeException("Product not found"))
+            );
+
+            if (wishlistItem.isEmpty()) {
                 response.put("success", false);
-                response.put("message", e.getMessage());
+                response.put("message", "Wishlist item not found");
                 return ResponseEntity.status(400).body(response);
             }
+
+            wishListRepo.delete(wishlistItem.get());
+            response.put("success", true);
+            response.put("message", "Product removed from wishlist");
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Unexpected error occurred: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
-
     }
 }

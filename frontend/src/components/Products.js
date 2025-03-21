@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Products.css";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,15 +33,21 @@ const Products = () => {
   return (
     <div className="products-grid">
       {products.map((product) => (
-        <div key={product.id} className="product-card">
-          <img
-            src={product.imageUrl} 
-            alt={product.name}
-            className="product-image"
-          />
+        <div
+          key={product.id}
+          className="product-card"
+          onClick={() => navigate(`/product/${product.id}`)} 
+          style={{ cursor: "pointer" }} 
+        >
+          <img 
+           src={product.imageUrl} 
+           alt={product.name} 
+           className="product-image" 
+           style={{ maxWidth: "150px", height: "auto" }}
+           />
           <p className="product-name">{product.name}</p>
           <p className="product-price">{product.price.toFixed(2)}₺</p>
-          <button className="add-to-cart-button">Sepete Ekle</button>
+          <button className="add-to-cart-button">Ürün Detayları</button>
         </div>
       ))}
     </div>
