@@ -74,5 +74,6 @@
 
 .out-of-stock-button:disabled {
     background-color: #666; /* Keeps the red color even when disabled */
+    padding: 12px 250px;
 
 }

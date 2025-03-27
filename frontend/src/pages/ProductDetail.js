@@ -87,7 +87,14 @@ const ProductDetail = () => {
                     <p><strong>Guarantee:</strong> {product.warrantyStatus ? "Var" : "Yok"}</p>
                     <p><strong>Distributor:</strong> {product.distributorInfo}</p>
                     
-                    <AddToCart product={product} />
+                    {/* Conditionally render "Out of Stock" message */}
+                    {product.quantityInStock === 0 ? (
+                        <button className="out-of-stock-button" disabled>
+                            Stokta Yok
+                        </button>
+                    ) : (
+                        <AddToCart product={product} />
+                    )}
                 </div>
             </div>
         </div>
