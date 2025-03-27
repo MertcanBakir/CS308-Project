@@ -53,4 +53,26 @@
 
 .add-to-cart-button:hover {
     background-color: #333;
+
+    
+}
+
+.out-of-stock-button {
+    background-color: #f44336; /* Red background */
+    color: white;
+    border: none;
+    padding: 12px 00px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: not-allowed;
+    
+    text-align: center;
+    margin-top: 20px;
+    min-width: 120px;
+
+}
+
+.out-of-stock-button:disabled {
+    background-color: #666; /* Keeps the red color even when disabled */
+
 }
