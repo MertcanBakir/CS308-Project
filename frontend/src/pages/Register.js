@@ -3,51 +3,82 @@ import { useNavigate } from "react-router-dom";
 import "./Register.css"; 
 
 function Register() {
-  const [name, setName] = useState("");
+  const [fullName, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [matchError, setMatchError] = useState("");
   const navigate = useNavigate();
-  
+
+  const evaluatePassword = (pwd) => {
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNumber = /[0-9]/.test(pwd);
+    const hasSymbol = /[^A-Za-z0-9]/.test(pwd);
+    const lengthValid = pwd.length >= 8;
+
+    if (!lengthValid || (!hasUpper && !hasLower && !hasNumber)) {
+      setPasswordStrength("weak");
+      setPasswordMessage("Şifre çok zayıf");
+    } else if (lengthValid && hasNumber && (hasUpper || hasLower)) {
+      setPasswordStrength("medium");
+      setPasswordMessage("Şifre kabul edilebilir");
+    } 
+    if (lengthValid && hasUpper && hasLower && hasNumber && hasSymbol) {
+      setPasswordStrength("strong");
+      setPasswordMessage("Şifre güçlü");
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    evaluatePassword(newPassword);
+    setMatchError("");
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    setMatchError("");
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    
+
+    if (passwordStrength === "weak") {
+      alert("Lütfen daha güçlü bir şifre seçin.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMatchError("Şifreler eşleşmiyor");
+      return;
+    }
+
+    const userData = { fullName, email, password };
+
     try {
       const response = await fetch('http://localhost:8080/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify(userData),
       });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Kayıt olurken bir hata oluştu');
+
+      if (response.ok) {
+        navigate("/login");
+      } else {
+        console.error("Registration failed");
       }
-      
-      // Başarılı kayıt
-      console.log('Kayıt başarılı:', data);
-      
-      // Giriş sayfasına yönlendirme
-      navigate('/login');
-      
     } catch (error) {
-      console.error('Kayıt hatası:', error);
-      setError(error.message || 'Kayıt olurken bir hata oluştu');
-    } finally {
-      setLoading(false);
+      console.error("Error during registration:", error);
     }
   };
-  
+
   return (
     <div className="register-container">
       <div className="back-button">
@@ -55,22 +86,19 @@ function Register() {
           <i className="arrow-left"></i>
         </a>
       </div>
-      
+
       <form onSubmit={handleRegister} className="register-form">
         <div className="logo-container">
           <img src="https://www.sephora.com/img/ufe/logo.svg" alt="Sephora" className="sephora-logo" />
         </div>
-        
+
         <h2>Register</h2>
-        {error && <div className="error-message">{error}</div>}
-        
         <input
           type="text"
           placeholder="Full Name"
-          value={name}
+          value={fullName}
           onChange={(e) => setName(e.target.value)}
           required
-          disabled={loading}
         />
         <input
           type="email"
@@ -78,30 +106,38 @@ function Register() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          disabled={loading}
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
           required
-          disabled={loading}
         />
-        <button 
-          type="submit" 
-          className="register-button"
-          disabled={loading}
-        >
-          {loading ? 'Kaydediliyor...' : 'Register'}
+        {password && (
+          <p className={`password-strength ${passwordStrength}`}>
+            {passwordMessage}
+          </p>
+        )}
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+          required
+        />
+        {matchError && (
+          <p className="password-mismatch-error" style={{ color: 'red' }}>
+            {matchError}
+          </p>
+        )}
+
+        <button type="submit" className="register-button">
+          Register
         </button>
         <p className="redirect-text">
           Already have an account?{" "}
-          <span 
-            className="redirect-link" 
-            onClick={() => navigate("/login")}
-            style={{pointerEvents: loading ? 'none' : 'auto'}}
-          >
+          <span className="redirect-link" onClick={() => navigate("/login")}>
             Log in
           </span>
         </p>
