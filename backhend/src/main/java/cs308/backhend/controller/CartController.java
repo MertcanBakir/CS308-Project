@@ -78,6 +78,9 @@ public class CartController {
                     productDetails.put("warrantyStatus", product.isWarrantyStatus());
                     productDetails.put("distributorInfo", product.getDistributorInfo());
                     productDetails.put("imageUrl", product.getImageUrl());
+                    productDetails.put("wishlistCount", product.getWishlistCount());
+                    productDetails.put("viewCount", product.getViewCount());
+                    productDetails.put("popularityScore", product.calculatePopularityScore());
 
                     productDetails.put("quantity", wishListService.getQuantity(user.getId(),product.getId()));
 
@@ -187,6 +190,11 @@ public class CartController {
                 newWishlistItem.setProduct(product);
                 newWishlistItem.setQuantity(quantityToAdd);
                 wishListRepo.save(newWishlistItem);
+
+                // Ürün sepete eklendiğinde popülerlik sayacını artır
+                product.incrementWishlistCount();
+                productRepo.save(product);
+
                 response.put("message", "Product added to wishlist!");
             }
 
@@ -225,16 +233,20 @@ public class CartController {
 
             long product_id = Long.parseLong(requestBody.get("product_id").toString());
 
-            Optional<Wishlist> wishlistItem = wishListRepo.findByUserAndProduct(userOptional.get(),
-                    productRepo.findById(product_id)
-                            .orElseThrow(() -> new RuntimeException("Product not found"))
-            );
+            Product product = productRepo.findById(product_id)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            Optional<Wishlist> wishlistItem = wishListRepo.findByUserAndProduct(userOptional.get(), product);
 
             if (wishlistItem.isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Wishlist item not found");
                 return ResponseEntity.status(400).body(response);
             }
+
+            // Ürün sepetten çıkarıldığında popülerlik sayacını azalt
+            product.decrementWishlistCount();
+            productRepo.save(product);
 
             wishListRepo.delete(wishlistItem.get());
             response.put("success", true);

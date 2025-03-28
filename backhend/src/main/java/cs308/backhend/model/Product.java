@@ -50,4 +50,42 @@ public class Product {
 
     @Column(columnDefinition = "TEXT", nullable = true)
     private String imageUrl;
+
+
+    @Column(nullable = false)
+    private int wishlistCount = 0;
+
+    @Column(nullable = false)
+    private int viewCount = 0;
+
+
+    @Transient
+    private double popularityScore = 0.0;
+
+
+    public void incrementWishlistCount() {
+        this.wishlistCount++;
+    }
+
+    public void decrementWishlistCount() {
+        if (this.wishlistCount > 0) {
+            this.wishlistCount--;
+        }
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
+
+    public double calculatePopularityScore() {
+        double viewWeight = 0.4;
+        double wishlistWeight = 0.6;
+
+        popularityScore = (viewCount * viewWeight) + (wishlistCount * wishlistWeight);
+        return popularityScore;
+    }
+
+    public double getPopularityScore() {
+        return this.popularityScore;
+    }
 }

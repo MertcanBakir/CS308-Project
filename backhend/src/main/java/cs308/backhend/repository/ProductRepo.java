@@ -3,6 +3,7 @@ package cs308.backhend.repository;
 import cs308.backhend.model.Product;
 import cs308.backhend.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,12 +14,24 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
 
     Optional<Product> findByName(String name);
 
-    // Belirli bir kategoriye ait ürünleri getir
+
     List<Product> findByCategories(Category category);
 
-    // Stok miktarı 0 olan ürünleri getir (Tükendi)
+
     List<Product> findByQuantityInStock(int quantity);
 
     List<Product> findByid(Long id);
+
+
+
+
+    List<Product> findAllByOrderByWishlistCountDesc();
+
+
+    List<Product> findAllByOrderByViewCountDesc();
+
+
+    @Query("SELECT p FROM Product p ORDER BY (p.wishlistCount * 0.6 + p.viewCount * 0.4) DESC")
+    List<Product> findByPopularity();
 
 }

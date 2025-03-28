@@ -20,7 +20,6 @@
   min-height: 300px; 
   width: 100%;
   width: 250px;
-  
 }
 
 .product-card:hover {
@@ -50,6 +49,19 @@
   margin: 5px 0;
 }
 
+.product-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #888;
+}
+
+.view-count, .wishlist-count {
+  margin: 2px 0;
+}
+
 .add-to-cart-button {
   background-color: #000000;
   color: white;
@@ -64,4 +76,17 @@
 
 .add-to-cart-button:hover {
   background-color: #ff0f83;
+}
+
+.sort-container {
+  margin-bottom: 15px;
+}
+
+.sort-container select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin-left: 5px;
+  background-color: white;
+  cursor: pointer;
 }
