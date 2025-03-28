@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Categories.css";
 
-const Categories = () => {
+const Categories = ({ setSelectedCategory }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +14,6 @@ const Categories = () => {
           throw new Error("Kategoriler yüklenirken hata oluştu!");
         }
         const data = await response.json();
-        
         setCategories([{ id: 0, name: "All" }, ...data]);
       } catch (err) {
         setError(err.message);
@@ -30,14 +29,16 @@ const Categories = () => {
   if (error) return <p>Hata: {error}</p>;
 
   return (
-    <div className="categories">
-      <h3>Categories</h3>
-      <ul>
-        {categories.map((category) => (
-          <li key={category.id}>{category.name}</li>
-        ))}
-      </ul>
-    </div>
+      <div className="categories">
+        <h3>Categories</h3>
+        <ul>
+          {categories.map((category) => (
+              <li key={category.id} onClick={() => setSelectedCategory(category.id)}>
+                {category.name}
+              </li>
+          ))}
+        </ul>
+      </div>
   );
 };
 

@@ -5,7 +5,12 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "wishlist")
+@Table(
+        name = "wishlist",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "product_id"})
+        }
+)
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

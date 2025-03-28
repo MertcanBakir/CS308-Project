@@ -4,8 +4,11 @@ import cs308.backhend.model.Product;
 import cs308.backhend.repository.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -17,13 +20,54 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
-    // Tüm ürünleri getir
     public List<Product> getAllProducts() {
         return productRepo.findAll();
     }
 
-    public Product getProductById(Long id) {
-        return productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+    public List<Product> searchProducts(String query) {
+        return productRepo.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
     }
+
+    public List<Product> getProductsByCategoryId(Long categoryId) {
+        return productRepo.findByCategories_Id(categoryId);
+    }
+
+
+    @Transactional
+    public Product getProductById(Long id) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+
+        product.incrementViewCount();
+        productRepo.save(product);
+
+        return product;
+    }
+
+    public List<Product> getMostWishlistedProducts() {
+        return productRepo.findAllByOrderByWishlistCountDesc();
+    }
+
+
+    public List<Product> getMostViewedProducts() {
+        return productRepo.findAllByOrderByViewCountDesc();
+    }
+
+
+    public List<Product> getMostPopularProducts() {
+        List<Product> allProducts = productRepo.findAll();
+
+
+        for (Product product : allProducts) {
+            product.calculatePopularityScore();
+        }
+
+
+        return allProducts.stream()
+                .sorted(Comparator.comparing(Product::getPopularityScore).reversed())
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -1,27 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import "./SearchBar.css";
 
-const SearchBar = () => {
+const SearchBar = ({ setProducts }) => {
   const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Searching:", query);
+  useEffect(() => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/products/search?query=${query}`);
+        if (!response.ok) throw new Error("Arama başarısız!");
+
+        const results = await response.json();
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Arama hatası:", error);
+      }
+    };
+
+    const delaySearch = setTimeout(fetchProducts, 300);
+    return () => clearTimeout(delaySearch);
+  }, [query]);
+
+  const handleSelectProduct = (product) => {
+    setQuery(product.name);
+    setSearchResults([]);
+    setProducts([product]);
   };
 
   return (
-    <form className="search-bar" onSubmit={handleSearch}>
-      <input
-        type="text"
-        placeholder="Search for products, brands, categories..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button type="submit">
-        <FaSearch />
-      </button>
-    </form>
+    <div className="search-bar-container">
+      <form className="search-bar">
+        <input
+          type="text"
+          placeholder="Search for products, brands, categories..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button type="button">
+          <FaSearch />
+        </button>
+      </form>
+
+      {searchResults.length > 0 && (
+        <ul className="search-results">
+          {searchResults.map((product) => (
+            <li key={product.id} onClick={() => handleSelectProduct(product)}>
+              <strong>{product.name}</strong> 
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 };
 

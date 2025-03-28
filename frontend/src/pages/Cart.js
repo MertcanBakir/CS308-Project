@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
-import TrashButton from "../components/TrashButton"; 
-import { useAuth } from "../context/AuthContext"; 
+import TrashButton from "../components/TrashButton";
+import { useAuth } from "../context/AuthContext";
 
 const Cart = () => {
   const { isLoggedIn, token } = useAuth();
@@ -10,22 +10,6 @@ const Cart = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const mergeCarts = (backendCart, localCart) => {
-    const mergedCart = [...backendCart];
-
-    localCart.forEach(localItem => {
-      const existingItem = mergedCart.find(item => item.id === localItem.id);
-      
-      if (existingItem) {
-        existingItem.quantity += localItem.quantity;
-      } else {
-        mergedCart.push(localItem);
-      }
-    });
-
-    return mergedCart;
-  };
 
   useEffect(() => {
     const getCartProducts = async () => {
@@ -40,7 +24,7 @@ const Cart = () => {
           });
 
           if (!response.ok) {
-            throw new Error("Ürünleri getirirken hata oluştu!");
+            throw new Error("Sepet verisi alınamadı.");
           }
 
           const data = await response.json();
@@ -48,22 +32,55 @@ const Cart = () => {
 
           const localCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-          if (localCart.length > 0) {
-            for (const product of localCart) {
+          for (const localProduct of localCart) {
+            const existingProduct = backendProducts.find(
+              (p) => p.id === localProduct.id
+            );
+
+            if (existingProduct) {
+              // 🛠 Quantity'leri topluyoruz
+              const totalQuantity = (existingProduct.quantity || 0) + (localProduct.quantity || 0);
+
+              await fetch("http://localhost:8080/change_quantity", {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  product_id: localProduct.id,
+                  quantity: totalQuantity,
+                }),
+              });
+            } else {
+              // Yeni ürünse backend'e ekle
               await fetch("http://localhost:8080/add_to_cart", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ product_id: product.id, quantity: product.quantity }),
+                body: JSON.stringify({
+                  product_id: localProduct.id,
+                  quantity: localProduct.quantity,
+                }),
               });
             }
-            localStorage.removeItem("cart");
           }
 
-          const finalCart = mergeCarts(backendProducts, localCart);
-          setProducts(finalCart);
+          localStorage.removeItem("cart");
+
+          // Son hali tekrar çek
+          const updatedResponse = await fetch("http://localhost:8080/cart", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const updatedData = await updatedResponse.json();
+          setProducts(updatedData.products || []);
         } catch (err) {
           setError(err.message);
         } finally {
@@ -81,33 +98,29 @@ const Cart = () => {
 
   const handleDeleteProduct = (productId) => {
     if (isLoggedIn) {
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== productId)
-      );
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
     } else {
-      const updatedCart = products.filter((product) => product.id !== productId);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      setProducts(updatedCart);
+      const updated = products.filter((p) => p.id !== productId);
+      localStorage.setItem("cart", JSON.stringify(updated));
+      setProducts(updated);
     }
   };
 
-  const handleQuantityChange = async (index, selectedQuantity) => {
-    const updatedQuantity = Number(selectedQuantity);
-  
-    setProducts((prevProducts) => {
-      const updated = [...prevProducts];
-      updated[index].quantity = updatedQuantity;
-  
+  const handleQuantityChange = async (index, newQty) => {
+    const updatedQty = Number(newQty);
+
+    setProducts((prev) => {
+      const updated = [...prev];
+      updated[index].quantity = updatedQty;
       if (!isLoggedIn) {
         localStorage.setItem("cart", JSON.stringify(updated));
       }
-  
       return updated;
     });
 
     if (isLoggedIn) {
       try {
-        const response = await fetch("http://localhost:8080/change_quantity", {
+        await fetch("http://localhost:8080/change_quantity", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -115,34 +128,29 @@ const Cart = () => {
           },
           body: JSON.stringify({
             product_id: products[index].id,
-            quantity: updatedQuantity,
+            quantity: updatedQty,
           }),
         });
-
-        const data = await response.json();
-        if (!response.ok || !data.message) {
-          console.error("Quantity güncelleme başarısız:", data.message);
-        }
-      } catch (error) {
-        console.error("Backend'e quantity güncellerken hata:", error);
+      } catch (err) {
+        console.error("Quantity güncelleme hatası:", err);
       }
     }
   };
 
   const totalPrice = products.reduce(
-    (total, product) => total + product.price * (product.quantity || 1),
+    (total, p) => total + p.price * (p.quantity || 1),
     0
   );
 
   const totalItems = products.reduce(
-    (count, product) => count + (product.quantity || 1),
+    (count, p) => count + (p.quantity || 1),
     0
   );
 
   return (
-    <div className="cart-page">  
+    <div className="cart-page">
       <div className="back-button">
-        <a href="/" title="Back to Home">
+        <a href="/" title="Ana Sayfa">
           <i className="arrow-left"></i>
         </a>
       </div>
@@ -157,23 +165,21 @@ const Cart = () => {
           products.map((product, index) => (
             <div key={index} className="productContainer">
               <div className="productImg">
-                <img src={product.imageUrl} alt="Ürün Resmi" className="productImage" />
+                <img src={product.imageUrl} alt={product.name} className="productImage" />
               </div>
 
               <div className="productInfoWrapper">
                 <div className="productName">
                   <span>{product.name}</span>
                 </div>
-                
+
                 <div className="productPriceDist">
                   <span className="productInfos"><strong>Model:</strong> {product.model}</span>
-                  <span className="productInfos"><strong>Price: </strong>{product.price.toFixed(2)}₺</span>
-                  <span className="productInfos"><strong>Distributor:</strong> {product.distributorInfo}</span>
-                  <span className="productInfos"><strong>Guarantee:</strong>
-                    {product.warrantyStatus ? " Var" : " Yok"}
-                  </span>
-                  
-                  <span className="productInfos">           
+                  <span className="productInfos"><strong>Fiyat:</strong> {product.price.toFixed(2)}₺</span>
+                  <span className="productInfos"><strong>Distribütör:</strong> {product.distributorInfo}</span>
+                  <span className="productInfos"><strong>Garanti:</strong> {product.warrantyStatus ? "Var" : "Yok"}</span>
+
+                  <span className="productInfos">
                     <strong>Adet:</strong>
                     <select
                       value={product.quantity}
@@ -181,29 +187,26 @@ const Cart = () => {
                       className="quantity-select"
                     >
                       {Array.from({ length: product.quantityInStock }, (_, i) => i + 1).map((q) => (
-                        <option key={q} value={q}>
-                          {q}
-                        </option>
+                        <option key={q} value={q}>{q}</option>
                       ))}
                     </select>
                   </span>
-
                 </div>
+
                 <div className="productDesc">{product.description}</div>
-                
               </div>
 
               <div className="deleteContainer">
                 <TrashButton
-                  productId={product.id} 
-                  token={token} 
+                  productId={product.id}
+                  token={token}
                   onDelete={handleDeleteProduct}
                 />
               </div>
             </div>
           ))
         ) : (
-          !loading && <p>Sepetinizde ürün bulunmamaktadır.</p>
+          !loading && <p>Sepetinizde ürün yok.</p>
         )}
       </div>
 
@@ -215,9 +218,9 @@ const Cart = () => {
           ))}
         </div>
         <hr />
-        <p><strong>Toplam Ürün:</strong> {totalItems} adet</p>
+        <p><strong>Toplam Ürün:</strong> {totalItems}</p>
         <p><strong>Toplam Fiyat:</strong> {totalPrice.toFixed(2)}₺</p>
-        <button 
+        <button
           className="checkout-button"
           onClick={() => isLoggedIn ? navigate("/checkout") : navigate("/login")}
         >

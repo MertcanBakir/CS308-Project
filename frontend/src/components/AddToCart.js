@@ -16,7 +16,7 @@ const AddToCart = ({ product }) => {
     setIsAdding(true);
     setButtonText("Ekleniyor...");
 
-    const quantity = 1; 
+    const quantity = 1;
 
     if (!isLoggedIn) {
       const localCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -36,21 +36,67 @@ const AddToCart = ({ product }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/add_to_cart", {
-        method: "POST",
+      const checkResponse = await fetch("http://localhost:8080/cart", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ product_id: product.id, quantity }),
       });
 
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setButtonText("✓ Eklendi");
+      if (!checkResponse.ok) {
+        throw new Error("Sepet kontrolü başarısız.");
+      }
+
+      const checkData = await checkResponse.json();
+      const cartItems = checkData.products || [];
+
+      const existingItem = cartItems.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        const newQuantity = (existingItem.quantity || 1) + 1;
+
+        const quantityResponse = await fetch("http://localhost:8080/change_quantity", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            product_id: product.id,
+            quantity: newQuantity,
+          }),
+        });
+
+        const quantityData = await quantityResponse.json();
+
+        if (quantityResponse.ok && quantityData.message) {
+          setButtonText("✓ Eklendi");
+        } else {
+          setButtonText("Güncelleme Hatası");
+          console.error("Quantity API:", quantityData);
+        }
       } else {
-        setButtonText("Zaten Sepette!");
-        console.error("API Yanıtı:", data);
+        const addResponse = await fetch("http://localhost:8080/add_to_cart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            product_id: product.id,
+            quantity: quantity,
+          }),
+        });
+
+        const addData = await addResponse.json();
+
+        if (addResponse.ok && addData.success) {
+          setButtonText("✓ Eklendi");
+        } else {
+          setButtonText("Hata!");
+          console.error("Add API:", addData);
+        }
       }
     } catch (error) {
       console.error("Sepete ekleme hatası:", error);

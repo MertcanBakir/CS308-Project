@@ -9,6 +9,7 @@ import cs308.backhend.repository.UserRepo;
 import cs308.backhend.repository.WishListRepo;
 import cs308.backhend.security.JwtUtil;
 import cs308.backhend.service.WishListService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -78,16 +79,11 @@ public class CartController {
                     productDetails.put("warrantyStatus", product.isWarrantyStatus());
                     productDetails.put("distributorInfo", product.getDistributorInfo());
                     productDetails.put("imageUrl", product.getImageUrl());
+                    productDetails.put("wishlistCount", product.getWishlistCount());
+                    productDetails.put("viewCount", product.getViewCount());
+                    productDetails.put("popularityScore", product.calculatePopularityScore());
 
                     productDetails.put("quantity", wishListService.getQuantity(user.getId(),product.getId()));
-
-                    Set<Category> categories = new HashSet<>(product.getCategories());
-                    List<String> categoryNames = new ArrayList<>();
-                    for (Category category : categories) {
-                        categoryNames.add(category.getName());
-                    }
-                    productDetails.put("categories", categoryNames);
-
                     productList.add(productDetails);
                 }
             }
@@ -143,7 +139,7 @@ public class CartController {
         return ResponseEntity.status(404).body(response);
     }
 
-
+    @Transactional
     @PostMapping("/add_to_cart")
     public ResponseEntity<Map<String, Object>> addProductToCart(
             @RequestBody Map<String, Object> requestBody,
@@ -177,20 +173,22 @@ public class CartController {
             Optional<Wishlist> wishlistItemOpt = wishListRepo.findByUserAndProduct(user, product);
 
             if (wishlistItemOpt.isPresent()) {
-                Wishlist wishlistItem = wishlistItemOpt.get();
-                wishlistItem.setQuantity(wishlistItem.getQuantity() + quantityToAdd);
-                wishListRepo.save(wishlistItem);
-                response.put("message", "Product quantity updated in wishlist!");
-            } else {
-                Wishlist newWishlistItem = new Wishlist();
-                newWishlistItem.setUser(user);
-                newWishlistItem.setProduct(product);
-                newWishlistItem.setQuantity(quantityToAdd);
-                wishListRepo.save(newWishlistItem);
-                response.put("message", "Product added to wishlist!");
+                response.put("success", false);
+                response.put("message", "Ürün zaten sepette!");
+                return ResponseEntity.status(400).body(response);
             }
 
+            Wishlist newWishlistItem = new Wishlist();
+            newWishlistItem.setUser(user);
+            newWishlistItem.setProduct(product);
+            newWishlistItem.setQuantity(quantityToAdd);
+            wishListRepo.save(newWishlistItem);
+
+            product.incrementWishlistCount();
+            productRepo.save(product);
+
             response.put("success", true);
+            response.put("message", "Product added to wishlist!");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
@@ -225,16 +223,19 @@ public class CartController {
 
             long product_id = Long.parseLong(requestBody.get("product_id").toString());
 
-            Optional<Wishlist> wishlistItem = wishListRepo.findByUserAndProduct(userOptional.get(),
-                    productRepo.findById(product_id)
-                            .orElseThrow(() -> new RuntimeException("Product not found"))
-            );
+            Product product = productRepo.findById(product_id)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            Optional<Wishlist> wishlistItem = wishListRepo.findByUserAndProduct(userOptional.get(), product);
 
             if (wishlistItem.isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Wishlist item not found");
                 return ResponseEntity.status(400).body(response);
             }
+            
+            product.decrementWishlistCount();
+            productRepo.save(product);
 
             wishListRepo.delete(wishlistItem.get());
             response.put("success", true);
