@@ -7,8 +7,19 @@
     width: 150%;
     max-width: 800px;
     background-color: white;
-    
   }
+
+  .search-bar-container{
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 600px;
+    background-color: white;
+
+  }
+
   
   .search-bar input {
     border: none;

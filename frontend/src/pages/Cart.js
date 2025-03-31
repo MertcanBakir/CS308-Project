@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 import TrashButton from "../components/TrashButton";
 import { useAuth } from "../context/AuthContext";
+import sephoraLogo from "../assets/images/sephoraLogo.png";
 
 const Cart = () => {
   const { isLoggedIn, token } = useAuth();
@@ -38,7 +39,6 @@ const Cart = () => {
             );
 
             if (existingProduct) {
-              // 🛠 Quantity'leri topluyoruz
               const totalQuantity = (existingProduct.quantity || 0) + (localProduct.quantity || 0);
 
               await fetch("http://localhost:8080/change_quantity", {
@@ -53,7 +53,7 @@ const Cart = () => {
                 }),
               });
             } else {
-              // Yeni ürünse backend'e ekle
+
               await fetch("http://localhost:8080/add_to_cart", {
                 method: "POST",
                 headers: {
@@ -70,7 +70,6 @@ const Cart = () => {
 
           localStorage.removeItem("cart");
 
-          // Son hali tekrar çek
           const updatedResponse = await fetch("http://localhost:8080/cart", {
             method: "GET",
             headers: {
@@ -149,10 +148,17 @@ const Cart = () => {
 
   return (
     <div className="cart-page">
-      <div className="back-button">
-        <a href="/" title="Ana Sayfa">
-          <i className="arrow-left"></i>
+
+      <div className="header-bar">
+        <a href="/" title="Ana Sayfa" className="back-button2">
+          <i className="arrow-left2"></i>
         </a>
+        <img
+          src={sephoraLogo}
+          alt="Sephora Logo"
+          className="logo2"
+          onClick={() => navigate("/")}
+        />
       </div>
 
       <div className="error">
@@ -214,7 +220,7 @@ const Cart = () => {
         <h3>Sepet Özeti</h3>
         <div className="price-list">
           {products.map((product, index) => (
-            <p key={index}>{product.name} - {product.price.toFixed(2)}₺</p>
+            <p key={index}> {product.name} - {product.price.toFixed(2)}₺</p>
           ))}
         </div>
         <hr />

@@ -18,7 +18,10 @@ const Home = () => {
 
   return (
     <div className="home">
-      <TopBanner />
+        <TopBanner 
+        message="Welcome to Sephora" 
+        onClose={() => console.log("Banner closed")}
+      />
 
       <div className="tools">
         <img

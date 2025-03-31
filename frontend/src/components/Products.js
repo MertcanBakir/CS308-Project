@@ -35,10 +35,13 @@ const Products = ({ selectedCategory, searchResults }) => {
         const data = await response.json();
 
         let sortedData = [...data];
+
         if (sortOrder === "asc") {
           sortedData.sort((a, b) => a.price - b.price);
         } else if (sortOrder === "desc") {
           sortedData.sort((a, b) => b.price - a.price);
+        } else if (!sortOrder || sortOrder === "") {
+          sortedData.sort((a, b) => a.id - b.id);
         }
 
         setProducts(sortedData);
