@@ -6,7 +6,8 @@
 .tools {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
+  justify-content: flex-start;
   padding: 10px 20px;
   width: 100%;
 }
@@ -15,17 +16,19 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  margin-left: auto;
 }
 
 .logo {
   width: 150px; 
-  padding-left: 20px;
+  margin-right: 180px;
+  padding-left: 0px;
   cursor: pointer;
 }
 
 .search-bar {
   flex-grow: 1;
-  max-width: 800px; 
+  max-width: 700px; 
 }
 
 .header-login-container {
@@ -59,7 +62,7 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
-  padding-right: 20px;
+  padding-right: 40px;
 }
 
 .cart-container:hover {

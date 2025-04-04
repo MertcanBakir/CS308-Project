@@ -35,13 +35,10 @@ const Products = ({ selectedCategory, searchResults }) => {
         const data = await response.json();
 
         let sortedData = [...data];
-
         if (sortOrder === "asc") {
           sortedData.sort((a, b) => a.price - b.price);
         } else if (sortOrder === "desc") {
           sortedData.sort((a, b) => b.price - a.price);
-        } else if (!sortOrder || sortOrder === "") {
-          sortedData.sort((a, b) => a.id - b.id);
         }
 
         setProducts(sortedData);
@@ -84,21 +81,22 @@ const Products = ({ selectedCategory, searchResults }) => {
         {productList.length > 0 ? (
           productList.map((product) => (
             <div
-              key={product.id}
-              className="product-card"
-              onClick={() => navigate(`/product/${product.id}`)}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="product-image"
-                style={{ maxWidth: "150px", height: "auto" }}
-              />
-              <p className="product-name">{product.name}</p>
-              <p className="product-price">{product.price.toFixed(2)}₺</p>
-              <button className="add-to-cart-button">Ürün Detayları</button>
-            </div>
+        key={product.id}
+        className="product-card"
+        onClick={() => navigate(`/product/${product.id}`)}
+        style={{ cursor: "pointer" }}
+      >
+        <div className="product-image-container">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="product-image"
+          />
+        </div>
+        <p className="product-name">{product.name}</p>
+        <p className="product-price">{product.price.toFixed(2)}₺</p>
+        <button className="add-to-cart-button">Ürün Detayları</button>
+      </div>
           ))
         ) : (
           <p>Bu kategoride ürün bulunmamaktadır</p>
