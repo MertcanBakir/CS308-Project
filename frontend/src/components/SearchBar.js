@@ -15,7 +15,9 @@ const SearchBar = ({ setProducts }) => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(`http://localhost:8080/products/search?query=${query}`);
-        if (!response.ok) throw new Error("Arama başarısız!");
+        if (!response.ok) {
+          throw new Error("Arama başarısız!");
+        }
 
         const results = await response.json();
         setSearchResults(results);
@@ -49,14 +51,15 @@ const SearchBar = ({ setProducts }) => {
       </form>
 
       {searchResults.length > 0 && (
-        <ul className="search-results">
-          {searchResults.map((product) => (
-            <li key={product.id} onClick={() => handleSelectProduct(product)}>
-              <strong>{product.name}</strong> 
-            </li>
-          ))}
-        </ul>
-      )}
+  <ul className="search-results">
+    {searchResults.map((product) => (
+      <li key={product.id} onClick={() => handleSelectProduct(product)} className="search-result-item">
+        <img src={product.imageUrl} alt={product.name} />
+        <span>{product.name}</span>
+      </li>
+    ))}
+  </ul>
+)}
     </div>
   );
 };

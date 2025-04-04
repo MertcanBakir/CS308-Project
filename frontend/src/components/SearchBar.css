@@ -1,43 +1,80 @@
+.search-bar-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .search-bar {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    padding: 5px 10px;
-    width: 150%;
-    max-width: 800px;
-    background-color: white;
-  }
-
-  .search-bar-container{
-    display: flex;
-    align-items: center;
-    border-radius: 20px;
-    padding: 5px 10px;
-    width: 100%;
-    max-width: 600px;
-    background-color: white;
-
-  }
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 5px 10px;
+  width: 800%;
+  max-width:800px;
+  background-color: white;
+  float:left;
+  margin: 0;
+  margin-left: -150px;
 
   
-  .search-bar input {
-    border: none;
-    outline: none;
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-  }
-  
-  .search-bar button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    font-size: 16px;
-    color: #555;
-  }
-  
-  .search-bar button:hover {
-    color: black;
-  }
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.search-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 16px;
+  color: #555;
+}
+
+.search-bar button:hover {
+  color: black;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 80%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  z-index: 1000;
+  list-style: none;
+  padding: 8px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-left: -140px;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+  background-color: #f5f5f5;
+}
+ 
+.search-result-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 5px;
+}
