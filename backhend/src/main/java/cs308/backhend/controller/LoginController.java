@@ -45,6 +45,11 @@ public class LoginController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("token", token);
+        response.put("email", user.getEmail());
+        response.put("address", user.getAddress());
+        response.put("fullname", user.getFullName());
+        response.put("card", user.getCreditCardLast4Digits());
+
 
         return ResponseEntity.ok(response);
     }

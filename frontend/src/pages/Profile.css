@@ -1,0 +1,49 @@
+.profile-page {
+    text-align: center;
+    padding: 20px;
+}
+
+.profile-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    text-align: left;
+}
+
+.profile-content h2 {
+    margin-bottom: 20px;
+}
+
+.profile-content p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.logout-button:hover {
+    background-color: #cc0000;
+}
+
+/* Geri Dön Butonu */
+.back-button2 {
+    margin-right: 30px;
+    margin-left: 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: none; /* Kutuyu kaldırmak için */
+    border: none; /* Çerçeveyi kaldırmak için */
+    padding: 0; /* İç boşluğu kaldırmak için */
+}

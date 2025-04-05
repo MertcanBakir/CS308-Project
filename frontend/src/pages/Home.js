@@ -34,19 +34,22 @@ const Home = () => {
 
         <div className="right-tools">
           {isLoggedIn ? (
-            <div className="header-login-container" onClick={logout}>
-              <img src={LoginImage} alt="Logout" className="logologin" />
-              <span className="login-text">Logout</span>
-            </div>
+              <div
+                  className="header-login-container"
+                  onClick={() => navigate("/profile")}
+              >
+                <img src={LoginImage} alt="Profile" className="logologin" />
+                <span className="login-text">Profile</span>
+              </div>
           ) : (
-            <div
-              className="header-login-container"
-              onClick={() => navigate("/login")}
-            >
-              <img src={LoginImage} alt="Login" className="logologin" />
-              <span className="login-text">Login / Register</span>
-            </div>
+              <div
+                  className="header-login-container"
+                  onClick={() => navigate("/login")}
+              >
+                <span className="login-text">Login / Register</span>
+              </div>
           )}
+
 
           <div className="cart-container" onClick={() => navigate("/cart")}>
             <img src={CartImage} alt="Cart" className="cart-logo" />

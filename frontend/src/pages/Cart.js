@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 import TrashButton from "../components/TrashButton";
@@ -150,20 +150,20 @@ const Cart = () => {
     <div className="cart-page">
 
       <div className="header-bar">
-        <a href="/" title="Ana Sayfa" className="back-button2">
+        <button onClick={() => navigate("/")} title="Ana Sayfa" className="back-button2">
           <i className="arrow-left2"></i>
-        </a>
+        </button>
         <img
-          src={sephoraLogo}
-          alt="Sephora Logo"
-          className="logo2"
-          onClick={() => navigate("/")}
+            src={sephoraLogo}
+            alt="Sephora Logo"
+            className="logo2"
+            onClick={() => navigate("/")}
         />
       </div>
 
       <div className="error">
         {loading && <p>Yükleniyor...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{color: "red"}}>{error}</p>}
       </div>
 
       <div className="productsGrid">

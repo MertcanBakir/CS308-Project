@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,10 +23,7 @@ function Login() {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
@@ -40,9 +37,16 @@ function Login() {
         return;
       }
 
+      // doğru sırayla nesne olarak login fonksiyonuna gönderiliyor
       if (data.token) {
-        login(data.token); 
-        navigate('/'); 
+        login({
+          token: data.token,
+          email: data.email,
+          address: data.address,
+          fullname: data.fullname,
+          card: data.card,
+        });
+        navigate('/');
       } else {
         setError('Login successful, but no token received.');
       }
@@ -55,49 +59,49 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="back-button">
-        <a href="/" title="Back to Home">
-          <i className="arrow-left"></i>
-        </a>
+      <div className="login-container">
+        <div className="back-button">
+          <a href="/" title="Back to Home">
+            <i className="arrow-left"></i>
+          </a>
+        </div>
+
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="logo-container">
+            <img src="https://www.sephora.com/img/ufe/logo.svg" alt="Sephora" className="sephora-logo" />
+          </div>
+
+          <h2>Login</h2>
+          {error && <div className="error-message">{error}</div>}
+
+          <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+          />
+          <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+          />
+          <button
+              type="submit"
+              className="login-button"
+              disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Log In'}
+          </button>
+          <div className="create-account">
+            <p>Don't have an account? <a href="/register">Create Account</a></p>
+          </div>
+        </form>
       </div>
-
-      <form onSubmit={handleLogin} className="login-form">
-        <div className="logo-container">
-          <img src="https://www.sephora.com/img/ufe/logo.svg" alt="Sephora" className="sephora-logo" />
-        </div>
-
-        <h2>Login</h2>
-        {error && <div className="error-message">{error}</div>}
-
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={loading}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-        />
-        <button 
-          type="submit" 
-          className="login-button"
-          disabled={loading}
-        >
-          {loading ? 'Logging in...' : 'Log In'}
-        </button>
-        <div className="create-account">
-          <p>Don't have an account? <a href="/register">Create Account</a></p>
-        </div>
-      </form>
-    </div>
   );
 }
 
