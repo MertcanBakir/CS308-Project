@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Auth bilgilerini almak için
+import { useAuth } from "../context/AuthContext"; 
 import sephoraLogo from "../assets/images/sephoraLogo.png";
 import "./Profile.css";
 

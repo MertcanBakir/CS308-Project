@@ -37,7 +37,6 @@ function Login() {
         return;
       }
 
-      // doğru sırayla nesne olarak login fonksiyonuna gönderiliyor
       if (data.token) {
         login({
           token: data.token,

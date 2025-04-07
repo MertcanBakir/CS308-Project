@@ -55,18 +55,14 @@ public class CartController {
             if (wishlistItems.isEmpty()) {
                 response.put("success", true);
                 response.put("message", "Wishlist is empty.");
+                response.put("products", new ArrayList<>());
                 return ResponseEntity.status(200).body(response);
             }
 
-            List<Product> products = new ArrayList<>();
-            for (Wishlist wishlist : wishlistItems) {
-                products.add(wishlist.getProduct());
-            }
-
-            response.put("success", true);
             List<Map<String, Object>> productList = new ArrayList<>();
 
-            for (Product product : products) {
+            for (Wishlist wishlist : wishlistItems) {
+                Product product = wishlist.getProduct();
                 if (product != null) {
                     Map<String, Object> productDetails = new HashMap<>();
                     productDetails.put("id", product.getId());
@@ -79,15 +75,15 @@ public class CartController {
                     productDetails.put("warrantyStatus", product.isWarrantyStatus());
                     productDetails.put("distributorInfo", product.getDistributorInfo());
                     productDetails.put("imageUrl", product.getImageUrl());
-                    productDetails.put("wishlistCount", product.getWishlistCount());
-                    productDetails.put("viewCount", product.getViewCount());
-                    productDetails.put("popularityScore", product.calculatePopularityScore());
 
-                    productDetails.put("quantity", wishListService.getQuantity(user.getId(),product.getId()));
+                    productDetails.put("quantity", wishlist.getQuantity());
+                    productDetails.put("wishlistId", wishlist.getId());
+
                     productList.add(productDetails);
                 }
             }
 
+            response.put("success", true);
             response.put("products", productList);
             return ResponseEntity.status(200).body(response);
 

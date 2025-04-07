@@ -1,5 +1,6 @@
 package cs308.backhend.controller;
 
+import cs308.backhend.model.Address;
 import cs308.backhend.model.User;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
@@ -10,9 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/login")
@@ -42,14 +42,28 @@ public class LoginController {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
+        List<String> addressList = user.getAddresses().stream()
+                .map(Address::getAddress)
+                .collect(Collectors.toList());
+
+        // Kartların son 4 hanesini al
+        List<String> cardLast4Digits = user.getCards().stream()
+                .map(card -> {
+                    String fullNumber = card.getCardNumber();
+                    return fullNumber != null && fullNumber.length() >= 4
+                            ? fullNumber.substring(fullNumber.length() - 4)
+                            : "";
+                })
+                .collect(Collectors.toList());
+
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("token", token);
         response.put("email", user.getEmail());
-        response.put("address", user.getAddress());
         response.put("fullname", user.getFullName());
-        response.put("card", user.getCreditCardLast4Digits());
-
+        response.put("card", cardLast4Digits);
+        response.put("addresses", addressList);
+        response.put("role", user.getRole());
 
         return ResponseEntity.ok(response);
     }

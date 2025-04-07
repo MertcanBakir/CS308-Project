@@ -99,4 +99,18 @@ public class WishListService {
             throw new RuntimeException("Product is not in the wishlist");
         }
     }
+
+    public Wishlist getWishlistItem(Long userId, Long productId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        return wishListRepo.findByUserAndProduct(user, product)
+                .orElseThrow(() -> new RuntimeException("Wishlist item not found"));
+    }
+    public Wishlist getWishlistById(Long wishlistId) {
+        return wishListRepo.findById(wishlistId)
+                .orElseThrow(() -> new RuntimeException("Wishlist not found"));
+    }
 }

@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/CS308-Project.iml" filepath="$PROJECT_DIR$/.idea/CS308-Project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backhend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backhend.main.iml" />
     </modules>
   </component>
 </project>

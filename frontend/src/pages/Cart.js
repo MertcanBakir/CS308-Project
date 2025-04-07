@@ -146,6 +146,11 @@ const Cart = () => {
     0
   );
 
+  const goCheckout = () => {
+    localStorage.setItem("checkoutProducts", JSON.stringify(products));
+    navigate("/checkout");
+  };
+
   return (
     <div className="cart-page">
 
@@ -228,7 +233,8 @@ const Cart = () => {
         <p><strong>Toplam Fiyat:</strong> {totalPrice.toFixed(2)}₺</p>
         <button
           className="checkout-button"
-          onClick={() => isLoggedIn ? navigate("/checkout") : navigate("/login")}
+          disabled={isLoggedIn && products.length === 0}
+          onClick={() => isLoggedIn ? goCheckout() : navigate("/login")}
         >
           {isLoggedIn ? "Ödemeye Geç" : "Giriş Yap"}
         </button>

@@ -45,6 +45,16 @@ public class ProductService {
         return product;
     }
 
+    public void decrementStock(Product product, int change) {
+        int stock = product.getQuantityInStock();
+        stock = stock - change;
+        if(stock < 0) {
+            product.setQuantityInStock(0);
+
+        }
+        product.setQuantityInStock(stock);
+    }
+
     public List<Product> getMostWishlistedProducts() {
         return productRepo.findAllByOrderByWishlistCountDesc();
     }

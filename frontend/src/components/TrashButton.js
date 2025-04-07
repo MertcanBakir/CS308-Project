@@ -14,7 +14,6 @@ const TrashButton = ({ productId, onDelete }) => {
     console.log("🛑 Silinecek ürün ID:", productId);
 
     if (!isLoggedIn) {
-      // **Giriş yapılmamışsa localStorage'dan sil**
       const localCart = JSON.parse(localStorage.getItem("cart")) || [];
       const updatedCart = localCart.filter((product) => product.id !== productId);
       localStorage.setItem("cart", JSON.stringify(updatedCart));
@@ -23,7 +22,6 @@ const TrashButton = ({ productId, onDelete }) => {
       return;
     }
 
-    // **İstek Gönderiyoruz**
     const requestBody = { product_id: Number(productId) };
     console.log("📤 Gönderilecek istek:", requestBody);
 
