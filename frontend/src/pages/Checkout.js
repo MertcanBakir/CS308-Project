@@ -4,13 +4,13 @@ import sephoraLogo from "../assets/images/sephoraLogo.png";
 import AddressSection from "../components/AddressSection";
 import CardSection from "../components/CardSection";
 import "./Checkout.css";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [selectedCardId, setSelectedCardId] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem("checkoutProducts");
@@ -33,14 +33,11 @@ const Checkout = () => {
     const token = localStorage.getItem("token");
 
     if (!selectedAddressId || !selectedCardId) {
-      setErrorMessage("Lütfen bir adres ve kart seçin.");
-      setTimeout(() => setErrorMessage(""), 2000);
+      toast.error("Lütfen bir adres ve kart seçin.");
       return;
     }
 
     try {
-      setErrorMessage("");
-
       for (const product of products) {
         const response = await fetch("http://localhost:8080/add-order", {
           method: "POST",
@@ -58,17 +55,17 @@ const Checkout = () => {
         const data = await response.json();
 
         if (!data.success) {
-          setErrorMessage(`Sipariş başarısız: ${data.message}`);
+          toast.error(`Order failed: ${data.message}`);
           return;
         }
       }
 
-      alert("Tüm siparişler başarıyla oluşturuldu.");
+      toast.success("All orders have been successfully created. Invoice sent via email.");
       localStorage.removeItem("checkoutProducts");
-      navigate("/");
+      setTimeout(() => navigate("/"), 2500);
     } catch (error) {
-      console.error("Hata:", error);
-      setErrorMessage("Bir hata oluştu. Lütfen tekrar deneyin.");
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again..");
     }
   };
 
@@ -105,12 +102,6 @@ const Checkout = () => {
             <hr />
             <p><strong>Toplam Ürün:</strong> {totalItems}</p>
             <p><strong>Toplam Fiyat:</strong> {totalPrice.toFixed(2)}₺</p>
-
-            {errorMessage && (
-              <div className="checkout-error-box">
-                <span className="checkout-error-text">{errorMessage}</span>
-              </div>
-            )}
 
             <button
               className="checkout-button"
