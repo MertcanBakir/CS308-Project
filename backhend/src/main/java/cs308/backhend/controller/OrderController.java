@@ -3,6 +3,7 @@ package cs308.backhend.controller;
 import cs308.backhend.model.*;
 import cs308.backhend.repository.*;
 import cs308.backhend.security.JwtUtil;
+import cs308.backhend.service.OrderService;
 import cs308.backhend.service.ProductService;
 import cs308.backhend.service.WishListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RestController
 public class OrderController {
 
+    private final OrderService orderService;
     private final OrderRepo orderRepo;
     private final UserRepo userRepo;
     private final ProductRepo productRepo;
@@ -24,10 +26,11 @@ public class OrderController {
     private final WishListService wishListService;
     private final JwtUtil jwtUtil;
 
-    public OrderController(OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo,
+    public OrderController(OrderService orderService, OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo,
                            ProductService productService, CardRepo cardRepo,
                            AddressRepo addressRepo, WishListService wishListService,
                            JwtUtil jwtUtil) {
+        this.orderService = orderService;
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
         this.productRepo = productRepo;
@@ -79,13 +82,15 @@ public class OrderController {
 
             wishListService.removeFromWishlist(user.getId(), product.getId());
 
+            orderService.generateInvoiceAndSendEmail(order, user);
+
             response.put("success", true);
-            response.put("message", "Sipariş başarıyla oluşturuldu.");
+            response.put("message", "The order was created successfully and the invoice was sent via email.");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "Bir hata oluştu: " + e.getMessage());
+            response.put("message", "Error: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
