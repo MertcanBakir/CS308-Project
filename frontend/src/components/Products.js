@@ -95,7 +95,7 @@ const Products = ({ selectedCategory, searchResults }) => {
         </div>
         <p className="product-name">{product.name}</p>
         <p className="product-price">{product.price.toFixed(2)}₺</p>
-        <button className="add-to-cart-button">Ürün Detayları</button>
+        <button className="add-to-cart-button">Product Details</button>
       </div>
           ))
         ) : (
