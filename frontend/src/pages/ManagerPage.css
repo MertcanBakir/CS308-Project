@@ -1,0 +1,42 @@
+.back-button2 {
+    margin-right: 30px;
+    margin-left: 10px;
+    top: 0px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  
+  .arrow-left2 {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-top: 2px solid #DB1F6E;
+    border-left: 2px solid #DB1F6E;
+    transform: rotate(-45deg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .arrow-left2:hover {
+    border-color: #A11C55;
+    transform: rotate(-45deg) scale(1.2);
+  }
+  
+  .logo2 {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 130px;
+    right: 50px;
+    height: 75px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    object-fit: contain;
+  }
+  
+  
+  .logo2:hover {
+    opacity: 0.8;
+  }
+  

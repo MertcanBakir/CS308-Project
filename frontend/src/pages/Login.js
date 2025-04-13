@@ -38,12 +38,22 @@ function Login() {
       }
 
       if (data.token) {
+        let role = data.role;
+
+      if (!role) {
+        if (email.endsWith("@salesman.com")) role = "salesManager";
+        else if (email.endsWith("@prodman.com")) role = "productManager";
+        else role = "user";
+      }
+
+
         login({
           token: data.token,
           email: data.email,
           address: data.address,
           fullname: data.fullname,
           card: data.card,
+          role: role,
         });
         navigate('/');
       } else {

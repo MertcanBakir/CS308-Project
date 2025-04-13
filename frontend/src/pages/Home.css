@@ -86,3 +86,22 @@
   text-align: left;
   margin-top: -25px;
 }
+
+.header-management-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: black; 
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: transparent; 
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.header-management-container:hover {
+  color: #333; /* Hover’da biraz koyulaşır */
+  transform: scale(1.05);
+}

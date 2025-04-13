@@ -7,9 +7,12 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import Checkout from "./pages/Checkout";
+import ManagerPage from "./pages/ManagerLayout";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
+import ProductManagerPage from "./pages/ProductManagerPage";
+import SalesManagerPage from "./pages/SalesManagerPage";
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/product-manager-page" element={<ProductManagerPage />} />
+          <Route path="/sales-manager-page" element={<SalesManagerPage />} />
+
         </Routes>
         <ToastContainer
           position="top-right"

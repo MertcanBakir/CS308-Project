@@ -9,12 +9,27 @@ import sephoraLogo from "../assets/images/sephoraLogo.png";
 import LoginImage from "../assets/images/LoginImage.png";
 import CartImage from "../assets/images/cart.png";
 import "./Home.css";
+import { MdOutlineManageAccounts } from "react-icons/md";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, email } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [searchResults, setSearchResults] = useState(null);
+
+  // Giriş yapmış ve özel mail adresi olan kullanıcılar için buton gösterilsin
+  const showManagementButton =
+    isLoggedIn &&
+    (email?.endsWith("@salesman.com") || email?.endsWith("@prodman.com"));
+
+  // Giriş yapan kişinin rolüne göre ilgili yönetici sayfasına yönlendir
+  const handleManagementNavigation = () => {
+    if (email?.endsWith("@salesman.com")) {
+      navigate("/sales-manager-page");
+    } else if (email?.endsWith("@prodman.com")) {
+      navigate("/product-manager-page");
+    }
+  };
 
   return (
     <div className="home">
@@ -28,28 +43,35 @@ const Home = () => {
           onClick={() => navigate("/")}
         />
 
-
         <SearchBar setProducts={setSearchResults} />
 
-
         <div className="right-tools">
-          {isLoggedIn ? (
-              <div
-                  className="header-login-container"
-                  onClick={() => navigate("/profile")}
-              >
-                <img src={LoginImage} alt="Profile" className="logologin" />
-                <span className="login-text">Profile</span>
-              </div>
-          ) : (
-              <div
-                  className="header-login-container"
-                  onClick={() => navigate("/login")}
-              >
-                <span className="login-text">Login / Register</span>
-              </div>
+          {showManagementButton && (
+            <div
+              className="header-management-container"
+              onClick={handleManagementNavigation}
+            >
+              <MdOutlineManageAccounts size={45} />
+              <span className="login-text">Admin</span>
+            </div>
           )}
 
+          {isLoggedIn ? (
+            <div
+              className="header-login-container"
+              onClick={() => navigate("/profile")}
+            >
+              <img src={LoginImage} alt="Profile" className="logologin" />
+              <span className="login-text">Profile</span>
+            </div>
+          ) : (
+            <div
+              className="header-login-container"
+              onClick={() => navigate("/login")}
+            >
+              <span className="login-text">Login / Register</span>
+            </div>
+          )}
 
           <div className="cart-container" onClick={() => navigate("/cart")}>
             <img src={CartImage} alt="Cart" className="cart-logo" />
