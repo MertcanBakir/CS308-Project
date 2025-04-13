@@ -54,7 +54,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 24px;
+    padding: 15px 24px 15px 36px;
     width: 100%;
     position: relative;
     z-index: 1100;
@@ -66,7 +66,7 @@
   .left-tools {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 36px;
     height: 50px;
   }
   
@@ -86,6 +86,7 @@
     border-top: 2px solid #DB1F6E;
     border-left: 2px solid #DB1F6E;
     transform: rotate(-45deg);
+    margin-left: -20px;
     transition: border-color 0.2s ease;
   }
   
@@ -98,6 +99,7 @@
     object-fit: contain;
     cursor: pointer;
     display: block;
+  
   }
   
   .search-container {
