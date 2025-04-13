@@ -40,7 +40,18 @@ public class LoginController {
                 loginRequest.getEmail(), loginRequest.getPassword()
         ));
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String role;
+        if (user.getRole() != null) {
+            role = user.getRole().name();
+        } else if (user.getEmail().endsWith("@salesman.com")) {
+            role = "salesManager";
+        } else if (user.getEmail().endsWith("@prodman.com")) {
+            role = "productManager";
+        } else {
+            role = "user";
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail(), role);
 
         List<String> addressList = user.getAddresses().stream()
                 .map(Address::getAddress)
@@ -63,7 +74,7 @@ public class LoginController {
         response.put("fullname", user.getFullName());
         response.put("card", cardLast4Digits);
         response.put("addresses", addressList);
-        response.put("role", user.getRole());
+        response.put("role", role);
 
         return ResponseEntity.ok(response);
     }
