@@ -49,4 +49,18 @@ public class Card {
     @JsonIgnore
     private User user;
 
+    public String getLast4Digits() {
+        try {
+            String decrypted = AESUtil.decrypt(this.CardNumber);
+            if (decrypted != null && decrypted.length() >= 4) {
+                return decrypted.substring(decrypted.length() - 4);
+            } else {
+                return "****";
+            }
+        } catch (Exception e) {
+            return "****";
+        }
+    }
+
+
 }

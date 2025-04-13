@@ -6,10 +6,25 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [email, setEmail] = useState(localStorage.getItem("email") || null);
-  const [address, setAddress] = useState(localStorage.getItem("address") || null);
   const [fullname, setFullname] = useState(localStorage.getItem("fullname") || null);
-  const [card, setCard] = useState(localStorage.getItem("card") || null);
   const [role, setRole] = useState(localStorage.getItem("role") || null);
+
+  const [address, setAddress] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("address")) || [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [card, setCard] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("card")) || [];
+    } catch (e) {
+      return [];
+    }
+  });
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -25,20 +40,33 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (storedEmail) setEmail(storedEmail);
-    if (storedAddress) setAddress(storedAddress);
-    if (storedCard) setCard(storedCard);
     if (storedFullname) setFullname(storedFullname);
     if (storedRole) setRole(storedRole);
+    if (storedCard) {
+      try {
+        setCard(JSON.parse(storedCard));
+      } catch (e) {
+        setCard([]);
+      }
+    }
+
+    if (storedAddress) {
+      try {
+        setAddress(JSON.parse(storedAddress));
+      } catch (e) {
+        setAddress([]);
+      }
+    }
+
   }, []);
 
   // login: artık tek bir nesne parametresi alıyor
-  const login = ({ token, email, address, fullname, card, role }) => {
+  const login = ({ token, email, address, fullname, card }) => {
     localStorage.setItem("token", token);
     localStorage.setItem("email", email);
-    localStorage.setItem("address", address);
+    localStorage.setItem("address", JSON.stringify(address));
     localStorage.setItem("fullname", fullname);
-    localStorage.setItem("card", card);
-    localStorage.setItem("role", role);
+    localStorage.setItem("card", JSON.stringify(card));
 
     setIsLoggedIn(true);
     setToken(token);
@@ -46,8 +74,8 @@ export const AuthProvider = ({ children }) => {
     setAddress(address);
     setFullname(fullname);
     setCard(card);
-    setRole(role);
   };
+
 
   const logout = () => {
     ["token", "email", "address", "fullname", "card", "role"].forEach(key => localStorage.removeItem(key));

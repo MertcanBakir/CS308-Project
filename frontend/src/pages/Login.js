@@ -50,7 +50,7 @@ function Login() {
         login({
           token: data.token,
           email: data.email,
-          address: data.address,
+          address: data.addresses,
           fullname: data.fullname,
           card: data.card,
           role: role,

@@ -3,7 +3,9 @@ package cs308.backhend.service;
 import cs308.backhend.model.Address;
 import cs308.backhend.model.Role;
 import cs308.backhend.model.User;
+import cs308.backhend.model.Card;
 import cs308.backhend.repository.AddressRepo;
+import cs308.backhend.repository.CardRepo;
 import cs308.backhend.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +21,24 @@ public class UserService {
     private final UserRepo userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AddressRepo addressRepository;
+    private final CardRepo cardRepository;
+
 
 
     @Autowired
-    public UserService(UserRepo userRepository,AddressRepo addressRepository) {
+    public UserService(UserRepo userRepository,AddressRepo addressRepository, CardRepo cardRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.addressRepository = addressRepository;
+        this.cardRepository = cardRepository;
     }
 
     public List<Address> getUserAddresses(Long userId) {
         return addressRepository.findByUserId(userId);
+    }
+
+    public List<Card> getUserCards(Long userId) {
+        return cardRepository.findByUserId(userId);
     }
 
     @Transactional
