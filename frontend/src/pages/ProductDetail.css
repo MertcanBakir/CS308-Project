@@ -1,189 +1,200 @@
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #00000033;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.star {
+  color: lightgray;
+  transition: color 0.2s ease;
+}
+
+.star.filled {
+  color: gold;
+}
+
+textarea {
+  resize: none;
+  height: 100px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.comment-section {
+  margin-top: 40px;
+}
+
+.comment-box {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  margin-bottom: 15px;
+}
+
+.comment-box p {
+  margin: 4px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.comment-box strong {
+  color: #000;
+}
+
+/* Ürün detayları */
 .product-detail-container {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 40px;
-    padding: 40px;
-  }
-  
-  .productimage-container {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .product-image {
-    width: 400px;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
-  }
-  
-  .product-info-container {
-    flex: 1;
-    text-align: left;
-  }
-  
-  .product-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .product-description {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
-  .add-to-cart-button {
-    background-color: black;
-    color: white;
-    padding: 12px 24px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 15px;
-  }
-  
-  .add-to-cart-button:hover {
-    background-color: #333;
-  }
-  
-  .tools {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 24px 15px 36px;
-    width: 100%;
-    position: relative;
-    z-index: 1100;
-    background-color: white;
-    min-height: 80px;
-    box-sizing: border-box;
-  }
-  
-  .left-tools {
-    display: flex;
-    align-items: center;
-    gap: 36px;
-    height: 50px;
-  }
-  
-  .back-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    margin-top: 12px;
-  }
-  
-  .arrow-left {
-    width: 12px;
-    height: 12px;
-    border-top: 2px solid #DB1F6E;
-    border-left: 2px solid #DB1F6E;
-    transform: rotate(-45deg);
-    margin-left: -20px;
-    transition: border-color 0.2s ease;
-  }
-  
-  .arrow-left:hover {
-    border-color: #A11C55;
-  }
-  
-  .logo {
-    height: 70px;
-    object-fit: contain;
-    cursor: pointer;
-    display: block;
-  
-  }
-  
-  .search-container {
-    position: relative;
-    width: 1000px;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 12px 40px 12px 18px; 
-    border: 1px solid #ccc;
-    border-radius: 25px; 
-    font-size: 15px; 
-    outline: none;
-  }
-  
-  .search-button {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-500%);
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .search-icon {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .right-tools {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    height: 70px;
-  }
-  
-  .header-login-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    height: 40px;
-  }
-  
-  .logologin {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-  }
-  
-  .login-text {
-    font-size: 16px;
-    white-space: nowrap;
-  }
-  
-  .cart-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    height: 40px;
-  }
-  
-  .cart-logo {
-    width: 45px;
-    height: 45px;
-    object-fit: contain;
-  }
-  
-  .cart-text {
-    font-size: 16px;
-    white-space: nowrap;
-  }
-  
-  .out-of-stock-button {
-    background-color: #ccc;
-    color: #666;
-    padding: 12px 24px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    margin-top: 15px;
-    width: 100%;
-    cursor: not-allowed;
-  }
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+  padding: 40px;
+}
+
+.productimage-container {
+  flex: 1;
+  text-align: center;
+}
+
+.product-image {
+  width: 400px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.product-info-container {
+  flex: 1;
+  text-align: left;
+}
+
+.product-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.add-to-cart-button {
+  background-color: black;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+.add-to-cart-button:hover {
+  background-color: #333;
+}
+
+.out-of-stock-button {
+  background-color: #ccc;
+  color: #666;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 15px;
+  width: 100%;
+  cursor: not-allowed;
+}
+
+/* Header (tools) */
+.tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 24px;
+  width: 100%;
+  position: relative;
+  z-index: 1100;
+  background-color: white;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+.left-tools {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 50px;
+}
+
+.logo {
+  height: 72px;
+  object-fit: contain;
+  cursor: pointer;
+  display: block;
+}
+
+/* Geri butonu */
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  background-color: transparent;
+  margin-right: 10px;
+}
+
+.arrow-left {
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #DB1F6E;
+  border-left: 2px solid #DB1F6E;
+  transform: rotate(-45deg);
+}
+
+.logologin {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.cart-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.login-text, .cart-text {
+  font-size: 16px;
+  white-space: nowrap;
+}

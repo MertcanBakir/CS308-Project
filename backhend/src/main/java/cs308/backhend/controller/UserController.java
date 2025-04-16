@@ -1,15 +1,16 @@
 package cs308.backhend.controller;
 
-import cs308.backhend.controller.UserProfileResponse;
+import cs308.backhend.dto.OrderSummaryResponse;
 import cs308.backhend.model.Address;
 import cs308.backhend.model.Card;
-import cs308.backhend.model.User;
+import cs308.backhend.model.Comment;
 import cs308.backhend.model.Order;
+import cs308.backhend.model.User;
 import cs308.backhend.repository.AddressRepo;
 import cs308.backhend.repository.CardRepo;
-import cs308.backhend.repository.UserRepo;
+import cs308.backhend.repository.CommentRepository;
 import cs308.backhend.repository.OrderRepo;
-import cs308.backhend.dto.OrderSummaryResponse;
+import cs308.backhend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UserController {
     private final AddressRepo addressRepository;
     private final CardRepo creditCardRepository;
     private final OrderRepo orderRepo;
-
+    private final CommentRepository commentRepository;
 
     @GetMapping
     public ResponseEntity<UserProfileResponse> getProfile(@RequestParam String email) {
@@ -56,6 +57,7 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/orders")
     public ResponseEntity<List<OrderSummaryResponse>> getUserOrders(@RequestParam String email) {
         Optional<User> userOptional = userRepo.findByEmail(email);
@@ -64,7 +66,7 @@ public class UserController {
         }
 
         User user = userOptional.get();
-        List<Order> orders = orderRepo.findByUserId(user.getId());
+        List<Order> orders = orderRepo.findByUser_Id(user.getId());
 
         List<OrderSummaryResponse> orderResponses = orders.stream().map(order -> {
             OrderSummaryResponse o = new OrderSummaryResponse();
@@ -80,8 +82,4 @@ public class UserController {
 
         return ResponseEntity.ok(orderResponses);
     }
-
-
-
-
 }

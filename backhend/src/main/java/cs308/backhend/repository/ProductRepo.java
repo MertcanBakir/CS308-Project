@@ -20,7 +20,6 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
 
     List<Product> findByQuantityInStock(int quantity);
 
-    List<Product> findByid(Long id);
 
     List<Product> findByCategories_Id(Long categoryId);
 

@@ -1,3 +1,5 @@
+// ✅ Güncellenmiş ProductDetail.js — Geri butonu logo solunda olacak şekilde hizalandı
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import TopBanner from "../components/TopBanner";
@@ -8,22 +10,29 @@ import CartImage from "../assets/images/cart.png";
 import "./ProductDetail.css";
 import AddToCart from "../components/AddToCart";
 import { useAuth } from "../context/AuthContext";
+import Modal from "react-modal";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [comments, setComments] = useState([]);
+  const [averageRating, setAverageRating] = useState(null);
+  const [canComment, setCanComment] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newRating, setNewRating] = useState(0);
+  const [newContent, setNewContent] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(`http://localhost:8080/products/${id}`);
-        if (!response.ok) {
-          throw new Error("Ürün bilgileri getirilemedi!");
-        }
+        if (!response.ok) throw new Error("Ürün bilgileri getirilemedi!");
         const data = await response.json();
         setProduct(data);
       } catch (err) {
@@ -33,8 +42,57 @@ const ProductDetail = () => {
       }
     };
 
+    const fetchCommentsAndPermission = async () => {
+      const commentRes = await fetch(`http://localhost:8080/comments/product/${id}`);
+      if (commentRes.ok) {
+        const commentData = await commentRes.json();
+        setComments(commentData.comments);
+
+        if (commentData.comments.length > 0) {
+          const total = commentData.comments.reduce((sum, c) => sum + c.rating, 0);
+          setAverageRating((total / commentData.comments.length).toFixed(1));
+        }
+      } else {
+        console.error("Yorumlar alınamadı:", commentRes.status);
+      }
+
+      const token = localStorage.getItem("token");
+      const permissionRes = await fetch(`http://localhost:8080/comments/can-comment/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (permissionRes.ok) {
+        const permissionData = await permissionRes.json();
+        setCanComment(permissionData.canComment);
+      } else {
+        console.error("Yorum izni alınamadı:", permissionRes.status);
+      }
+    };
+
     fetchProduct();
+    fetchCommentsAndPermission();
   }, [id]);
+
+  const submitComment = async () => {
+    const token = localStorage.getItem("token");
+    await fetch(`http://localhost:8080/comments/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId: Number(id),
+        rating: newRating,
+        content: newContent,
+      }),
+    });
+
+    setIsModalOpen(false);
+    setNewRating(0);
+    setNewContent("");
+    window.location.reload();
+  };
 
   if (loading) return <p>Ürün yükleniyor...</p>;
   if (error) return <p>Hata: {error}</p>;
@@ -44,33 +102,27 @@ const ProductDetail = () => {
       <TopBanner />
       <div className="tools">
         <div className="left-tools">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <i className="arrow-left"></i>
-          </div>
           <img
             src={sephoraLogo}
             alt="Sephora Logo"
             className="logo"
             onClick={() => navigate("/")}
           />
+          <div className="back-button" onClick={() => navigate(-1)}>
+            <i className="arrow-left"></i>
+          </div>
         </div>
         <SearchBar />
         <div className="right-tools">
           {isLoggedIn ? (
-              <div
-                  className="header-login-container"
-                  onClick={() => navigate("/profile")}
-              >
-                <img src={LoginImage} alt="Profile" className="logologin" />
-                <span className="login-text">Profile</span>
-              </div>
+            <div className="header-login-container" onClick={() => navigate("/profile")}>
+              <img src={LoginImage} alt="Profile" className="logologin" />
+              <span className="login-text">Profile</span>
+            </div>
           ) : (
-              <div
-                  className="header-login-container"
-                  onClick={() => navigate("/login")}
-              >
-                <span className="login-text">Login / Register</span>
-              </div>
+            <div className="header-login-container" onClick={() => navigate("/login")}>
+              <span className="login-text">Login / Register</span>
+            </div>
           )}
           <div className="cart-container" onClick={() => navigate("/cart")}>
             <img src={CartImage} alt="Cart" className="cart-logo" />
@@ -81,30 +133,79 @@ const ProductDetail = () => {
 
       <div className="product-detail-container">
         <div className="productimage-container">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="product-image"
-          />
+          <img src={product.imageUrl} alt={product.name} className="product-image" />
         </div>
         <div className="product-info-container">
           <h1 className="product-title">{product.name}</h1>
           <p className="product-description">{product.description}</p>
           <p><strong>Price:</strong> {product.price}₺</p>
+          {averageRating && (
+            <p><strong>Rating:</strong> {"⭐".repeat(Math.floor(averageRating))} ({averageRating})</p>
+          )}
           <p><strong>Model:</strong> {product.model}</p>
           <p><strong>Stock:</strong> {product.quantityInStock}</p>
           <p><strong>Guarantee:</strong> {product.warrantyStatus ? "Var" : "Yok"}</p>
           <p><strong>Distributor:</strong> {product.distributorInfo}</p>
 
           {product.quantityInStock === 0 ? (
-            <button className="out-of-stock-button" disabled>
-              Stokta Yok
-            </button>
+            <button className="out-of-stock-button" disabled>Stokta Yok</button>
           ) : (
             <AddToCart product={product} />
           )}
+
+          {canComment && (
+            <button
+              className="add-to-cart-button"
+              onClick={() => setIsModalOpen(true)}
+              style={{ marginTop: "20px" }}
+            >
+              Yorum Yap
+            </button>
+          )}
+
+          <div className="comment-section">
+            <h2>Yorumlar</h2>
+            {comments.length === 0 ? (
+              <p>Henüz yorum yapılmamış.</p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="comment-box">
+                  <p><strong>{comment.fullName}</strong> ({new Date(comment.createdAt).toLocaleString()})</p>
+                  <p>{"⭐".repeat(comment.rating)} ({comment.rating})</p>
+                  <p>{comment.content}</p>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        className="modal"
+        overlayClassName="modal-overlay"
+        ariaHideApp={false}
+      >
+        <h2>Yorum Yap</h2>
+        <div className="star-rating">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className={`star ${star <= newRating ? "filled" : ""}`}
+              onClick={() => setNewRating(star)}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+        <textarea
+          placeholder="Yorumunuzu yazın..."
+          value={newContent}
+          onChange={(e) => setNewContent(e.target.value)}
+        />
+        <button className="add-to-cart-button" onClick={submitComment}>Gönder</button>
+      </Modal>
     </div>
   );
 };

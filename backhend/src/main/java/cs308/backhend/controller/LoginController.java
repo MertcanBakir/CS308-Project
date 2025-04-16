@@ -57,7 +57,7 @@ public class LoginController {
                 .map(Address::getAddress)
                 .collect(Collectors.toList());
 
-        // Kartların son 4 hanesini al
+
         List<String> cardLast4Digits = user.getCards().stream()
                 .map(card -> {
                     String fullNumber = card.getCardNumber();
