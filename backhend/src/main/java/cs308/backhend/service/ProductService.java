@@ -64,7 +64,6 @@ public class ProductService {
         return productRepo.findAllByOrderByViewCountDesc();
     }
 
-
     public List<Product> getMostPopularProducts() {
         List<Product> allProducts = productRepo.findAll();
 

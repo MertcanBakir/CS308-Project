@@ -8,12 +8,15 @@ import cs308.backhend.service.ProductService;
 import cs308.backhend.service.WishListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 @RestController
+@RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -26,6 +29,7 @@ public class OrderController {
     private final WishListService wishListService;
     private final JwtUtil jwtUtil;
 
+    @Autowired
     public OrderController(OrderService orderService, OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo,
                            ProductService productService, CardRepo cardRepo,
                            AddressRepo addressRepo, WishListService wishListService,
@@ -41,8 +45,37 @@ public class OrderController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/add-order")
-    public ResponseEntity<Map<String, Object>> addOrder(@RequestBody Map<String, Object> requestBody, @RequestHeader("Authorization") String token) {
+    @GetMapping
+    public ResponseEntity<List<Order>> getAllOrders() {
+        System.out.println("✅ Tüm siparişler çekildi");
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+
+    // @PreAuthorize("hasRole('PRODUCT_MANAGER')")
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Order> updateDeliveryStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request) {
+
+        String newStatus = request.get("status");
+
+        System.out.println("🟡 Güncellenecek status: " + newStatus);
+        if (newStatus == null || newStatus.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Order updatedOrder = orderService.updateDeliveryStatus(id, newStatus);
+        return ResponseEntity.ok(updatedOrder);
+    }
+
+
+    @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('PRODUCT_MANAGER', 'SALES_MANAGER')")
+    public ResponseEntity<Map<String, Object>> addOrder(
+            @RequestBody Map<String, Object> requestBody,
+            @RequestHeader("Authorization") String token) {
+
         Map<String, Object> response = new HashMap<>();
 
         try {
@@ -76,12 +109,11 @@ public class OrderController {
             order.setAddress(address);
             order.setQuantity(quantity);
             order.setStatus(OrderStatus.PROCESSING);
+            order.setDeliveryStatus("Processing");
 
             orderRepo.save(order);
             productService.decrementStock(product, quantity);
-
             wishListService.removeFromWishlist(user.getId(), product.getId());
-
             orderService.generateInvoiceAndSendEmail(order, user);
 
             response.put("success", true);
