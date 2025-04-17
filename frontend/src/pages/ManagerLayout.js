@@ -76,15 +76,14 @@ const ManagerLayout = ({ type }) => {
   };
 
   return (
-    <div style={{ fontFamily: "'Helvetica Neue', sans-serif", backgroundColor: "#fafafa", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Helvetica Neue', sans-serif", backgroundColor: "#f9fafb", minHeight: "100vh" }}>
       {/* Header */}
       <div
         style={{
           position: "relative",
           padding: "24px 32px",
           backgroundColor: "#fff",
-          borderBottom: "1px solid #e0e0e0",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          borderBottom: "1px solid #e5e7eb",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -97,7 +96,7 @@ const ManagerLayout = ({ type }) => {
           <div className="arrow-left2" />
         </div>
 
-        <h1 style={{ fontSize: "26px", fontWeight: "600", color: "#333", margin: 0 }}>
+        <h1 style={{ fontSize: "26px", fontWeight: "700", color: "#111827", margin: 0 }}>
           {roleText} Page
         </h1>
 
@@ -119,7 +118,7 @@ const ManagerLayout = ({ type }) => {
             fontSize: "16px",
             backgroundColor: "#DB1F6E",
             color: "#fff",
-            padding: "10px 16px",
+            padding: "12px 20px",
             borderRadius: "12px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             opacity: 0.95,
@@ -133,46 +132,69 @@ const ManagerLayout = ({ type }) => {
 
       {/* Order Table */}
       {(type === "product" || type === "order") && (
-        <div style={{ padding: "20px 40px" }}>
-          <h2 style={{ textAlign: "center", marginBottom: "24px" }}>Orders</h2>
+        <div style={{ padding: "40px 60px" }}>
+          <h2 style={{ fontSize: "22px", fontWeight: "600", marginBottom: "24px", color: "#1f2937" }}>Orders</h2>
           {orders.length === 0 ? (
-            <p style={{ textAlign: "center" }}>No orders found.</p>
+            <p style={{ textAlign: "center", color: "#6b7280" }}>No orders found.</p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center" }}>
-              <thead>
+            <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "#fff", borderRadius: "12px", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
+              <thead style={{ backgroundColor: "#f3f4f6" }}>
                 <tr>
-                  <th style={{ padding: "12px", borderBottom: "1px solid #ddd", width: "20%" }}>Order ID</th>
-                  <th style={{ padding: "12px", borderBottom: "1px solid #ddd", width: "40%" }}>Status</th>
-                  <th style={{ padding: "12px", borderBottom: "1px solid #ddd", width: "40%" }}>
-                    {type === "product" ? "Change Status" : ""}
-                  </th>
+                  <th style={{ padding: "16px", fontSize: "12px", textAlign: "left", color: "#6b7280", fontWeight: 600 }}>Order ID</th>
+                  <th style={{ padding: "16px", fontSize: "12px", textAlign: "left", color: "#6b7280", fontWeight: 600 }}>Product</th>
+                  <th style={{ padding: "16px", fontSize: "12px", textAlign: "left", color: "#6b7280", fontWeight: 600 }}>Status</th>
+                  <th style={{ padding: "16px", fontSize: "12px", textAlign: "left", color: "#6b7280", fontWeight: 600 }}>Change Status</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
-                  <tr key={order.id}>
-                    <td style={{ padding: "12px", verticalAlign: "middle" }}>{order.id}</td>
-                    <td style={{ padding: "12px", verticalAlign: "middle" }}>{order.deliveryStatus}</td>
-                    <td style={{ padding: "12px", verticalAlign: "middle" }}>
-                      {type === "product" ? (
-                        <select
-                          style={{
-                            padding: "8px",
-                            width: "100%",
-                            maxWidth: "180px",
-                            borderRadius: "6px",
-                            border: "1px solid #ccc",
-                          }}
-                          value={order.deliveryStatus}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        >
-                          <option value="Processing">Processing</option>
-                          <option value="On the Way">On the Way</option>
-                          <option value="Delivered">Delivered</option>
-                        </select>
-                      ) : (
-                        "-"
-                      )}
+                  <tr key={order.id} style={{ borderTop: "1px solid #e5e7eb" }}>
+                    <td style={{ padding: "16px", fontSize: "14px", color: "#374151" }}>#{order.id}</td>
+                    <td style={{ padding: "16px", fontSize: "14px", color: "#374151" }}>{order.product?.name || "N/A"}</td>
+                    <td style={{ padding: "16px" }}>
+                      <span style={{
+                        padding: "6px 12px",
+                        borderRadius: "9999px",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        backgroundColor:
+                          order.deliveryStatus === "Delivered"
+                            ? "#d1fae5"
+                            : order.deliveryStatus === "Processing"
+                            ? "#fef3c7"
+                            : order.deliveryStatus === "On the Way"
+                            ? "#bfdbfe"
+                            : "#fcdcdc",
+                        color:
+                          order.deliveryStatus === "Delivered"
+                            ? "#065f46"
+                            : order.deliveryStatus === "Processing"
+                            ? "#92400e"
+                            : order.deliveryStatus === "On the Way"
+                            ? "#1e40af"
+                            : "#991b1b",
+                      }}>
+                        {order.deliveryStatus}
+                      </span>
+                    </td>
+                    <td style={{ padding: "16px" }}>
+                      <select
+                        style={{
+                          padding: "8px 12px",
+                          border: "1px solid #d1d5db",
+                          borderRadius: "8px",
+                          backgroundColor: "#fff",
+                          fontSize: "14px",
+                          width: "100%",
+                          maxWidth: "180px",
+                        }}
+                        value={order.deliveryStatus}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                      >
+                        <option value="Processing">Processing</option>
+                        <option value="On the Way">On the Way</option>
+                        <option value="Delivered">Delivered</option>
+                      </select>
                     </td>
                   </tr>
                 ))}
