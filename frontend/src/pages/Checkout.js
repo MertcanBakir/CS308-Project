@@ -33,7 +33,7 @@ const Checkout = () => {
     const token = localStorage.getItem("token");
 
     if (!selectedAddressId || !selectedCardId) {
-      toast.error("Lütfen bir adres ve kart seçin.");
+      toast.error("Please choose an address and a cart");
       return;
     }
 
@@ -91,7 +91,7 @@ const Checkout = () => {
           </div>
 
           <div className="totaltablo">
-            <h3>Sepet Özeti</h3>
+            <h3>Cart Summary</h3>
             <div className="price-list">
               {products.map((product, index) => (
                 <p key={index}>
@@ -100,15 +100,15 @@ const Checkout = () => {
               ))}
             </div>
             <hr />
-            <p><strong>Toplam Ürün:</strong> {totalItems}</p>
-            <p><strong>Toplam Fiyat:</strong> {totalPrice.toFixed(2)}₺</p>
+            <p><strong>Total Items:</strong> {totalItems}</p>
+            <p><strong>Total Price:</strong> {totalPrice.toFixed(2)}₺</p>
 
             <button
               className="checkout-button"
               onClick={handleCompletePayment}
               disabled={products.length === 0}
             >
-              Ödemeyi Onayla
+              Confirm Payment
             </button>
           </div>
         </div>

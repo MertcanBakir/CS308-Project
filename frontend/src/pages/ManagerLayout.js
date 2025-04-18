@@ -53,7 +53,6 @@ const ManagerLayout = ({ type, children }) => {
         />
       </div>
 
-      {/* Welcome mesajı */}
       {showWelcome && (
         <div
           className="manager-welcome"
@@ -76,7 +75,6 @@ const ManagerLayout = ({ type, children }) => {
         </div>
       )}
 
-      {/* Sayfa içeriği */}
       <div style={{ padding: "24px" }}>
         {children}
       </div>

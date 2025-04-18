@@ -25,7 +25,7 @@ const Cart = () => {
           });
 
           if (!response.ok) {
-            throw new Error("Sepet verisi alınamadı.");
+            throw new Error("Could not get cart data.");
           }
 
           const data = await response.json();
@@ -131,7 +131,7 @@ const Cart = () => {
           }),
         });
       } catch (err) {
-        console.error("Quantity güncelleme hatası:", err);
+        console.error("Quantity update error:", err);
       }
     }
   };
@@ -155,7 +155,7 @@ const Cart = () => {
     <div className="cart-page">
 
       <div className="header-bar">
-        <button onClick={() => navigate("/")} title="Ana Sayfa" className="back-button2">
+        <button onClick={() => navigate("/")} title="Home Page" className="back-button2">
           <i className="arrow-left2"></i>
         </button>
         <img
@@ -167,7 +167,7 @@ const Cart = () => {
       </div>
 
       <div className="error">
-        {loading && <p>Yükleniyor...</p>}
+        {loading && <p>Loading...</p>}
         {error && <p style={{color: "red"}}>{error}</p>}
       </div>
 
@@ -186,12 +186,12 @@ const Cart = () => {
 
                 <div className="productPriceDist">
                   <span className="productInfos"><strong>Model:</strong> {product.model}</span>
-                  <span className="productInfos"><strong>Fiyat:</strong> {product.price.toFixed(2)}₺</span>
-                  <span className="productInfos"><strong>Distribütör:</strong> {product.distributorInfo}</span>
-                  <span className="productInfos"><strong>Garanti:</strong> {product.warrantyStatus ? "Var" : "Yok"}</span>
+                  <span className="productInfos"><strong>Price:</strong> {product.price.toFixed(2)}₺</span>
+                  <span className="productInfos"><strong>Distributor:</strong> {product.distributorInfo}</span>
+                  <span className="productInfos"><strong>Guarantee:</strong> {product.warrantyStatus ? "Yes" : "No"}</span>
 
                   <span className="productInfos">
-                    <strong>Adet:</strong>
+                    <strong>Quantity:</strong>
                     <select
                       value={product.quantity}
                       onChange={(e) => handleQuantityChange(index, e.target.value)}
@@ -217,26 +217,26 @@ const Cart = () => {
             </div>
           ))
         ) : (
-          !loading && <p>Sepetinizde ürün yok.</p>
+          !loading && <p>There are no items in your cart.</p>
         )}
       </div>
 
       <div className="totaltablo">
-        <h3>Sepet Özeti</h3>
+        <h3>Cart Summary</h3>
         <div className="price-list">
           {products.map((product, index) => (
             <p key={index}> {product.name} - {product.price.toFixed(2)}₺</p>
           ))}
         </div>
         <hr />
-        <p><strong>Toplam Ürün:</strong> {totalItems}</p>
-        <p><strong>Toplam Fiyat:</strong> {totalPrice.toFixed(2)}₺</p>
+        <p><strong>Total Items:</strong> {totalItems}</p>
+        <p><strong>Total Price:</strong> {totalPrice.toFixed(2)}₺</p>
         <button
           className="checkout-button"
           disabled={isLoggedIn && products.length === 0}
           onClick={() => isLoggedIn ? goCheckout() : navigate("/login")}
         >
-          {isLoggedIn ? "Ödemeye Geç" : "Giriş Yap"}
+          {isLoggedIn ? "Proceed to Payment" : "Login"}
         </button>
       </div>
     </div>

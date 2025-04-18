@@ -24,10 +24,10 @@ const ProductManagerPage = () => {
         const data = await response.json();
         setComments(data);
       } else {
-        console.error("Yorumlar çekilemedi:", response.status);
+        console.error("Comments could not be withdrawn:", response.status);
       }
     } catch (error) {
-      console.error("Yorumları çekerken hata:", error);
+      console.error("Error fetching comments:", error);
     } finally {
       setLoading(false);
     }
@@ -51,21 +51,21 @@ const ProductManagerPage = () => {
             comment.id === commentId ? { ...comment, approved: approvedStatus } : comment
           )
         );
-        setSuccessMessage(approvedStatus ? "✅ Yorum onaylandı!" : "❌ Yorum reddedildi!");
+        setSuccessMessage(approvedStatus ? "✅ Comment approved!" : "❌ Comment rejected!");
         setTimeout(() => setSuccessMessage(""), 3000);
       } else {
-        console.error("Yorum güncellenemedi:", response.status);
+        console.error("Comments could not update:", response.status);
       }
     } catch (error) {
-      console.error("Onay/Red işlemi sırasında hata:", error);
+      console.error("Error during Approval/Rejection process:", error);
     }
   };
 
   const getApprovalStatusText = (approved) => {
-    if (approved === null) return "⏳ Onay Bekliyor";
-    if (approved === true) return "✅ Onaylandı";
-    if (approved === false) return "❌ Reddedildi";
-    return "Bilinmiyor";
+    if (approved === null) return "⏳ Pending Approval";
+    if (approved === true) return "✅ Approved";
+    if (approved === false) return "❌ Rejected";
+    return "Unknown";
   };
 
   return (
@@ -76,9 +76,9 @@ const ProductManagerPage = () => {
         {successMessage && <div className="success-message">{successMessage}</div>}
 
         {loading ? (
-          <p className="loading-text">Yorumlar yükleniyor...</p>
+          <p className="loading-text">Comments loading...</p>
         ) : comments.length === 0 ? (
-          <p className="no-comments-text">Henüz yorum yapılmamış.</p>
+          <p className="no-comments-text">No comments yet.</p>
         ) : (
           <div className="comments-grid">
             {comments.map((comment) => (
@@ -87,11 +87,11 @@ const ProductManagerPage = () => {
                   <h3>{comment.productName}</h3>
                 </div>
                 <div className="comment-body">
-                  <p><strong>Kullanıcı:</strong> {comment.userFullName} (ID: {comment.userId})</p>
-                  <p><strong>Puan:</strong> {comment.rating} ⭐</p>
-                  <p><strong>İçerik:</strong> {comment.content}</p>
-                  <p><strong>Tarih:</strong> {new Date(comment.createdAt).toLocaleString()}</p>
-                  <p><strong>Durum:</strong> {getApprovalStatusText(comment.approved)}</p>
+                  <p><strong>User:</strong> {comment.userFullName} (ID: {comment.userId})</p>
+                  <p><strong>Rating:</strong> {comment.rating} ⭐</p>
+                  <p><strong>Content:</strong> {comment.content}</p>
+                  <p><strong>Date:</strong> {new Date(comment.createdAt).toLocaleString()}</p>
+                  <p><strong>Status:</strong> {getApprovalStatusText(comment.approved)}</p>
                 </div>
 
                 {comment.approved === null && (
@@ -100,13 +100,13 @@ const ProductManagerPage = () => {
                       className="approve-button"
                       onClick={() => updateCommentApproval(comment.id, true)}
                     >
-                      Onayla
+                      Confirm
                     </button>
                     <button
                       className="reject-button"
                       onClick={() => updateCommentApproval(comment.id, false)}
                     >
-                      Reddet
+                      Decline
                     </button>
                   </div>
                 )}

@@ -1,4 +1,3 @@
-// ✅ Güncellenmiş ProductDetail.js — Geri butonu logo solunda olacak şekilde hizalandı
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -32,7 +31,7 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(`http://localhost:8080/products/${id}`);
-        if (!response.ok) throw new Error("Ürün bilgileri getirilemedi!");
+        if (!response.ok) throw new Error("Could not get product information!");
         const data = await response.json();
         setProduct(data);
       } catch (err) {
@@ -53,7 +52,7 @@ const ProductDetail = () => {
           setAverageRating((total / commentData.comments.length).toFixed(1));
         }
       } else {
-        console.error("Yorumlar alınamadı:", commentRes.status);
+        console.error("Comments could not be retrieved:", commentRes.status);
       }
 
       const token = localStorage.getItem("token");
@@ -65,7 +64,7 @@ const ProductDetail = () => {
         const permissionData = await permissionRes.json();
         setCanComment(permissionData.canComment);
       } else {
-        console.error("Yorum izni alınamadı:", permissionRes.status);
+        console.error("Comment permission not received:", permissionRes.status);
       }
     };
 
@@ -94,8 +93,8 @@ const ProductDetail = () => {
     window.location.reload();
   };
 
-  if (loading) return <p>Ürün yükleniyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
+  if (loading) return <p>Item is loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="home">
@@ -159,14 +158,14 @@ const ProductDetail = () => {
               onClick={() => setIsModalOpen(true)}
               style={{ marginTop: "20px" }}
             >
-              Yorum Yap
+              Comment
             </button>
           )}
 
           <div className="comment-section">
-            <h2>Yorumlar</h2>
+            <h2>Comments</h2>
             {comments.length === 0 ? (
-              <p>Henüz yorum yapılmamış.</p>
+              <p>No comments yet.</p>
             ) : (
               comments.map((comment) => (
                 <div key={comment.id} className="comment-box">
@@ -187,7 +186,7 @@ const ProductDetail = () => {
         overlayClassName="modal-overlay"
         ariaHideApp={false}
       >
-        <h2>Yorum Yap</h2>
+        <h2>Comment</h2>
         <div className="star-rating">
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -200,11 +199,11 @@ const ProductDetail = () => {
           ))}
         </div>
         <textarea
-          placeholder="Yorumunuzu yazın..."
+          placeholder="Write your comment..."
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
         />
-        <button className="add-to-cart-button" onClick={submitComment}>Gönder</button>
+        <button className="add-to-cart-button" onClick={submitComment}>Submit</button>
       </Modal>
     </div>
   );

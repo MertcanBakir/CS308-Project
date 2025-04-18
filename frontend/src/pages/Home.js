@@ -17,12 +17,10 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [searchResults, setSearchResults] = useState(null);
 
-  // Giriş yapmış ve özel mail adresi olan kullanıcılar için buton gösterilsin
   const showManagementButton =
     isLoggedIn &&
     (email?.endsWith("@salesman.com") || email?.endsWith("@prodman.com"));
 
-  // Giriş yapan kişinin rolüne göre ilgili yönetici sayfasına yönlendir
   const handleManagementNavigation = () => {
     if (email?.endsWith("@salesman.com")) {
       navigate("/sales-manager-page");
