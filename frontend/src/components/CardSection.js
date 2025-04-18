@@ -30,7 +30,7 @@ const CardSection = ({ onSelectCard }) => {
       const data = await res.json();
       setCards(data.cards);
     } catch (err) {
-      console.error("Kartlar alınamadı:", err);
+      console.error("Failed to receive cards:", err);
     }
   }, [token]);
 
@@ -47,7 +47,7 @@ const CardSection = ({ onSelectCard }) => {
       cvv.length !== 3 ||
       !/^\d{2}\/\d{2}$/.test(cardExpiryDate)
     ) {
-      alert("Lütfen tüm alanları geçerli şekilde doldurun.");
+      alert("Please fill in all fields correctly.");
       return;
     }
 
@@ -82,7 +82,7 @@ const CardSection = ({ onSelectCard }) => {
     });
     fetchCards();
     setSelectedCardIndex(null);
-    onSelectCard(null); // silinen kart seçiliyse temizle
+    onSelectCard(null); 
   };
 
   const formatCardNumber = (number) => {
@@ -124,7 +124,7 @@ const CardSection = ({ onSelectCard }) => {
             ref={nameRef}
             className="modal-input"
             type="text"
-            placeholder="Kart Sahibi Adı"
+            placeholder="Cardholder Name"
             value={newCard.name}
             onChange={(e) =>
               setNewCard({
@@ -138,7 +138,7 @@ const CardSection = ({ onSelectCard }) => {
             ref={surnameRef}
             className="modal-input"
             type="text"
-            placeholder="Kart Sahibi Soyadı"
+            placeholder="Cardholder Surname"
             value={newCard.surname}
             onChange={(e) =>
               setNewCard({
@@ -152,7 +152,7 @@ const CardSection = ({ onSelectCard }) => {
             ref={numberRef}
             className="modal-input"
             type="text"
-            placeholder="Kart Numarası (16 Hane)"
+            placeholder="Card Number (16 Digits)"
             maxLength={16}
             value={newCard.cardNumber}
             onChange={(e) =>
@@ -192,8 +192,8 @@ const CardSection = ({ onSelectCard }) => {
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
           <div className="modal-actions">
-            <button onClick={() => setShowForm(false)}>İptal</button>
-            <button onClick={handleAdd}>Kaydet</button>
+            <button onClick={() => setShowForm(false)}>Cancel</button>
+            <button onClick={handleAdd}>Save</button>
           </div>
         </div>
       )}

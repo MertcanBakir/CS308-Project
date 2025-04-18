@@ -11,7 +11,7 @@ const Categories = ({ setSelectedCategory }) => {
       try {
         const response = await fetch("http://localhost:8080/categories");
         if (!response.ok) {
-          throw new Error("Kategoriler yüklenirken hata oluştu!");
+          throw new Error("Error loading categories!");
         }
         const data = await response.json();
         setCategories([{ id: 0, name: "All" }, ...data]);
@@ -25,8 +25,8 @@ const Categories = ({ setSelectedCategory }) => {
     fetchCategories();
   }, []);
 
-  if (loading) return <p>Kategoriler yükleniyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
+  if (loading) return <p>Loading categories...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
       <div className="categories">

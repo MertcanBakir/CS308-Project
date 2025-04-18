@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./TopBanner.css";
 
 const TopBanner = ({
-  message = "Welcome to Sephora – Güzelliğin adresi burada 💄✨",
+  message = "Welcome to Sephora – Address of beauty is here 💄✨",
   showCloseButton = true,
   onClose = () => {},
 }) => {

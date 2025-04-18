@@ -13,7 +13,6 @@ const Profile = () => {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        // Profil bilgilerini çek (adres + kart)
         fetch(`http://localhost:8080/profile?email=${email}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -24,9 +23,8 @@ const Profile = () => {
                 setAddresses(data.addresses || []);
                 setCards(data.cards || []);
             })
-            .catch(err => console.error("Profil bilgileri alınamadı:", err));
+            .catch(err => console.error("Profile information could not be retrieved:", err));
 
-        // Sipariş geçmişini çek
         fetch(`http://localhost:8080/profile/orders?email=${email}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -36,14 +34,13 @@ const Profile = () => {
             .then(data => {
                 setOrders(data || []);
             })
-            .catch(err => console.error("Siparişler alınamadı:", err));
+            .catch(err => console.error("Orders could not be received:", err));
     }, [email, token]);
 
     return (
         <div className="profile-page">
-            {/* Header */}
             <div className="header-bar">
-                <button onClick={() => navigate("/")} title="Ana Sayfa" className="back-button2">
+                <button onClick={() => navigate("/")} title="Home Page" className="back-button2">
                     <i className="arrow-left2"></i>
                 </button>
                 <img
@@ -54,14 +51,13 @@ const Profile = () => {
                 />
             </div>
 
-            {/* Kullanıcı Bilgileri */}
             <div className="profile-content">
                 <h2>Profil</h2>
-                <p><strong>İsim Soyisim:</strong> {fullname || "Not set"}</p>
-                <p><strong>Email Adresi:</strong> {email || "Not set"}</p>
+                <p><strong>Name Surname:</strong> {fullname || "Not set"}</p>
+                <p><strong>Email Address:</strong> {email || "Not set"}</p>
 
                 <div>
-                    <strong>Adresler:</strong>
+                    <strong>Addresses:</strong>
                     <ul>
                         {addresses.length > 0 ? (
                             addresses.map((addr, index) => <li key={index}>{addr}</li>)
@@ -72,7 +68,7 @@ const Profile = () => {
                 </div>
 
                 <div>
-                    <strong>Kartlar:</strong>
+                    <strong>Cards:</strong>
                     <ul>
                         {cards.length > 0 ? (
                             cards.map((c, index) => (
@@ -87,7 +83,7 @@ const Profile = () => {
                 <div>
                     <div>
                         <div>
-                            <strong>Geçmiş Siparişler:</strong>
+                            <strong>Past Orders:</strong>
                             <ul>
                                 {orders.length > 0 ? (
                                     orders.map((order, index) => (
@@ -95,13 +91,13 @@ const Profile = () => {
                                             <div className="order-header-horizontal">
                                                 <div className="order-info">
                                                     <p>
-                                                        <strong>İşlem Tarihi:</strong> {new Date(order.createdAt).toLocaleString()}
+                                                        <strong>Transaction Date:</strong> {new Date(order.createdAt).toLocaleString()}
                                                     </p>
-                                                    <p><strong>Sipariş Durumu:</strong> {order.status}</p>
-                                                    <p><strong>Ürün:</strong> {order.productName}</p>
-                                                    <p><strong>Miktar:</strong> {order.quantity}</p>
-                                                    <p><strong>Adres:</strong> {order.addressText}</p>
-                                                    <p><strong>İşlem Yapılan Kart:</strong> **** **** **** {order.cardLast4}</p>
+                                                    <p><strong>Order Status:</strong> {order.status}</p>
+                                                    <p><strong>Product:</strong> {order.productName}</p>
+                                                    <p><strong>Quantity:</strong> {order.quantity}</p>
+                                                    <p><strong>Address:</strong> {order.addressText}</p>
+                                                    <p><strong>Credit Card:</strong> **** **** **** {order.cardLast4}</p>
                                                 </div>
                                                 <img
                                                     src={order.productImageUrl || "https://via.placeholder.com/100"}

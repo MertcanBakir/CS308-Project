@@ -4,17 +4,17 @@ import { useAuth } from "../context/AuthContext";
 const AddToCart = ({ product }) => {
   const { isLoggedIn, token } = useAuth();
   const [isAdding, setIsAdding] = useState(false);
-  const [buttonText, setButtonText] = useState("Sepete Ekle");
+  const [buttonText, setButtonText] = useState("Add to Cart");
 
   const handleAddToCart = async () => {
     if (!product || !product.id) {
-      setButtonText("Ürün Bulunamadı!");
-      setTimeout(() => setButtonText("Sepete Ekle"), 2500);
+      setButtonText("Product Not Found!");
+      setTimeout(() => setButtonText("Add to cart"), 2500);
       return;
     }
 
     setIsAdding(true);
-    setButtonText("Ekleniyor...");
+    setButtonText("Adding...");
 
     const quantity = 1;
 
@@ -29,8 +29,8 @@ const AddToCart = ({ product }) => {
       }
 
       localStorage.setItem("cart", JSON.stringify(localCart));
-      setButtonText("✓ Eklendi");
-      setTimeout(() => setButtonText("Sepete Ekle"), 2500);
+      setButtonText("✓ Added");
+      setTimeout(() => setButtonText("Add to Cart"), 2500);
       setIsAdding(false);
       return;
     }
@@ -45,7 +45,7 @@ const AddToCart = ({ product }) => {
       });
 
       if (!checkResponse.ok) {
-        throw new Error("Sepet kontrolü başarısız.");
+        throw new Error("Cart control failed.");
       }
 
       const checkData = await checkResponse.json();
@@ -71,9 +71,9 @@ const AddToCart = ({ product }) => {
         const quantityData = await quantityResponse.json();
 
         if (quantityResponse.ok && quantityData.message) {
-          setButtonText("✓ Eklendi");
+          setButtonText("✓ Added");
         } else {
-          setButtonText("Güncelleme Hatası");
+          setButtonText("Update Error");
           console.error("Quantity API:", quantityData);
         }
       } else {
@@ -92,18 +92,18 @@ const AddToCart = ({ product }) => {
         const addData = await addResponse.json();
 
         if (addResponse.ok && addData.success) {
-          setButtonText("✓ Eklendi");
+          setButtonText("✓ Added");
         } else {
-          setButtonText("Hata!");
+          setButtonText("Error!");
           console.error("Add API:", addData);
         }
       }
     } catch (error) {
-      console.error("Sepete ekleme hatası:", error);
-      setButtonText("Bağlantı Hatası!");
+      console.error("Add to cart error:", error);
+      setButtonText("Connection Error!");
     }
 
-    setTimeout(() => setButtonText("Sepete Ekle"), 2500);
+    setTimeout(() => setButtonText("Add to Cart"), 2500);
     setIsAdding(false);
   };
 

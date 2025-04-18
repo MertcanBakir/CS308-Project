@@ -29,7 +29,7 @@ const Products = ({ selectedCategory, searchResults }) => {
 
         const response = await fetch(url);
         if (!response.ok) {
-          throw new Error("Ürünleri getirirken hata oluştu!");
+          throw new Error("An error occurred while fetching the products!");
         }
 
         const data = await response.json();
@@ -58,8 +58,8 @@ const Products = ({ selectedCategory, searchResults }) => {
     setSortOrder(e.target.value);
   };
 
-  if (loading) return <p>Ürünler yükleniyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   const productList = searchResults !== null ? searchResults : products;
 
@@ -67,12 +67,12 @@ const Products = ({ selectedCategory, searchResults }) => {
     <>
       <div className="products-header" style={{ justifyContent: "flex-end" }}>
         <div className="sort-container">
-          <label htmlFor="sort">Sırala: </label>
+          <label htmlFor="sort">Sort: </label>
           <select id="sort" onChange={handleSortChange} value={sortOrder}>
-            <option value="">Sıralama Seçin</option>
-            <option value="asc">Artan Fiyat</option>
-            <option value="desc">Azalan Fiyat</option>
-            <option value="popular">Popülerliğe Göre</option>
+            <option value="">Select Sort</option>
+            <option value="asc">Increasing Price</option>
+            <option value="desc">Decreasing Price</option>
+            <option value="popular">By Popularity</option>
           </select>
         </div>
       </div>
@@ -99,7 +99,7 @@ const Products = ({ selectedCategory, searchResults }) => {
       </div>
           ))
         ) : (
-          <p>Bu kategoride ürün bulunmamaktadır</p>
+          <p>There are no products in this category.</p>
         )}
       </div>
     </>

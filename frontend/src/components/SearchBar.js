@@ -16,13 +16,13 @@ const SearchBar = ({ setProducts }) => {
       try {
         const response = await fetch(`http://localhost:8080/products/search?query=${query}`);
         if (!response.ok) {
-          throw new Error("Arama başarısız!");
+          throw new Error("Search failed!");
         }
 
         const results = await response.json();
         setSearchResults(results);
       } catch (error) {
-        console.error("Arama hatası:", error);
+        console.error("Search error!", error);
       }
     };
 

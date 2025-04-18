@@ -60,7 +60,6 @@ export const AuthProvider = ({ children }) => {
 
   }, []);
 
-  // login: artık tek bir nesne parametresi alıyor
   const login = ({ token, email, address, fullname, card }) => {
     localStorage.setItem("token", token);
     localStorage.setItem("email", email);

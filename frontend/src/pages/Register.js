@@ -21,14 +21,14 @@ function Register() {
 
     if (!lengthValid || (!hasUpper && !hasLower && !hasNumber)) {
       setPasswordStrength("weak");
-      setPasswordMessage("Şifre çok zayıf");
+      setPasswordMessage("Password is weak");
     } else if (lengthValid && hasNumber && (hasUpper || hasLower)) {
       setPasswordStrength("medium");
-      setPasswordMessage("Şifre kabul edilebilir");
+      setPasswordMessage("Password acceptable");
     } 
     if (lengthValid && hasUpper && hasLower && hasNumber && hasSymbol) {
       setPasswordStrength("strong");
-      setPasswordMessage("Şifre güçlü");
+      setPasswordMessage("Password is strong");
     }
   };
 
@@ -48,12 +48,12 @@ function Register() {
     e.preventDefault();
 
     if (passwordStrength === "weak") {
-      alert("Lütfen daha güçlü bir şifre seçin.");
+      alert("Please choose a stronger password.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setMatchError("Şifreler eşleşmiyor");
+      setMatchError("Passwords do not match");
       return;
     }
 
@@ -82,7 +82,7 @@ function Register() {
   return (
     <div className="register-container">
       <div className="back-button">
-        <a href="/" title="Ana Sayfaya Dön">
+        <a href="/" title="Return to home page">
           <i className="arrow-left"></i>
         </a>
       </div>

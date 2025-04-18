@@ -6,24 +6,24 @@ const TrashButton = ({ productId, onDelete }) => {
 
   const handleDelete = async () => {
     if (!productId) {
-      alert("Silinecek ürün bulunamadı!");
+      alert("No product found to delete!");
       return;
     }
 
-    console.log("✅ Silme işlemi başlatılıyor...");
-    console.log("🛑 Silinecek ürün ID:", productId);
+    console.log("✅ Starting the deletion process...");
+    console.log("🛑 Product ID to be deleted:", productId);
 
     if (!isLoggedIn) {
       const localCart = JSON.parse(localStorage.getItem("cart")) || [];
       const updatedCart = localCart.filter((product) => product.id !== productId);
       localStorage.setItem("cart", JSON.stringify(updatedCart));
       onDelete(productId); 
-      console.log("🛑 [LOCAL] Ürün localStorage'dan silindi.");
+      console.log("🛑 [LOCAL] The item was deleted from localStorage.");
       return;
     }
 
     const requestBody = { product_id: Number(productId) };
-    console.log("📤 Gönderilecek istek:", requestBody);
+    console.log("📤 Request to be sent:", requestBody);
 
     try {
       const response = await fetch("http://localhost:8080/delete_from_cart", {
@@ -35,25 +35,25 @@ const TrashButton = ({ productId, onDelete }) => {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("📥 Gelen Yanıt:", response);
+      console.log("📥 Incoming Response:", response);
 
       if (!response.ok) {
-        throw new Error(`Sunucu hatası! Status: ${response.status}`);
+        throw new Error(`Server error! Status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("✅ API Yanıtı:", data);
+      console.log("✅ API Reply:", data);
 
       if (data.success) {
-        console.log("✅ Ürün başarıyla silindi:", productId);
+        console.log("✅ Product successfully deleted:", productId);
         onDelete(productId);
       } else {
-        console.error("❌ Ürün silinemedi:", data.message);
+        console.error("❌ Product could not be deleted:", data.message);
         alert("Ürün silinemedi: " + data.message);
       }
     } catch (error) {
-      console.error("🚨 Silme isteği başarısız:", error);
-      alert("Silme işlemi başarısız! Hata: " + error.message);
+      console.error("🚨 Delete request failed:", error);
+      alert("Deletion failed! Error:" + error.message);
     }
   };
 

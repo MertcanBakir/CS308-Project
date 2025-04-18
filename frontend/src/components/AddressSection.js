@@ -21,7 +21,7 @@ const AddressSection = ({ onSelectAddress }) => {
       const data = await res.json();
       setAddresses(data.addresses);
     } catch (err) {
-      console.error("Adresler alınamadı:", err);
+      console.error("Addresses could not be retrieved:", err);
     }
   };
 
@@ -90,8 +90,8 @@ const AddressSection = ({ onSelectAddress }) => {
             onChange={(e) => setNewAddress(e.target.value)}
           />
           <div className="modal-actions">
-            <button onClick={() => setShowForm(false)}>İptal</button>
-            <button onClick={handleAdd}>Kaydet</button>
+            <button onClick={() => setShowForm(false)}>Cancel</button>
+            <button onClick={handleAdd}>Save</button>
           </div>
         </div>
       )}
