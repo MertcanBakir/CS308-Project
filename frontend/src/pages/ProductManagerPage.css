@@ -1,0 +1,85 @@
+.manager-container {
+    padding: 20px;
+  }
+  
+  .manager-title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .comments-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  
+  .comment-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: 0.3s;
+  }
+  
+  .comment-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .comment-header h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+  }
+  
+  .comment-body p {
+    margin: 4px 0;
+    font-size: 15px;
+    color: #555;
+  }
+  
+  .button-group {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .approve-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+  }
+  
+  .approve-button:hover {
+    background-color: #218838;
+  }
+  
+  .reject-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+  }
+  
+  .reject-button:hover {
+    background-color: #c82333;
+  }
+  

@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
 import "./ManagerPage.css";
 
-const ManagerLayout = ({ type }) => {
+const ManagerLayout = ({ type, children }) => {
   const navigate = useNavigate();
   const { fullname } = useAuth();
   const [showWelcome, setShowWelcome] = useState(false);
@@ -14,6 +14,7 @@ const ManagerLayout = ({ type }) => {
   useEffect(() => {
     const showTimer = setTimeout(() => setShowWelcome(true), 1000);
     const hideTimer = setTimeout(() => setShowWelcome(false), 9000);
+
     return () => {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
@@ -52,6 +53,7 @@ const ManagerLayout = ({ type }) => {
         />
       </div>
 
+      {/* Welcome mesajı */}
       {showWelcome && (
         <div
           className="manager-welcome"
@@ -73,6 +75,11 @@ const ManagerLayout = ({ type }) => {
           Welcome, {roleText} 👋
         </div>
       )}
+
+      {/* Sayfa içeriği */}
+      <div style={{ padding: "24px" }}>
+        {children}
+      </div>
     </div>
   );
 };

@@ -47,7 +47,13 @@ public class UserService {
             return ResponseEntity.badRequest().body("Email already exists.");
         }
 
-        if (user.getRole() == null) {
+
+        if (user.getEmail().endsWith("@salesman.com")) {
+            user.setRole(Role.salesManager);
+
+        } else if (user.getEmail().endsWith("@prodman.com")) {
+            user.setRole(Role.productManager);
+        }else {
             user.setRole(Role.User);
         }
 

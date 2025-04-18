@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("address", JSON.stringify(address));
     localStorage.setItem("fullname", fullname);
     localStorage.setItem("card", JSON.stringify(card));
+    localStorage.setItem("role", role);
 
     setIsLoggedIn(true);
     setToken(token);
@@ -74,6 +75,7 @@ export const AuthProvider = ({ children }) => {
     setAddress(address);
     setFullname(fullname);
     setCard(card);
+    setRole(role);
   };
 
 

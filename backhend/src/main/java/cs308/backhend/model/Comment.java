@@ -14,7 +14,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
@@ -27,8 +27,8 @@ public class Comment {
     @Column(nullable = false)
     private int rating;
 
-    @Column(nullable = false)
-    private boolean approved = true;
+    @Column(nullable = true)
+    private Boolean approved;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

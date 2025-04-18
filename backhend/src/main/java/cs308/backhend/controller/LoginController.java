@@ -1,6 +1,7 @@
 package cs308.backhend.controller;
 
 import cs308.backhend.model.Address;
+import cs308.backhend.model.Role;
 import cs308.backhend.model.User;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
@@ -40,23 +41,22 @@ public class LoginController {
                 loginRequest.getEmail(), loginRequest.getPassword()
         ));
 
-        String role;
-        if (user.getRole() != null) {
-            role = user.getRole().name();
-        } else if (user.getEmail().endsWith("@salesman.com")) {
-            role = "salesManager";
+        Role role;
+        if (user.getEmail().endsWith("@salesman.com")) {
+            role = Role.salesManager;
         } else if (user.getEmail().endsWith("@prodman.com")) {
-            role = "productManager";
+            role = Role.productManager;
+        } else if (user.getRole() != null) {
+            role = user.getRole();
         } else {
-            role = "user";
+            role = Role.User;
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), role);
+        String token = jwtUtil.generateToken(user.getEmail(), role.name());
 
         List<String> addressList = user.getAddresses().stream()
                 .map(Address::getAddress)
                 .collect(Collectors.toList());
-
 
         List<String> cardLast4Digits = user.getCards().stream()
                 .map(card -> {
@@ -74,7 +74,7 @@ public class LoginController {
         response.put("fullname", user.getFullName());
         response.put("card", cardLast4Digits);
         response.put("addresses", addressList);
-        response.put("role", role);
+        response.put("role", role.name());
 
         return ResponseEntity.ok(response);
     }
