@@ -7,8 +7,8 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import Checkout from "./pages/Checkout";
-import ManagerPage from "./pages/ManagerLayout";
 import { AuthProvider } from "./context/AuthContext";
+import CommentApprovalPage from "./pages/CommentApprovalPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
 import ProductManagerPage from "./pages/ProductManagerPage";
@@ -27,6 +27,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/product-manager-page" element={<ProductManagerPage />} />
+          <Route path="/product-manager-page/comments" element={<CommentApprovalPage />} />
           <Route path="/sales-manager-page" element={<SalesManagerPage />} />
 
         </Routes>

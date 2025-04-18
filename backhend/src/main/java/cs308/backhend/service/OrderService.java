@@ -2,9 +2,11 @@ package cs308.backhend.service;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
+import cs308.backhend.model.OrderStatus;
 import jakarta.activation.DataSource;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
+import jakarta.transaction.Transactional;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import cs308.backhend.model.User;
@@ -24,6 +26,16 @@ public class OrderService {
     private final OrderRepo orderRepo;
     private final JavaMailSender javaMailSender;
 
+
+    public Order updateDeliveryStatus(Long orderId, String newStatus) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        OrderStatus statusEnum = OrderStatus.valueOf(newStatus.toUpperCase());
+        order.setStatus(statusEnum);
+
+        return orderRepo.save(order);
+    }
     public void generateInvoiceAndSendEmail(Order order, User user) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document();

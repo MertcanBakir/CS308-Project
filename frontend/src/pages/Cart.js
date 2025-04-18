@@ -155,9 +155,9 @@ const Cart = () => {
     <div className="cart-page">
 
       <div className="header-bar">
-        <button onClick={() => navigate("/")} title="Home Page" className="back-button2">
+        <div onClick={() => navigate("/")} title="Home Page" className="cart-back-button2">
           <i className="arrow-left2"></i>
-        </button>
+        </div>
         <img
             src={sephoraLogo}
             alt="Sephora Logo"

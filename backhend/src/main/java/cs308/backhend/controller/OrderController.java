@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,6 +40,51 @@ public class OrderController {
         this.addressRepo = addressRepo;
         this.wishListService = wishListService;
         this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping("/all-order")
+    public ResponseEntity<?> getAllOrders(@RequestHeader("Authorization") String token) {
+        try {
+            String role = jwtUtil.extractRole(token);
+            if (!role.equals("salesManager") && !role.equals("productManager")) {
+                return ResponseEntity.status(403).body("Access denied. Only managers can view orders.");
+            }
+
+            List<Order> orders = orderRepo.findAll();
+            return ResponseEntity.ok(orders);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid or expired token.");
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateDeliveryStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request,
+            @RequestHeader("Authorization") String token) {
+
+        try {
+            String role = jwtUtil.extractRole(token);
+            if (!role.equals("salesManager") && !role.equals("productManager")) {
+                return ResponseEntity.status(403).body("Access denied. Only managers can update order status.");
+            }
+
+            String newStatus = request.get("status");
+            System.out.println("🟡 Güncellenecek status: " + newStatus);
+
+            if (newStatus == null || newStatus.isEmpty()) {
+                return ResponseEntity.badRequest().body("Status is required.");
+            }
+
+            orderService.updateDeliveryStatus(id, newStatus); // sadece güncelle, sonucu döndürme
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", newStatus);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid or expired token.");
+        }
     }
 
     @PostMapping("/add-order")

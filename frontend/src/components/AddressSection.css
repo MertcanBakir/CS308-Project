@@ -1,0 +1,57 @@
+:root {
+    --primary-color: #DB1F6E;
+    --primary-light: #fff0f6;
+    --primary-dark: #C01A5E;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --border-color: #e0e0e0;
+    --border-selected: #DB1F6E;
+    --background-light: #f8f8f8;
+    --background-white: #fff;
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --transition-duration: 0.25s;
+  }
+  
+  .address-section {
+    width: 100%;
+    background-color: var(--background-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    transition: all var(--transition-duration) ease;
+  }
+  
+  .address-section:hover {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .address-error {
+    background-color: #fff3f3;
+    border-left: 3px solid #e74c3c;
+    color: #c0392b;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .address-loading {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+  
+  .address-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  
+  .address-text {
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    max-width: 85%;
+  }

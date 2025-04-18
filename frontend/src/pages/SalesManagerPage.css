@@ -1,0 +1,57 @@
+.sales-page-container {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #fafafa;
+    min-height: 100vh;
+  }
+  
+  .sales-header {
+    position: relative;
+    padding: 24px 32px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sales-back-button {
+    position: absolute;
+    left: 24px;
+    margin-top: 6px;
+    cursor: pointer;
+  }
+  
+  .sales-arrow-left {
+    width: 16px;
+    height: 16px;
+    border-top: 2px solid #333;
+    border-left: 2px solid #333;
+    transform: rotate(-45deg);
+    margin: 8px;
+  }
+  
+  .sales-page-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    margin-top: -4px;
+  }
+  
+  .sales-logo {
+    position: absolute;
+    right: 24px;
+    height: 75px;
+    cursor: pointer;
+  }
+  
+  .sales-main-content {
+    padding: 24px;
+  }
+  
+  .sales-subtitle {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
