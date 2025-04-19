@@ -1,85 +1,408 @@
-.manager-container {
-    padding: 20px;
+:root {
+  --primary-color: #db1f6e;
+  --primary-hover: #c71a62;
+  --secondary-color: #007bff;
+  --secondary-hover: #0056b3;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --gray-light: #f5f5f5;
+  --gray-medium: #e0e0e0;
+  --gray-dark: #cccccc;
+  --white: #ffffff;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 14px;
+  --border-radius-xl: 20px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --transition-speed: 0.3s;
+}
+
+.productmanager-product-manager-page {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--gray-light);
+  min-height: 100vh;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.productmanager-manager-header {
+  position: relative;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background-color: var(--white);
+  border-bottom: 1px solid var(--gray-medium);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  height: 80px;
+}
+
+.productmanager-back-button2 {
+  position: absolute;
+  left: var(--spacing-lg);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-speed) ease;
+}
+
+.productmanager-back-button2:hover {
+  transform: translateX(-3px);
+}
+
+.productmanager-arrow-left2 {
+  width: 12px;
+  height: 12px;
+  border-left: 2px solid var(--primary-color);
+  border-top: 2px solid var(--primary-color);
+  transform: rotate(-45deg);
+}
+
+.productmanager-logo2 {
+  position: absolute;
+  right: var(--spacing-xl);
+  height: 75px;
+  cursor: pointer;
+  transition: opacity var(--transition-speed) ease;
+}
+
+.productmanager-logo2:hover {
+  opacity: 0.9;
+}
+
+.productmanager-manager-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.productmanager-manager-welcome {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  left: var(--spacing-lg);
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: 16px;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .manager-title {
-    font-size: 28px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 20px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .success-message {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    text-align: center;
+}
+
+.productmanager-manager-container {
+  padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.productmanager-dashboard-heading {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xl);
+  color: var(--text-primary);
+}
+
+.productmanager-manager-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: calc(var(--spacing-xl) + var(--spacing-md));
+}
+
+.productmanager-approve-button {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.15);
+  transition: all var(--transition-speed) ease;
+}
+
+.productmanager-approve-button:hover {
+  background-color: var(--secondary-hover);
+  transform: translateY(-2px);
+}
+
+.productmanager-approve-button:active {
+  transform: translateY(0);
+}
+
+.productmanager-orders-section {
+  margin-top: var(--spacing-xl);
+}
+
+.productmanager-orders-heading {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--gray-medium);
+  padding-bottom: var(--spacing-xs);
+  display: inline-block;
+}
+
+.productmanager-error-message {
+  color: var(--danger);
+  padding: var(--spacing-md);
+  background-color: rgba(220, 53, 69, 0.1);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.productmanager-loading-indicator {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.productmanager-no-data-message {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+  color: var(--text-secondary);
+}
+
+.productmanager-order-cards-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.productmanager-order-card {
+  background: var(--white);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  transition: all var(--transition-speed) ease;
+  border-left: 5px solid transparent;
+}
+
+.productmanager-order-card:hover {
+  box-shadow: var(--shadow-md);
+  border-left-color: var(--secondary-color);
+}
+
+.productmanager-order-info {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  font-size: 15px;
+}
+
+.productmanager-order-info p {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.productmanager-order-info strong {
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-right: var(--spacing-xs);
+}
+
+.productmanager-status-change {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xs);
+}
+
+.productmanager-status-change label {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.productmanager-status-dropdown {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 14px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--gray-dark);
+  background-color: var(--white);
+  color: var(--text-primary);
+  min-width: 160px;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 30px;
+}
+
+.productmanager-status-dropdown:focus {
+  border-color: var(--secondary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.productmanager-status-dropdown:hover {
+  border-color: var(--secondary-color);
+}
+
+.productmanager-status-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: var(--border-radius-xl);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  min-width: 90px;
+  text-align: center;
+  transition: all var(--transition-speed) ease;
+}
+
+.productmanager-status-pill.processing {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid rgba(133, 100, 4, 0.1);
+}
+
+.productmanager-status-pill.shipped {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid rgba(12, 84, 96, 0.1);
+}
+
+.productmanager-status-pill.delivered {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid rgba(21, 87, 36, 0.1);
+}
+
+.productmanager-status-pill.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid rgba(114, 28, 36, 0.1);
+}
+
+.productmanager-status-pill.refunded {
+  background-color: #cce5ff;
+  color: #004085;
+  border: 1px solid rgba(0, 64, 133, 0.1);
+}
+
+@media (max-width: 768px) {
+  .productmanager-manager-header {
+    padding: var(--spacing-md) var(--spacing-lg);
   }
-  
-  .comments-grid {
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+
+  .productmanager-manager-container {
+    padding: var(--spacing-lg);
   }
-  
-  .comment-card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: 0.3s;
+
+  .productmanager-order-card {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .comment-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+  .productmanager-order-info {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+    margin-bottom: var(--spacing-md);
   }
-  
-  .comment-header h3 {
-    margin: 0 0 10px 0;
-    color: #333;
+
+  .productmanager-status-change {
+    width: 100%;
+    align-items: flex-start;
   }
-  
-  .comment-body p {
-    margin: 4px 0;
-    font-size: 15px;
-    color: #555;
+
+  .productmanager-status-dropdown {
+    width: 100%;
   }
-  
-  .button-group {
-    margin-top: 12px;
-    display: flex;
-    gap: 10px;
-  }
-  
-  .approve-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-  }
-  
-  .approve-button:hover {
-    background-color: #218838;
-  }
-  
-  .reject-button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-  }
-  
-  .reject-button:hover {
-    background-color: #c82333;
-  }
-  
+} 
+/* === Tabs === */
+.productmanager-tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0 var(--spacing-xl);
+}
+
+.productmanager-tab {
+  background-color: var(--gray-medium);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+.productmanager-tab:hover {
+  background-color: var(--gray-dark);
+}
+
+.productmanager-tab.active {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+/* === Status Pills (fix class names) === */
+.productmanager-processing {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid rgba(133, 100, 4, 0.1);
+}
+
+.productmanager-shipped {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid rgba(12, 84, 96, 0.1);
+}
+
+.productmanager-delivered {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid rgba(21, 87, 36, 0.1);
+}
+
+.productmanager-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid rgba(114, 28, 36, 0.1);
+}
+
+.productmanager-refunded {
+  background-color: #cce5ff;
+  color: #004085;
+  border: 1px solid rgba(0, 64, 133, 0.1);
+}
