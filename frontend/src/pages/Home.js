@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import Categories from "../components/Categories";
 import TopBanner from "../components/TopBanner";
 import Products from "../components/Products";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
 import LoginImage from "../assets/images/LoginImage.png";
@@ -16,8 +17,16 @@ const Home = () => {
   const { isLoggedIn, email } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [searchResults, setSearchResults] = useState(null);
+    const location = useLocation();
 
-  const showManagementButton =
+    useEffect(() => {
+        if (location.state?.searchResults) {
+            setSearchResults(location.state.searchResults);
+        }
+    }, [location.state]);
+
+
+    const showManagementButton =
     isLoggedIn &&
     (email?.endsWith("@salesman.com") || email?.endsWith("@prodman.com"));
 
@@ -79,8 +88,12 @@ const Home = () => {
       </div>
 
       <div className="main-container">
-        <Categories setSelectedCategory={setSelectedCategory} />
-
+        <Categories
+            setSelectedCategory={(id) => {
+              setSelectedCategory(id);
+              setSearchResults(null);
+            }}
+        />
         <div className="products-container">
           <h2>Featured Products</h2>
           <Products

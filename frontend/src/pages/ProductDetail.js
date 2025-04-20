@@ -26,6 +26,9 @@ const ProductDetail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newRating, setNewRating] = useState(0);
   const [newContent, setNewContent] = useState("");
+  const handleSearchEnter = (query) => {
+    navigate("/", { state: { searchQuery: query } });
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -111,7 +114,7 @@ const ProductDetail = () => {
             <i className="arrow-left"></i>
           </div>
         </div>
-        <SearchBar />
+        <SearchBar onSearchEnter={handleSearchEnter} />
         <div className="right-tools">
           {isLoggedIn ? (
             <div className="header-login-container" onClick={() => navigate("/profile")}>
