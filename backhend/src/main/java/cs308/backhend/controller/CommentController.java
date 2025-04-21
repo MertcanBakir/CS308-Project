@@ -137,7 +137,6 @@ public class CommentController {
         }
     }
 
-
     @PatchMapping("/approve/{commentId}")
     public ResponseEntity<Map<String, Object>> approveComment(
             @PathVariable Long commentId,
@@ -186,18 +185,16 @@ public class CommentController {
         List<Comment> comments = commentRepository.findByProduct_Id(productId);
 
         List<Map<String, Object>> commentList = comments.stream()
-                .filter(comment -> comment.getApproved() != null) // sadece approved edilmiş (true veya false) yorumlar
                 .map(comment -> {
                     Map<String, Object> commentMap = new HashMap<>();
                     commentMap.put("id", comment.getId());
                     commentMap.put("rating", comment.getRating());
                     commentMap.put("createdAt", comment.getCreatedAt());
                     commentMap.put("fullName", comment.getUser().getFullName());
-                    // Eğer yorum reddedildiyse content boş olacak
                     if (Boolean.TRUE.equals(comment.getApproved())) {
                         commentMap.put("content", comment.getContent());
                     } else {
-                        commentMap.put("content", ""); // ya da hiç koyma
+                        commentMap.put("content", ""); // reddedilmiş ya da null olanlar
                     }
                     return commentMap;
                 }).toList();
@@ -207,7 +204,6 @@ public class CommentController {
 
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/can-comment/{productId}")
     public ResponseEntity<Map<String, Boolean>> canUserComment(

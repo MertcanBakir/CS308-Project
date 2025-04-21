@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 public class OrderController {
@@ -46,11 +49,11 @@ public class OrderController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            String userEmail = jwtUtil.extractEmail(token);
+            String userEmail = jwtUtil.extractEmail(token.replace("Bearer ", ""));
             User user = userRepo.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!jwtUtil.validateToken(token, userEmail)) {
+            if (!jwtUtil.validateToken(token.replace("Bearer ", ""), userEmail)) {
                 response.put("success", false);
                 response.put("message", "Invalid or expired token!");
                 return ResponseEntity.status(401).body(response);
@@ -86,6 +89,91 @@ public class OrderController {
 
             response.put("success", true);
             response.put("message", "The order was created successfully and the invoice was sent via email.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    @GetMapping("/all-order")
+    public ResponseEntity<?> getAllOrders(@RequestHeader("Authorization") String token) {
+        try {
+            String userEmail = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+            User user = userRepo.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (!jwtUtil.validateToken(token.replace("Bearer ", ""), userEmail)) {
+                return ResponseEntity.status(401).body(Map.of("success", false, "message", "Invalid token"));
+            }
+
+            if (user.getRole() != Role.productManager) {
+                return ResponseEntity.status(403).body(Map.of("success", false, "message", "Unauthorized access"));
+            }
+
+            List<Order> orders = orderRepo.findAll(); // Bütün siparişleri getirir
+
+            List<Map<String, Object>> responseOrders = orders.stream().map(order -> {
+                Map<String, Object> orderMap = new HashMap<>();
+                orderMap.put("id", order.getId());
+                orderMap.put("product", Map.of(
+                        "id", order.getProduct().getId(),
+                        "name", order.getProduct().getName()
+                ));
+                orderMap.put("quantity", order.getQuantity());
+                orderMap.put("status", order.getStatus().toString());
+                orderMap.put("createdAt", order.getCreatedAt());
+                return orderMap;
+            }).toList();
+
+            return ResponseEntity.ok(responseOrders);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<Map<String, Object>> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody Map<String, String> requestBody,
+            @RequestHeader("Authorization") String token) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String userEmail = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+            User user = userRepo.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (!jwtUtil.validateToken(token.replace("Bearer ", ""), userEmail)) {
+                response.put("success", false);
+                response.put("message", "Invalid or expired token!");
+                return ResponseEntity.status(401).body(response);
+            }
+
+            if (user.getRole() != Role.productManager) {
+                response.put("success", false);
+                response.put("message", "Only product managers can update order status.");
+                return ResponseEntity.status(403).body(response);
+            }
+
+            String newStatus = requestBody.get("status");
+            if (newStatus == null) {
+                response.put("success", false);
+                response.put("message", "Status must be provided!");
+                return ResponseEntity.status(400).body(response);
+            }
+
+            Order order = orderRepo.findById(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+
+            order.setStatus(OrderStatus.valueOf(newStatus));
+            orderRepo.save(order);
+
+            response.put("success", true);
+            response.put("message", "Order status updated successfully!");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

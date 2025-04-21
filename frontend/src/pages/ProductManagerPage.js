@@ -10,86 +10,100 @@ const STATUS_OPTIONS = Object.freeze({
   SHIPPED: "Shipped",
   DELIVERED: "Delivered",
   CANCELLED: "Cancelled",
-  REFUNDED: "Refunded"
+  REFUNDED: "Refunded",
 });
 
 const ProductManagerPage = () => {
   const navigate = useNavigate();
   const { fullname } = useAuth();
   const [orders, setOrders] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [comments, setComments] = useState([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
+  const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [error, setError] = useState("");
   const [showWelcome, setShowWelcome] = useState(false);
   const [activeTab, setActiveTab] = useState("orders");
 
   const fetchOrders = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingOrders(true);
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("Authentication token not found");
-
       const response = await fetch("http://localhost:8080/all-order", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to fetch orders");
-      }
-
+      if (!response.ok) throw new Error("Failed to fetch orders");
       const data = await response.json();
       setOrders(data);
-      setError("");
     } catch (err) {
-      console.error("Order fetch error:", err);
-      setError("Siparişler alınırken bir hata oluştu.");
+      setError("An error occurred while receiving orders.");
     } finally {
-      setIsLoading(false);
+      setIsLoadingOrders(false);
+    }
+  }, []);
+
+  const fetchComments = useCallback(async () => {
+    try {
+      setIsLoadingComments(true);
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/comments/all", {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to fetch comments");
+      const data = await response.json();
+      setComments(data);
+    } catch (err) {
+      setError("An error occurred while receiving comments.");
+    } finally {
+      setIsLoadingComments(false);
     }
   }, []);
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("Authentication token not found");
-
       const response = await fetch(`http://localhost:8080/${orderId}/status`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: newStatus })
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status: newStatus }),
       });
+      if (!response.ok) throw new Error("Could not update status");
+      setOrders((prev) =>
+        prev.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order))
+      );
+    } catch (err) {
+      alert(`Could not update status: ${err.message}`);
+    }
+  };
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Durum güncellenemedi");
-      }
-
-      setOrders(prev =>
-        prev.map(order =>
-          order.id === orderId ? { ...order, status: newStatus } : order
+  const updateCommentApproval = async (commentId, approvedStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/comments/approve/${commentId}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ approved: approvedStatus }),
+      });
+      if (!response.ok) throw new Error("Could not update comments");
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.id === commentId ? { ...comment, approved: approvedStatus } : comment
         )
       );
     } catch (err) {
-      console.error("Status update error:", err);
-      alert(`Durum güncellenemedi: ${err.message}`);
+      alert(`Could not update comments: ${err.message}`);
     }
   };
 
   useEffect(() => {
     fetchOrders();
+    fetchComments();
     const showTimer = setTimeout(() => setShowWelcome(true), 1000);
     const hideTimer = setTimeout(() => setShowWelcome(false), 9000);
     return () => {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
-  }, [fetchOrders]);
+  }, [fetchOrders, fetchComments]);
 
   const handleNavigateHome = () => navigate("/");
 
@@ -108,16 +122,12 @@ const ProductManagerPage = () => {
         />
       </header>
 
-      {showWelcome && (
-        <div className="productmanager-manager-welcome">
-          Welcome, Product Manager 👋
-        </div>
-      )}
+      {showWelcome && <div className="productmanager-manager-welcome">Welcome, Product Manager 👋</div>}
 
       <main className="productmanager-manager-container">
         <h2 className="productmanager-dashboard-heading">Dashboard</h2>
 
-        {/* Tab Buttons */}
+        {/* Tabs */}
         <div className="productmanager-tab-buttons">
           <button
             className={classNames("productmanager-tab", { active: activeTab === "orders" })}
@@ -133,12 +143,11 @@ const ProductManagerPage = () => {
           </button>
         </div>
 
-        {/* Orders Section */}
+        {/* Orders */}
         {activeTab === "orders" && (
           <section className="productmanager-orders-section">
-            <h3 className="productmanager-orders-heading">Orders</h3>
             {error && <p className="productmanager-error-message">{error}</p>}
-            {isLoading ? (
+            {isLoadingOrders ? (
               <div className="productmanager-loading-indicator">Loading orders...</div>
             ) : orders.length === 0 ? (
               <p className="productmanager-no-data-message">No orders found.</p>
@@ -178,11 +187,53 @@ const ProductManagerPage = () => {
           </section>
         )}
 
-        {/* Comments Section */}
+        {/* Comments */}
         {activeTab === "comments" && (
           <section className="productmanager-comments-section">
             <h3 className="productmanager-orders-heading">Manage Comments</h3>
-            <p className="productmanager-no-data-message">No comments yet.</p>
+            {isLoadingComments ? (
+              <div className="productmanager-loading-indicator">Loading comments...</div>
+            ) : comments.length === 0 ? (
+              <p className="productmanager-no-data-message">No comments found.</p>
+            ) : (
+              <div className="productmanager-order-cards-wrapper">
+                {comments.map((comment) => (
+                  <div className="productmanager-order-card" key={comment.id}>
+                    <div className="productmanager-order-info">
+                      <p><strong>Ürün:</strong> {comment.productName}</p>
+                      <p><strong>Kullanıcı:</strong> {comment.userFullName} (ID: {comment.userId})</p>
+                      <p><strong>Rating:</strong> {comment.rating} ⭐</p>
+                      <p><strong>İçerik:</strong> {comment.content}</p>
+                      <p><strong>Tarih:</strong> {new Date(comment.createdAt).toLocaleString()}</p>
+                      <p>
+                        <strong>Durum:</strong>{" "}
+                        {comment.approved === true
+                          ? "✅ Approved"
+                          : comment.approved === false
+                          ? "❌ Rejected"
+                          : "⏳ Pending"}
+                      </p>
+                    </div>
+                    {comment.approved === null && (
+                      <div className="button-group">
+                        <button
+                          className="productmanager-approve-button"
+                          onClick={() => updateCommentApproval(comment.id, true)}
+                        >
+                          Onayla
+                        </button>
+                        <button
+                          className="productmanager-reject-button"
+                          onClick={() => updateCommentApproval(comment.id, false)}
+                        >
+                          Reddet
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         )}
       </main>
