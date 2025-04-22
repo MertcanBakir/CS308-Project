@@ -72,9 +72,9 @@ const Checkout = () => {
   return (
     <div className="checkout-container">
       <div className="header-bar">
-        <button onClick={() => navigate("/cart")} className="back-button2">
+        <div onClick={() => navigate("/")} title="Home Page" className="cart-back-button2">
           <i className="arrow-left2"></i>
-        </button>
+        </div>
         <img
           src={sephoraLogo}
           alt="Sephora Logo"
