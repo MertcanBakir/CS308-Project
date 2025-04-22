@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -45,9 +46,9 @@ public class OrderController {
     }
 
     @PostMapping("/add-order")
-    public ResponseEntity<Map<String, Object>> addOrder(@RequestBody Map<String, Object> requestBody, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Map<String, Object>> addOrder(@RequestBody Map<String, Object> requestBody,
+                                                        @RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
-
         try {
             String userEmail = jwtUtil.extractEmail(token.replace("Bearer ", ""));
             User user = userRepo.findByEmail(userEmail)
@@ -59,36 +60,41 @@ public class OrderController {
                 return ResponseEntity.status(401).body(response);
             }
 
-            Long wishlistId = Long.parseLong(requestBody.get("wishlist_id").toString());
+            List<Integer> wishlistIds = (List<Integer>) requestBody.get("wishlist_ids");
             Long cardId = Long.parseLong(requestBody.get("card_id").toString());
             Long addressId = Long.parseLong(requestBody.get("address_id").toString());
-
-            Wishlist wishlist = wishListService.getWishlistById(wishlistId);
-            Product product = wishlist.getProduct();
-            int quantity = wishlist.getQuantity().intValue();
 
             Card card = cardRepo.findById(cardId)
                     .orElseThrow(() -> new RuntimeException("Card not found"));
             Address address = addressRepo.findById(addressId)
                     .orElseThrow(() -> new RuntimeException("Address not found"));
 
-            Order order = new Order();
-            order.setUser(user);
-            order.setProduct(product);
-            order.setCard(card);
-            order.setAddress(address);
-            order.setQuantity(quantity);
-            order.setStatus(OrderStatus.PROCESSING);
+            List<Order> orderList = new ArrayList<>();
 
-            orderRepo.save(order);
-            productService.decrementStock(product, quantity);
+            for (Integer wishlistId : wishlistIds) {
+                Wishlist wishlist = wishListService.getWishlistById(Long.valueOf(wishlistId));
+                Product product = wishlist.getProduct();
+                int quantity = wishlist.getQuantity().intValue();
 
-            wishListService.removeFromWishlist(user.getId(), product.getId());
+                Order order = new Order();
+                order.setUser(user);
+                order.setProduct(product);
+                order.setCard(card);
+                order.setAddress(address);
+                order.setQuantity(quantity);
+                order.setStatus(OrderStatus.PROCESSING);
 
-            orderService.generateInvoiceAndSendEmail(order, user);
+                orderRepo.save(order);
+                orderList.add(order);
+
+                productService.decrementStock(product, quantity);
+                wishListService.removeFromWishlist(user.getId(), product.getId());
+            }
+
+            orderService.generateInvoiceAndSendEmail(orderList, user);
 
             response.put("success", true);
-            response.put("message", "The order was created successfully and the invoice was sent via email.");
+            response.put("message", "All orders placed and invoice sent successfully.");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

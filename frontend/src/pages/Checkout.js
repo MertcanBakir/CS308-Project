@@ -31,41 +31,41 @@ const Checkout = () => {
 
   const handleCompletePayment = async () => {
     const token = localStorage.getItem("token");
-
+  
     if (!selectedAddressId || !selectedCardId) {
-      toast.error("Please choose an address and a cart");
+      toast.error("Please choose an address and a card");
       return;
     }
-
+  
     try {
-      for (const product of products) {
-        const response = await fetch("http://localhost:8080/add-order", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            wishlist_id: product.wishlistId,
-            card_id: selectedCardId,
-            address_id: selectedAddressId,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-          toast.error(`Order failed: ${data.message}`);
-          return;
-        }
+      const wishlistIds = products.map((p) => p.wishlistId);
+  
+      const response = await fetch("http://localhost:8080/add-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          wishlist_ids: wishlistIds, // ✅ Liste olarak gönderiyoruz
+          card_id: selectedCardId,
+          address_id: selectedAddressId,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!data.success) {
+        toast.error(`Order failed: ${data.message}`);
+        return;
       }
-
+  
       toast.success("All orders have been successfully created. Invoice sent via email.");
       localStorage.removeItem("checkoutProducts");
       setTimeout(() => navigate("/"), 2500);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("An error occurred. Please try again..");
+      toast.error("An error occurred. Please try again.");
     }
   };
 
