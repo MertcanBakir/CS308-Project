@@ -44,7 +44,7 @@ class LoginControllerTest {
     static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @DisplayName("✅ Başarılı giriş - User için token dönmeli")
+    @DisplayName("Başarılı giriş")
     void testSuccessfulLogin_user() throws Exception {
         User user = createMockUser("user@test.com", "encodedpass", Role.User);
         String requestBody = objectMapper.writeValueAsString(createLoginRequest("user@test.com", "rawpass"));
@@ -62,7 +62,7 @@ class LoginControllerTest {
     }
 
     @Test
-    @DisplayName("❌ Geçersiz email ile login başarısız")
+    @DisplayName("Geçersiz email ile login başarısız")
     void testLoginFailsWithInvalidEmail() throws Exception {
         when(userRepo.findByEmail("notfound@test.com")).thenReturn(Optional.empty());
         String body = objectMapper.writeValueAsString(createLoginRequest("notfound@test.com", "any"));
@@ -75,7 +75,7 @@ class LoginControllerTest {
     }
 
     @Test
-    @DisplayName("❌ Hatalı şifre ile giriş başarısız")
+    @DisplayName("Hatalı şifre ile giriş başarısız")
     void testLoginFailsWithWrongPassword() throws Exception {
         User user = createMockUser("user@test.com", "encodedpass", Role.User);
         when(userRepo.findByEmail("user@test.com")).thenReturn(Optional.of(user));
@@ -91,7 +91,7 @@ class LoginControllerTest {
     }
 
     @Test
-    @DisplayName("✅ Kullanıcının adres ve kart bilgileri dönmeli")
+    @DisplayName("Kullanıcının adres ve kart bilgileri dönmeli")
     void testLoginReturnsCardAndAddress() throws Exception {
         User user = createMockUser("user@test.com", "encodedpass", Role.User);
         Address addr = new Address(); addr.setAddress("Test Address");
@@ -113,7 +113,7 @@ class LoginControllerTest {
                 .andExpect(jsonPath("$.card[0]").value("5678"));
     }
     @Test
-    @DisplayName("✅ Giriş sonrası fullname bilgisi dönmeli")
+    @DisplayName("Giriş sonrası fullname bilgisi dönmeli")
     void testSuccessfulLoginReturnsFullName() throws Exception {
         User user = createMockUser("user@test.com", "encodedpass", Role.User);
         user.setFullName("Efecan Kasapoğlu");
