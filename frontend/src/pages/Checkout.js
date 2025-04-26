@@ -47,7 +47,7 @@ const Checkout = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          wishlist_ids: wishlistIds, // ✅ Liste olarak gönderiyoruz
+          wishlist_ids: wishlistIds,
           card_id: selectedCardId,
           address_id: selectedAddressId,
         }),
@@ -72,7 +72,7 @@ const Checkout = () => {
   return (
     <div className="checkout-container">
       <div className="header-bar">
-        <div onClick={() => navigate("/")} title="Home Page" className="cart-back-button2">
+        <div onClick={() => navigate("/cart")} title="Home Page" className="cart-back-button2">
           <i className="arrow-left2"></i>
         </div>
         <img

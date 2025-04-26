@@ -6,6 +6,7 @@ import cs308.backhend.model.User;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,13 +18,20 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/login")
-@RequiredArgsConstructor
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepo userRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public LoginController(AuthenticationManager authenticationManager, UserRepo userRepository, JwtUtil jwtUtil, BCryptPasswordEncoder passwordEncoder){
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> login(@RequestBody User loginRequest) {

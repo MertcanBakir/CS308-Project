@@ -9,6 +9,7 @@ import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
 import cs308.backhend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequiredArgsConstructor
 public class RegisterController {
 
     private final UserService userService;
@@ -25,6 +25,15 @@ public class RegisterController {
     private final UserRepo userRepo;
     private final CardRepo cardRepo;
     private final AddressRepo addressRepo;
+
+    @Autowired
+    public RegisterController(UserService userService, JwtUtil jwtUtil, UserRepo userRepo, CardRepo cardRepo, AddressRepo addressRepo){
+        this.addressRepo = addressRepo;
+        this.cardRepo = cardRepo;
+        this.userRepo = userRepo;
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {

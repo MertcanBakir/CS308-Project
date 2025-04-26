@@ -13,29 +13,83 @@ const Profile = () => {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/profile?email=${email}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
+        const fetchProfile = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/profile/full", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch profile data");
+                }
+
+                const data = await response.json();
                 setAddresses(data.addresses || []);
                 setCards(data.cards || []);
-            })
-            .catch(err => console.error("Profile information could not be retrieved:", err));
+                setOrders(data.orders || []);
+            } catch (err) {
+                console.error("Error fetching full profile:", err);
+            }
+        };
 
-        fetch(`http://localhost:8080/profile/orders?email=${email}`, {
+        fetchProfile();
+    }, [token]);
+
+    const fetchInvoiceBlobUrl = async (orderId) => {
+        const response = await fetch(`http://localhost:8080/invoices/${orderId}/download`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        })
-            .then(res => res.json())
-            .then(data => {
-                setOrders(data || []);
-            })
-            .catch(err => console.error("Orders could not be received:", err));
-    }, [email, token]);
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch invoice.");
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        return url;
+    };
+
+    const handleDownloadInvoice = async (orderId) => {
+        try {
+            if (!orderId) {
+                alert("No invoice available for this order.");
+                return;
+            }
+
+            const url = await fetchInvoiceBlobUrl(orderId);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `invoice-${orderId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Error downloading invoice:", err);
+            alert("Could not download invoice.");
+        }
+    };
+
+    const handleViewInvoice = async (orderId) => {
+        try {
+            if (!orderId) {
+                alert("No invoice available for this order.");
+                return;
+            }
+
+            const url = await fetchInvoiceBlobUrl(orderId);
+            window.open(url, "_blank");
+        } catch (err) {
+            console.error("Error viewing invoice:", err);
+            alert("Could not open invoice.");
+        }
+    };
 
     return (
         <div className="profile-page">
@@ -81,41 +135,51 @@ const Profile = () => {
                 </div>
 
                 <div>
-                    <div>
-                        <div>
-                            <strong>Past Orders:</strong>
-                            <ul>
-                                {orders.length > 0 ? (
-                                    orders.map((order, index) => (
-                                        <li key={index} className="order-card">
-                                            <div className="order-header-horizontal">
-                                                <div className="order-info">
-                                                    <p>
-                                                        <strong>Transaction Date:</strong> {new Date(order.createdAt).toLocaleString()}
-                                                    </p>
-                                                    <p><strong>Order Status:</strong> {order.status}</p>
-                                                    <p><strong>Product:</strong> {order.productName}</p>
-                                                    <p><strong>Quantity:</strong> {order.quantity}</p>
-                                                    <p><strong>Address:</strong> {order.addressText}</p>
-                                                    <p><strong>Credit Card:</strong> **** **** **** {order.cardLast4}</p>
+                    <strong>Past Orders:</strong>
+                    <ul>
+                        {orders.length > 0 ? (
+                            orders.map((order, index) => (
+                                <li key={index} className="order-card">
+                                    <div className="order-header-horizontal">
+                                        <div className="order-info">
+                                            <p><strong>Transaction Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                                            <p><strong>Order Status:</strong> {order.status}</p>
+                                            <p><strong>Product:</strong> {order.productName}</p>
+                                            <p><strong>Quantity:</strong> {order.quantity}</p>
+                                            <p><strong>Address:</strong> {order.addressText}</p>
+                                            <p><strong>Credit Card:</strong> **** **** **** {order.cardLast4}</p>
+
+                                            {order.invoiceId ? (
+                                                <div className="invoice-buttons">
+                                                    <button
+                                                        onClick={() => handleViewInvoice(order.id)}
+                                                        className="invoice-button"
+                                                    >
+                                                        See Invoice
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDownloadInvoice(order.id)}
+                                                        className="invoice-button"
+                                                    >
+                                                        Download Invoice
+                                                    </button>
                                                 </div>
-                                                <img
-                                                    src={order.productImageUrl || "https://via.placeholder.com/100"}
-                                                    alt={order.productName}
-                                                    className="product-image-right"
-                                                />
-                                            </div>
-                                        </li>
-
-                                    ))
-                                ) : (
-                                    <li>No orders found.</li>
-                                )}
-                            </ul>
-
-                        </div>
-
-                    </div>
+                                            ) : (
+                                                <p>No invoice available</p>
+                                            )}
+                                        </div>
+                                        <img
+                                            src={order.productImageUrl || "https://via.placeholder.com/100"}
+                                            alt={order.productName}
+                                            className="product-image-right"
+                                        />
+                                    </div>
+                                </li>
+                            ))
+                        ) : (
+                            <li>No orders found.</li>
+                        )}
+                    </ul>
                 </div>
 
                 <button className="logout-button" onClick={logout}>Logout</button>

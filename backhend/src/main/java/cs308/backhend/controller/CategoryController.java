@@ -9,6 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
+
     private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {

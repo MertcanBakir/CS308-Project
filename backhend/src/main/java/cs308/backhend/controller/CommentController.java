@@ -22,20 +22,20 @@ import java.util.Map;
 @RequestMapping("/comments")
 public class CommentController {
 
-    @Autowired
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
+    private final OrderRepo orderRepo;
+    private final UserRepo userRepo;
+    private final ProductRepo productRepository;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    private OrderRepo orderRepo;
-
-    @Autowired
-    private UserRepo userRepo;
-
-    @Autowired
-    private ProductRepo productRepository;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    public CommentController(JwtUtil jwtUtil,ProductRepo productRepository, UserRepo userRepo, OrderRepo orderRepo, CommentRepository commentRepository){
+        this.commentRepository = commentRepository;
+        this.orderRepo = orderRepo;
+        this.productRepository = productRepository;
+        this.jwtUtil = jwtUtil;
+        this.userRepo = userRepo;
+    }
 
     @PostMapping("/add")
     public ResponseEntity<Map<String, Object>> addComment(

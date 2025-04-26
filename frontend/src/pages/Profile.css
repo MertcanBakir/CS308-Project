@@ -102,3 +102,26 @@
 .profile-page .product-image-right:hover {
     transform: scale(1.5);
 }
+
+
+.invoice-button {
+    background-color: #d63384;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.invoice-button:hover {
+    background-color: #b0276e;
+}
+
+.invoice-buttons {
+    display: flex;
+    gap: 20px; 
+    margin-top: 10px;
+}

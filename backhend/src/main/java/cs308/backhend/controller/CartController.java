@@ -22,17 +22,15 @@ public class CartController {
 
     private final JwtUtil jwtUtil;
     private final UserRepo userRepo;
-    private final WishListService wishListService;
     private final WishListRepo wishListRepo;
     private final ProductRepo productRepo;
 
     @Autowired
-    public CartController(UserRepo userRepo, WishListRepo wishListRepo, ProductRepo productRepo, JwtUtil jwtUtil,WishListService wishListService) {
+    public CartController(UserRepo userRepo, WishListRepo wishListRepo, ProductRepo productRepo, JwtUtil jwtUtil) {
         this.userRepo = userRepo;
         this.wishListRepo = wishListRepo;
         this.productRepo = productRepo;
         this.jwtUtil = jwtUtil;
-        this.wishListService = wishListService;
     }
 
     @GetMapping("/cart")

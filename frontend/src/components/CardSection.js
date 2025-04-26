@@ -36,7 +36,7 @@ const CardSection = ({ onSelectCard }) => {
       const data = await res.json();
       setCards(data.cards || []);
     } catch (err) {
-      console.error("Kartlar alınamadı:", err);
+      console.error("Failed to fetch cards:", err);
     }
   }, [token]);
 
@@ -75,28 +75,28 @@ const CardSection = ({ onSelectCard }) => {
     const { firstField, lastField, inputOne, inputTwo, inputThree } = newCard;
 
     if (!firstField.trim()) {
-      toast.error("İsim gereklidir");
+      toast.error("First name is required");
       return false;
     }
 
     if (!lastField.trim()) {
-      toast.error("Soyisim gereklidir");
+      toast.error("Last name is required");
       return false;
     }
 
     const cleanNumber = inputOne.replace(/\s+/g, "");
     if (cleanNumber.length !== 16) {
-      toast.error("Kart numarası 16 haneli olmalı");
+      toast.error("Card number must be 16 digits");
       return false;
     }
 
     if (inputTwo.length !== 3) {
-      toast.error("CVV 3 haneli olmalı");
+      toast.error("CVV must be 3 digits");
       return false;
     }
 
     if (!/^\d{2}\/\d{2}$/.test(inputThree)) {
-      toast.error("Tarih formatı geçersiz (MM/YY)");
+      toast.error("Invalid date format (MM/YY)");
       return false;
     } else {
       const [month, year] = inputThree.split("/");
@@ -108,7 +108,7 @@ const CardSection = ({ onSelectCard }) => {
       const yy = parseInt(year, 10);
 
       if (mm < 1 || mm > 12 || yy < currentYear || (yy === currentYear && mm < currentMonth)) {
-        toast.error("Geçersiz tarih.");
+        toast.error("Invalid expiration date.");
         return false;
       }
     }
@@ -149,7 +149,7 @@ const CardSection = ({ onSelectCard }) => {
       setShowForm(false);
       fetchCards();
     } catch (err) {
-      console.error("Kart ekleme hatası:", err);
+      console.error("Card add error:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -170,9 +170,9 @@ const CardSection = ({ onSelectCard }) => {
       if (!res.ok) {
         const data = await res.json();
         if (data.message?.includes("foreign key constraint")) {
-          toast.error("Bu kart geçmiş siparişlerde kullanıldığı için silinemez.");
+          toast.error("This card is used in previous orders and cannot be deleted.");
         } else {
-          toast.error("Kart silinirken bir hata oluştu.");
+          toast.error("An error occurred while deleting the card.");
         }
         return;
       }
@@ -183,8 +183,8 @@ const CardSection = ({ onSelectCard }) => {
         onSelectCard(null);
       }
     } catch (err) {
-      console.error("Kart silinirken hata:", err);
-      toast.error("Kart silinirken beklenmeyen bir hata oluştu.");
+      console.error("Error deleting card:", err);
+      toast.error("Unexpected error occurred while deleting the card.");
     }
   };
 
@@ -215,11 +215,11 @@ const CardSection = ({ onSelectCard }) => {
     <div className="box payment-section">
       <div className="section-header">
         <FaCreditCard className="section-icon" />
-        <h2>Ödeme Yöntemi</h2>
+        <h2>Payment Method</h2>
       </div>
 
       {cards.length === 0 && !showForm ? (
-        <div className="no-cards-message">Henüz kayıtlı kartınız yok</div>
+        <div className="no-cards-message">No saved cards yet</div>
       ) : (
         <div className="cards-container">
           {cards.map((card, i) => {
@@ -235,7 +235,7 @@ const CardSection = ({ onSelectCard }) => {
                   <div className="card-number">**** **** **** {card.cardNumber.slice(-4)}</div>
                   <div className="card-holder">{card.name} {card.surname}</div>
                 </div>
-                <button className="card-delete-btn" onClick={(e) => handleDelete(card.id, e)} aria-label="Kartı Sil">
+                <button className="card-delete-btn" onClick={(e) => handleDelete(card.id, e)} aria-label="Delete Card">
                   <FaTrashCan />
                 </button>
               </div>
@@ -250,17 +250,17 @@ const CardSection = ({ onSelectCard }) => {
           setTimeout(() => nameRef.current?.focus(), 50);
         }}>
           <IoMdAdd className="add-icon" />
-          <span>Yeni Kart Ekle</span>
+          <span>Add New Card</span>
         </button>
       )}
 
       {showForm && (
         <form ref={formRef} className="card-form" onSubmit={handleAdd} autoComplete="off">
-          <div className="form-header"><h3>Kart Bilgileri</h3></div>
+          <div className="form-header"><h3>Card Information</h3></div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Ad</label>
+              <label>First Name</label>
               <input
                 ref={nameRef}
                 value={newCard.firstField}
@@ -271,7 +271,7 @@ const CardSection = ({ onSelectCard }) => {
             </div>
 
             <div className="form-group">
-              <label>Soyad</label>
+              <label>Last Name</label>
               <input
                 ref={surnameRef}
                 value={newCard.lastField}
@@ -283,7 +283,7 @@ const CardSection = ({ onSelectCard }) => {
           </div>
 
           <div className="form-group">
-            <label>Numara</label>
+            <label>Card Number</label>
             <input
               ref={numberRef}
               value={formatCardNumberInput(newCard.inputOne)}
@@ -296,7 +296,7 @@ const CardSection = ({ onSelectCard }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label>Son Kullanma</label>
+              <label>Expiry Date</label>
               <input
                 ref={expiryRef}
                 value={newCard.inputThree}
@@ -334,11 +334,11 @@ const CardSection = ({ onSelectCard }) => {
                 });
               }}
             >
-              İptal
+              Cancel
             </button>
 
             <button type="submit" className="save-btn" disabled={isSubmitting}>
-              {isSubmitting ? "Kaydediliyor..." : "Kartı Kaydet"}
+              {isSubmitting ? "Saving..." : "Save Card"}
             </button>
           </div>
         </form>

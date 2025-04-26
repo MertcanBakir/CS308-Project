@@ -6,6 +6,7 @@ import cs308.backhend.security.JwtUtil;
 import cs308.backhend.service.OrderService;
 import cs308.backhend.service.ProductService;
 import cs308.backhend.service.WishListService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class OrderController {
     private final WishListService wishListService;
     private final JwtUtil jwtUtil;
 
+    @Autowired
     public OrderController(OrderService orderService, OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo,
                            ProductService productService, CardRepo cardRepo,
                            AddressRepo addressRepo, WishListService wishListService,
@@ -44,7 +46,7 @@ public class OrderController {
         this.wishListService = wishListService;
         this.jwtUtil = jwtUtil;
     }
-
+    @Transactional
     @PostMapping("/add-order")
     public ResponseEntity<Map<String, Object>> addOrder(@RequestBody Map<String, Object> requestBody,
                                                         @RequestHeader("Authorization") String token) {
@@ -84,14 +86,17 @@ public class OrderController {
                 order.setQuantity(quantity);
                 order.setStatus(OrderStatus.PROCESSING);
 
-                orderRepo.save(order);
                 orderList.add(order);
-
                 productService.decrementStock(product, quantity);
                 wishListService.removeFromWishlist(user.getId(), product.getId());
             }
 
             orderService.generateInvoiceAndSendEmail(orderList, user);
+
+
+            for (Order order : orderList) {
+                orderRepo.save(order);
+            }
 
             response.put("success", true);
             response.put("message", "All orders placed and invoice sent successfully.");
