@@ -5,7 +5,6 @@ import cs308.backhend.model.Role;
 import cs308.backhend.model.User;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

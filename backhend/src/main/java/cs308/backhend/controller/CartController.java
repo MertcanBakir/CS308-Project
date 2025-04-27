@@ -1,6 +1,5 @@
 package cs308.backhend.controller;
 
-import cs308.backhend.model.Category;
 import cs308.backhend.model.Product;
 import cs308.backhend.model.User;
 import cs308.backhend.model.Wishlist;
@@ -8,8 +7,7 @@ import cs308.backhend.repository.ProductRepo;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.repository.WishListRepo;
 import cs308.backhend.security.JwtUtil;
-import cs308.backhend.service.WishListService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +30,7 @@ public class CartController {
         this.productRepo = productRepo;
         this.jwtUtil = jwtUtil;
     }
-
+    @Transactional(readOnly = true)
     @GetMapping("/cart")
     public ResponseEntity<Map<String, Object>> getWishlistProducts(@RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();

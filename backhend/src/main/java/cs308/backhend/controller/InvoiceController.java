@@ -5,11 +5,11 @@ import cs308.backhend.model.User;
 import cs308.backhend.repository.InvoiceRepo;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping
@@ -25,7 +25,8 @@ public class InvoiceController {
         this.jwtUtil = jwtUtil;
         this.userRepo = userRepo;
     }
-    @Transactional
+
+    @Transactional(readOnly = true)
     @GetMapping("/invoices/{orderId}/download")
     public ResponseEntity<?> downloadInvoice(@PathVariable Long orderId, @RequestHeader("Authorization") String token) {
         try {

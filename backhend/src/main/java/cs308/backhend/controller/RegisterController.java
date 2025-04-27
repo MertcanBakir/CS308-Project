@@ -8,9 +8,9 @@ import cs308.backhend.repository.CardRepo;
 import cs308.backhend.repository.UserRepo;
 import cs308.backhend.security.JwtUtil;
 import cs308.backhend.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -40,6 +40,7 @@ public class RegisterController {
         return userService.registerUser(user);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/addresses")
     public ResponseEntity<Map<String, Object>> getAddresses(@RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
@@ -139,6 +140,7 @@ public class RegisterController {
         }
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/cards")
     public ResponseEntity<Map<String, Object>> getCards(@RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();

@@ -2,6 +2,7 @@ package cs308.backhend.controller;
 
 import cs308.backhend.model.Category;
 import cs308.backhend.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Transactional(readOnly = true)
     @GetMapping
     public List<Category> getAllCategories() {
         return categoryService.getAllCategories();
