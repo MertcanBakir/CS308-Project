@@ -2,7 +2,7 @@ package cs308.backhend.model;
 
 public enum OrderStatus {
     PROCESSING,
-    SHIPPED,
+    INTRANSIT,
     DELIVERED,
     CANCELLED,
     REFUNDED;

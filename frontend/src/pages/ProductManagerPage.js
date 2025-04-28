@@ -2,12 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
-import classNames from "classnames"; // npm install classnames
+import classNames from "classnames"; 
 import "./ProductManagerPage.css";
 
 const STATUS_OPTIONS = Object.freeze({
   PROCESSING: "Processing",
-  SHIPPED: "Shipped",
+  INTRANSIT: "In Transit",
   DELIVERED: "Delivered",
   CANCELLED: "Cancelled",
   REFUNDED: "Refunded",
@@ -160,7 +160,7 @@ const ProductManagerPage = () => {
                       <p><strong>Product:</strong> {product?.name || "N/A"}</p>
                       <p>
                         <strong>Status:</strong>{" "}
-                        <span className={`productmanager-status-pill productmanager-${status.toLowerCase()}`}>
+                        <span className={`productmanager-status-pill productmanager-${status?.toLowerCase()}`}>
                           {STATUS_OPTIONS[status] || status}
                         </span>
                       </p>
