@@ -5,8 +5,10 @@ import cs308.backhend.repository.*;
 import cs308.backhend.security.JwtUtil;
 import cs308.backhend.service.OrderService;
 import cs308.backhend.service.ProductService;
+import cs308.backhend.model.Role;
 import cs308.backhend.service.WishListService;
-import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,6 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepo orderRepo;
     private final UserRepo userRepo;
-    private final ProductRepo productRepo;
     private final ProductService productService;
     private final CardRepo cardRepo;
     private final AddressRepo addressRepo;
@@ -31,20 +32,47 @@ public class OrderController {
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public OrderController(OrderService orderService, OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo,
+    public OrderController(OrderService orderService, OrderRepo orderRepo, UserRepo userRepo,
                            ProductService productService, CardRepo cardRepo,
                            AddressRepo addressRepo, WishListService wishListService,
                            JwtUtil jwtUtil) {
         this.orderService = orderService;
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
-        this.productRepo = productRepo;
         this.productService = productService;
         this.cardRepo = cardRepo;
         this.addressRepo = addressRepo;
         this.wishListService = wishListService;
         this.jwtUtil = jwtUtil;
     }
+
+    @Transactional(readOnly = true)
+    @GetMapping("/all-order-SL")
+    public ResponseEntity<?> getAllOrdersSalesManager(@RequestHeader("Authorization") String token) {
+        System.out.println("Extracted role: " + jwtUtil.extractRole(token));
+        if (!Role.valueOf(jwtUtil.extractRole(token)).equals(Role.salesManager)) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "You do not have permission to access this resource");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
+
+        List<Order> orders = orderRepo.findAll();
+        List<Map<String, Object>> responseList = new ArrayList<>();
+
+        for (Order order : orders) {
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("quantity", order.getQuantity());
+            orderMap.put("time", order.getCreatedAt());
+            orderMap.put("productId", order.getProduct().getId());
+            orderMap.put("productName", order.getProduct().getName());
+            orderMap.put("price", order.getProduct().getPrice());
+
+            responseList.add(orderMap);
+        }
+        return ResponseEntity.ok(responseList);
+    }
+
+
     @Transactional
     @PostMapping("/add-order")
     public ResponseEntity<Map<String, Object>> addOrder(@RequestBody Map<String, Object> requestBody,
@@ -122,7 +150,7 @@ public class OrderController {
                 return ResponseEntity.status(403).body(Map.of("success", false, "message", "Unauthorized access"));
             }
 
-            List<Order> orders = orderRepo.findAll(); // Bütün siparişleri getirir
+            List<Order> orders = orderRepo.findAll();
 
             List<Map<String, Object>> responseOrders = orders.stream().map(order -> {
                 Map<String, Object> orderMap = new HashMap<>();

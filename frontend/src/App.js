@@ -7,7 +7,6 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import Checkout from "./pages/Checkout";
-import ManagerPage from "./pages/ManagerLayout";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
