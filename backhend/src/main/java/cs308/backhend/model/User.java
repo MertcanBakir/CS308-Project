@@ -31,4 +31,13 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
+    // User.java
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + fullName + '\'' +
+                ", cardCount=" + (cards != null ? cards.size() : 0) +
+                '}';
+    }
 }

@@ -20,11 +20,11 @@ public class Card {
     private String Surname;
 
     @Column(nullable = true)
-    private String CardNumber;
+    private String cardNumber;
 
     public void setCardNumber(String cardNumber) {
         try {
-            this.CardNumber = AESUtil.encrypt(cardNumber);
+            this.cardNumber = AESUtil.encrypt(cardNumber);
         } catch (Exception e) {
             throw new RuntimeException("Encryption error", e);
         }
@@ -32,7 +32,7 @@ public class Card {
 
     public String getCardNumber() {
         try {
-            return AESUtil.decrypt(this.CardNumber);
+            return AESUtil.decrypt(this.cardNumber);
         } catch (Exception e) {
             throw new RuntimeException("Decryption error", e);
         }
@@ -51,7 +51,7 @@ public class Card {
 
     public String getLast4Digits() {
         try {
-            String decrypted = AESUtil.decrypt(this.CardNumber);
+            String decrypted = AESUtil.decrypt(this.cardNumber);
             if (decrypted != null && decrypted.length() >= 4) {
                 return decrypted.substring(decrypted.length() - 4);
             } else {
@@ -60,6 +60,16 @@ public class Card {
         } catch (Exception e) {
             return "****";
         }
+    }
+    // Card.java
+    @Override
+    public String toString() {
+        return "Card{" +
+                "cardNumber='" + getCardNumber() + '\'' +
+                ", cardName='" + Name + '\'' +
+                // user nesnesinin sadece id'sini veya null kontrolü
+                ", userId=" + (user != null ? user.getId() : "null") +
+                '}';
     }
 
 

@@ -258,18 +258,26 @@ const SalesManagerPage = () => {
   return (
     <div className="salesman-page">
 
-      <div className="salesman-header">
-        <div className="salesman-back-button2" onClick={() =>navigate("/")}>
-          <div className="salesman-arrow-left2" />
-        </div>
-        <h1 className="salesman-title">Sales Manager Page</h1>
-        <img
-          src={sephoraLogo}
-          alt="Sephora Logo"
-          className="logo2"
-          onClick={() => navigate("/")}
-        />
-      </div>
+<div className="salesman-header">
+  <div className="salesman-back-button2" onClick={() => navigate("/")}>
+    <div className="salesman-arrow-left2" />
+  </div>
+  <h1 className="salesman-title">Sales Manager Page</h1>
+  <div className="salesman-header-right">
+    <button
+      className="salesman-invoice-button"
+      onClick={() => navigate("/sales-invoices")}
+    >
+      Invoices
+    </button>
+    <img
+      src={sephoraLogo}
+      alt="Sephora Logo"
+      className="salesman-logo2"
+      onClick={() => navigate("/")}
+    />
+  </div>
+</div>
 
       {showWelcome && <div className="salesman-welcome">Welcome, Sales Manager 👋</div>}
 

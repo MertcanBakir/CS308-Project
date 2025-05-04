@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
 import ProductManagerPage from "./pages/ProductManagerPage";
 import SalesManagerPage from "./pages/SalesManagerPage";
+import InvoiceListPage from "./pages/InvoiceListPage";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/product-manager-page" element={<ProductManagerPage />} />
           <Route path="/sales-manager-page" element={<SalesManagerPage />} />
-
+          <Route path="/sales-invoices" element={<InvoiceListPage />} />
         </Routes>
         <ToastContainer
           position="top-right"

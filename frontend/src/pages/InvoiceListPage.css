@@ -1,0 +1,90 @@
+.invoice-page {
+  padding: 40px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.invoice-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.invoice-header h2 {
+  font-size: 28px;
+  color: #DB1F6E;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+}
+
+.invoice-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.invoice-filters input,
+.fetch-button {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.fetch-button {
+  background-color: #DB1F6E;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fetch-button:hover {
+  background-color: #b81a5c;
+}
+
+.invoice-table-wrapper {
+  overflow-x: auto;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.invoice-table th,
+.invoice-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.invoice-table th {
+  background-color: #FFE6F0;
+  color: #DB1F6E;
+  font-weight: 600;
+}
+
+.download-btn {
+  padding: 6px 12px;
+  background-color: #DB1F6E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background-color: #b81a5c;
+}
