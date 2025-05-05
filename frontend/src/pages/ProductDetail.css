@@ -198,3 +198,22 @@ textarea {
   font-size: 16px;
   white-space: nowrap;
 }
+
+.wishlist-button {
+  white-space: nowrap;
+  margin-top: 10px;
+  background-color: #ff91a4;
+  color: white;
+  border: none;
+  padding: 10px 300px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wishlist-button:hover {
+  background-color: #ff6f8f;
+}
+
+
+

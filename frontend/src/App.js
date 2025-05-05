@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProductManagerPage from "./pages/ProductManagerPage";
 import SalesManagerPage from "./pages/SalesManagerPage";
 import InvoiceListPage from "./pages/InvoiceListPage";
-
+import Wishlist from "./pages/Wishlist";
 function App() {
   return (
     <AuthProvider>
@@ -29,6 +29,7 @@ function App() {
           <Route path="/product-manager-page" element={<ProductManagerPage />} />
           <Route path="/sales-manager-page" element={<SalesManagerPage />} />
           <Route path="/sales-invoices" element={<InvoiceListPage />} />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
         <ToastContainer
           position="top-right"

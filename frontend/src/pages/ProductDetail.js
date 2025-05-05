@@ -10,6 +10,7 @@ import "./ProductDetail.css";
 import AddToCart from "../components/AddToCart";
 import { useAuth } from "../context/AuthContext";
 import Modal from "react-modal";
+import {AiOutlineHeart} from "react-icons/ai";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -29,6 +30,7 @@ const ProductDetail = () => {
   const handleSearchEnter = (query) => {
     navigate("/", { state: { searchQuery: query } });
   };
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -71,10 +73,32 @@ const ProductDetail = () => {
       }
     };
 
+
+
+
     fetchProduct();
     fetchCommentsAndPermission();
   }, [id]);
 
+
+  const handleAddToWishlist = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:8080/wishlist/add/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to add to wishlist");
+
+      alert("Ürün wishlist'e eklendi!");
+    } catch (err) {
+      console.error("Wishlist error:", err);
+      alert("Wishlist'e eklenirken bir hata oluştu.");
+    }
+  };
   const submitComment = async () => {
     const token = localStorage.getItem("token");
     await fetch(`http://localhost:8080/comments/add`, {
@@ -117,14 +141,30 @@ const ProductDetail = () => {
         <SearchBar onSearchEnter={handleSearchEnter} />
         <div className="right-tools">
           {isLoggedIn ? (
-            <div className="header-login-container" onClick={() => navigate("/profile")}>
-              <img src={LoginImage} alt="Profile" className="logologin" />
-              <span className="login-text">Profile</span>
-            </div>
+              <>
+                <div
+                    className="header-login-container"
+                    onClick={() => navigate("/profile")}
+                >
+                  <img src={LoginImage} alt="Profile" className="logologin" />
+                  <span className="login-text">Profile</span>
+                </div>
+
+                <div
+                    className="header-login-container"
+                    onClick={() => navigate("/wishlist")}
+                >
+                  <AiOutlineHeart size={35} />
+                  <span className="login-text">Wishlist</span>
+                </div>
+              </>
           ) : (
-            <div className="header-login-container" onClick={() => navigate("/login")}>
-              <span className="login-text">Login / Register</span>
-            </div>
+              <div
+                  className="header-login-container"
+                  onClick={() => navigate("/login")}
+              >
+                <span className="login-text">Login / Register</span>
+              </div>
           )}
           <div className="cart-container" onClick={() => navigate("/cart")}>
             <img src={CartImage} alt="Cart" className="cart-logo" />
@@ -154,6 +194,10 @@ const ProductDetail = () => {
           ) : (
             <AddToCart product={product} />
           )}
+          <button className="wishlist-button" onClick={handleAddToWishlist}>
+            ❤ Add to Wishlist
+          </button>
+
 
           {canComment && (
             <button

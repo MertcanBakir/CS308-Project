@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -113,4 +114,11 @@ public class WishListService {
         return wishListRepo.findById(wishlistId)
                 .orElseThrow(() -> new RuntimeException("Wishlist not found"));
     }
+    public List<Wishlist> getWishlistForUser(Long userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return wishListRepo.findByUser(user);
+    }
+
 }

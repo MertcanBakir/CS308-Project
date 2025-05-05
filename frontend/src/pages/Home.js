@@ -11,6 +11,8 @@ import LoginImage from "../assets/images/LoginImage.png";
 import CartImage from "../assets/images/cart.png";
 import "./Home.css";
 import { MdOutlineManageAccounts } from "react-icons/md";
+import { AiOutlineHeart } from "react-icons/ai";
+
 
 const Home = () => {
   const navigate = useNavigate();
@@ -63,24 +65,35 @@ const Home = () => {
             </div>
           )}
 
-          {isLoggedIn ? (
-            <div
-              className="header-login-container"
-              onClick={() => navigate("/profile")}
-            >
-              <img src={LoginImage} alt="Profile" className="logologin" />
-              <span className="login-text">Profile</span>
-            </div>
-          ) : (
-            <div
-              className="header-login-container"
-              onClick={() => navigate("/login")}
-            >
-              <span className="login-text">Login / Register</span>
-            </div>
-          )}
+            {isLoggedIn ? (
+                <>
+                    <div
+                        className="header-login-container"
+                        onClick={() => navigate("/profile")}
+                    >
+                        <img src={LoginImage} alt="Profile" className="logologin" />
+                        <span className="login-text">Profile</span>
+                    </div>
 
-          <div className="cart-container" onClick={() => navigate("/cart")}>
+                    <div
+                        className="header-login-container"
+                        onClick={() => navigate("/wishlist")}
+                    >
+                        <AiOutlineHeart size={35} />
+                        <span className="login-text">Wishlist</span>
+                    </div>
+                </>
+            ) : (
+                <div
+                    className="header-login-container"
+                    onClick={() => navigate("/login")}
+                >
+                    <span className="login-text">Login / Register</span>
+                </div>
+            )}
+
+
+            <div className="cart-container" onClick={() => navigate("/cart")}>
             <img src={CartImage} alt="Cart" className="cart-logo" />
             <span className="cart-text">Cart</span>
           </div>
