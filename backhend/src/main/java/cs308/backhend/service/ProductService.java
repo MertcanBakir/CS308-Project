@@ -78,6 +78,16 @@ public class ProductService {
                 .sorted(Comparator.comparing(Product::getPopularityScore).reversed())
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public Product updateProductNameAndStock(Long id, String newName, int newStock) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setName(newName);
+        product.setQuantityInStock(newStock);
+
+        return productRepo.save(product);
+    }
 
 
 }

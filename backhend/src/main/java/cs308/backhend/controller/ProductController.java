@@ -45,6 +45,11 @@ public class ProductController {
     public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
         return productService.getProductsByCategoryId(categoryId);
     }
+    @PatchMapping("/{id}/update-basic-info")
+    public ResponseEntity<Product> updateProductBasicInfo(@PathVariable Long id, @RequestBody Product updatedProduct) {
+        Product updated = productService.updateProductNameAndStock(id, updatedProduct.getName(), updatedProduct.getQuantityInStock());
+        return ResponseEntity.ok(updated);
+    }
 
 
 }
