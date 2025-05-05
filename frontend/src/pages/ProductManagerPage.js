@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
-import classNames from "classnames"; 
+import classNames from "classnames";
 import "./ProductManagerPage.css";
 
 const STATUS_OPTIONS = Object.freeze({
@@ -18,8 +18,10 @@ const ProductManagerPage = () => {
   const { fullname } = useAuth();
   const [orders, setOrders] = useState([]);
   const [comments, setComments] = useState([]);
+  const [products, setProducts] = useState([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [error, setError] = useState("");
   const [showWelcome, setShowWelcome] = useState(false);
   const [activeTab, setActiveTab] = useState("orders");
@@ -55,6 +57,22 @@ const ProductManagerPage = () => {
       setError("An error occurred while receiving comments.");
     } finally {
       setIsLoadingComments(false);
+    }
+  }, []);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      setIsLoadingProducts(true);
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/products", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      setError("Failed to fetch products");
+    } finally {
+      setIsLoadingProducts(false);
     }
   }, []);
 
@@ -94,16 +112,36 @@ const ProductManagerPage = () => {
     }
   };
 
+  const handleProductUpdate = async (productId, updatedName, updatedStock) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/products/${productId}/update-basic-info`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: updatedName, quantityInStock: updatedStock }),
+      });
+
+      if (!response.ok) throw new Error("Update failed");
+      fetchProducts();
+    } catch (err) {
+      alert(`Update error: ${err.message}`);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
     fetchComments();
+    fetchProducts();
     const showTimer = setTimeout(() => setShowWelcome(true), 1000);
     const hideTimer = setTimeout(() => setShowWelcome(false), 9000);
     return () => {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
-  }, [fetchOrders, fetchComments]);
+  }, [fetchOrders, fetchComments, fetchProducts]);
 
   const handleNavigateHome = () => navigate("/");
 
@@ -141,9 +179,15 @@ const ProductManagerPage = () => {
           >
             Comments
           </button>
+          <button
+            className={classNames("productmanager-tab", { active: activeTab === "products" })}
+            onClick={() => setActiveTab("products")}
+          >
+            Products
+          </button>
         </div>
 
-        {/* Orders */}
+        {/* Orders Tab */}
         {activeTab === "orders" && (
           <section className="productmanager-orders-section">
             {error && <p className="productmanager-error-message">{error}</p>}
@@ -187,7 +231,7 @@ const ProductManagerPage = () => {
           </section>
         )}
 
-        {/* Comments */}
+        {/* Comments Tab */}
         {activeTab === "comments" && (
           <section className="productmanager-comments-section">
             <h3 className="productmanager-orders-heading">Manage Comments</h3>
@@ -230,6 +274,49 @@ const ProductManagerPage = () => {
                         </button>
                       </div>
                     )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Products Tab */}
+        {activeTab === "products" && (
+          <section className="productmanager-products-section">
+            <h3 className="productmanager-orders-heading">Edit Products</h3>
+            {isLoadingProducts ? (
+              <div className="productmanager-loading-indicator">Loading products...</div>
+            ) : products.length === 0 ? (
+              <p className="productmanager-no-data-message">No products found.</p>
+            ) : (
+              <div className="productmanager-order-cards-wrapper">
+                {products.map((product) => (
+                  <div className="productmanager-order-card" key={product.id}>
+                    <div className="productmanager-order-info">
+                      <label>
+                        Name:
+                        <input
+                          type="text"
+                          defaultValue={product.name}
+                          onBlur={(e) => product.name = e.target.value}
+                        />
+                      </label>
+                      <label>
+                        Stock:
+                        <input
+                          type="number"
+                          defaultValue={product.quantityInStock}
+                          onBlur={(e) => product.quantityInStock = parseInt(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <button
+                      className="productmanager-approve-button"
+                      onClick={() => handleProductUpdate(product.id, product.name, product.quantityInStock)}
+                    >
+                      Save Changes
+                    </button>
                   </div>
                 ))}
               </div>
