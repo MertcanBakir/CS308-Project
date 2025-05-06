@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Wishlist.css";
+import AddToCart from "../components/AddToCart";
 import { useNavigate } from "react-router-dom";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
 
@@ -10,7 +11,7 @@ const Wishlist = () => {
     useEffect(() => {
         const fetchWishlist = async () => {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:8080/wishlist", {
+            const res = await fetch("http://localhost:8080/real-wishlist", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -20,6 +21,17 @@ const Wishlist = () => {
         };
         fetchWishlist();
     }, []);
+
+    const handleRemove = async (productId) => {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:8080/real-wishlist/remove/${productId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        setWishlist((prev) => prev.filter((item) => item.product.id !== productId));
+    };
 
     return (
         <div className="wishlist-page">
@@ -51,6 +63,13 @@ const Wishlist = () => {
                                 <h3>{item.product.name}</h3>
                                 <p>{item.product.description}</p>
                                 <p><strong>{item.product.price}₺</strong></p>
+                                <AddToCart product={item.product} />
+                                <button
+                                    className="remove-btn"
+                                    onClick={() => handleRemove(item.product.id)}
+                                >
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     ))

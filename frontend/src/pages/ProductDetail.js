@@ -81,24 +81,27 @@ const ProductDetail = () => {
   }, [id]);
 
 
+
+
   const handleAddToWishlist = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/wishlist/add/${id}`, {
+      const response = await fetch(`http://localhost:8080/real-wishlist/add/${id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!response.ok) throw new Error("Failed to add to wishlist");
+      if (!response.ok) throw new Error("Failed to add to real wishlist");
 
       alert("Ürün wishlist'e eklendi!");
     } catch (err) {
-      console.error("Wishlist error:", err);
+      console.error("RealWishlist error:", err);
       alert("Wishlist'e eklenirken bir hata oluştu.");
     }
   };
+
   const submitComment = async () => {
     const token = localStorage.getItem("token");
     await fetch(`http://localhost:8080/comments/add`, {
