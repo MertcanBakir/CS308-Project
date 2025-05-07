@@ -27,6 +27,10 @@ public class ProductService {
     public List<Product> getApprovedProducts() {
         return productRepo.findByApprovedTrue();
     }
+    public void save(Product product) {
+        productRepo.save(product);
+    }
+
 
 
 

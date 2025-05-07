@@ -1,309 +1,464 @@
 .salesman-page {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #fafafa;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-  }
-  
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #fafafa;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
 
-  .salesman-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80px;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-  
-  .salesman-back-button2 {
-    margin-right: 30px;
-    margin-left: 10px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-  
-  .salesman-arrow-left2 {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border-top: 2px solid #DB1F6E;
-    border-left: 2px solid #DB1F6E;
-    transform: rotate(-45deg);
-    transition: all 0.2s ease;
-  }
-  
-  .salesman-arrow-left2:hover {
-    border-color: #A11C55;
-    transform: rotate(-45deg) scale(1.2);
-  }
-  .salesman-invoice-button {
-    background-color: #DB1F6E;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    font-size: 14px;
-    margin-left: auto;
-    margin-right: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .salesman-invoice-button:hover {
-    background-color: #b81a5c;
-  }
-  .salesman-title {
-    font-size: 26px;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-    margin-top: -4px;
-    text-align: center;
-    flex-grow: 1;
-  }
-  
-  .salesman-logo2 {
-    width: 100px;
-    height: auto;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-  }
-  
-  .salesman-logo2:hover {
-    opacity: 0.8;
-  }
-  
-  .salesman-welcome {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    font-size: 16px;
-    background-color: #DB1F6E;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    opacity: 0.95;
-    transition: opacity 0.5s ease;
-    z-index: 1001;
-  }
-  
-  .salesman-content {
-    padding: 100px 24px 24px 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .sales-dashboard-header {
-    margin-bottom: 24px;
-  }
-  
-  .sales-dashboard-header h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-  }
-  
-  .dashboard-subtitle {
-    font-size: 14px;
-    color: #666;
-    margin-top: 0;
-  }
-  
+.salesman-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.salesman-back-button2 {
+  margin-right: 30px;
+  margin-left: 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.salesman-arrow-left2 {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid #DB1F6E;
+  border-left: 2px solid #DB1F6E;
+  transform: rotate(-45deg);
+  transition: all 0.2s ease;
+}
+
+.salesman-arrow-left2:hover {
+  border-color: #A11C55;
+  transform: rotate(-45deg) scale(1.2);
+}
+
+.salesman-invoice-button {
+  background-color: #DB1F6E;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  margin-left: auto;
+  margin-right: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.salesman-invoice-button:hover {
+  background-color: #b81a5c;
+}
+
+.salesman-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  margin-top: -4px;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.price-update-form {
+  margin-top: 30px;
+  background: #fff0f5;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.price-update-form h3 {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.price-input {
+  padding: 10px;
+  width: 100%;
+  max-width: 180px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.update-button {
+  background-color: #DB1F6E;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  width: fit-content;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #b81a5c;
+}
+
+.update-message {
+  margin-top: 10px;
+  font-weight: bold;
+  width: 100%;
+}
+
+.product-price-update-list {
+  margin-top: 30px;
+  background: #fff0f6;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.product-price-update-list h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.product-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 15px;
+  color: #666;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab-button.active {
+  color: #DB1F6E;
+  font-weight: 500;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #DB1F6E;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.product-card h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.product-card p {
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+}
+
+.product-price-info {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.product-inputs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.no-products-message {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 20px;
+}
+
+.salesman-logo2 {
+  width: 100px;
+  height: auto;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.salesman-logo2:hover {
+  opacity: 0.8;
+}
+
+.salesman-welcome {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  font-size: 16px;
+  background-color: #DB1F6E;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.95;
+  transition: opacity 0.5s ease;
+  z-index: 1001;
+}
+
+.salesman-content {
+  padding: 100px 24px 24px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sales-dashboard-header {
+  margin-bottom: 24px;
+}
+
+.sales-dashboard-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 0;
+}
+
+.filter-panel {
+  background-color: white;
+  border-radius: 10px;
+  padding: 18px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #DB1F6E;
+  box-shadow: 0 0 0 2px rgba(219, 31, 110, 0.1);
+}
+
+.date-filters {
+  display: flex;
+  gap: 16px;
+  flex: 2;
+  flex-wrap: wrap;
+}
+
+.date-filter-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.date-filter-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.date-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #DB1F6E;
+  box-shadow: 0 0 0 2px rgba(219, 31, 110, 0.1);
+}
+
+.chart-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+}
+
+.chart-container {
+  height: 400px;
+  position: relative;
+}
+
+.no-data-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.metrics-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.metric-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+}
+
+.metric-card.revenue::before {
+  background-color: #DB1F6E;
+}
+
+.metric-card.cost::before {
+  background-color: #FF90B8;
+}
+
+.metric-card.profit::before {
+  background-color: #000;
+}
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.salesman-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.nav-right a {
+  margin-left: 16px;
+}
+
+.metric-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
   .filter-panel {
-    background-color: white;
-    border-radius: 10px;
-    padding: 18px 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    margin-bottom: 24px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 16px;
   }
   
-  .filter-group {
-    flex: 1;
-    min-width: 200px;
-  }
-  
-  .filter-group label {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #555;
-  }
-  
-  .filter-select {
+  .filter-group, .date-filter-group {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    background-color: #fff;
-    transition: border-color 0.2s ease;
-  }
-  
-  .filter-select:focus {
-    outline: none;
-    border-color: #DB1F6E;
-    box-shadow: 0 0 0 2px rgba(219, 31, 110, 0.1);
   }
   
   .date-filters {
-    display: flex;
-    gap: 16px;
-    flex: 2;
-    flex-wrap: wrap;
-  }
-  
-  .date-filter-group {
-    flex: 1;
-    min-width: 150px;
-  }
-  
-  .date-filter-group label {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #555;
-  }
-  
-  .date-input {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
-  }
-  
-  .date-input:focus {
-    outline: none;
-    border-color: #DB1F6E;
-    box-shadow: 0 0 0 2px rgba(219, 31, 110, 0.1);
-  }
-  
-  .chart-card {
-    background-color: white;
-    border-radius: 10px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    margin-bottom: 24px;
-  }
-  
-  .chart-container {
-    height: 400px;
-    position: relative;
-  }
-  
-  .no-data-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: #888;
-    font-style: italic;
   }
   
   .metrics-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-top: 24px;
+    grid-template-columns: 1fr;
   }
   
-  .metric-card {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+  .products-grid {
+    grid-template-columns: 1fr;
   }
   
-  .metric-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 6px;
-    height: 100%;
+  .product-inputs {
+    flex-direction: column;
   }
-  
-  .metric-card.revenue::before {
-    background-color: #DB1F6E;
-  }
-  
-  .metric-card.cost::before {
-    background-color: #FF90B8;
-  }
-  
-  .metric-card.profit::before {
-    background-color: #000;
-  }
-  .nav-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-  }
-  .salesman-header-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-left: auto;
-  }
-  .nav-right a {
-    margin-left: 16px;
-  }
-  .metric-card h3 {
-    font-size: 16px;
-    font-weight: 500;
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #555;
-  }
-  
-  .metric-value {
-    font-size: 26px;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-  }
-  
-  @media (max-width: 768px) {
-    .filter-panel {
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .filter-group, .date-filter-group {
-      width: 100%;
-    }
-    
-    .date-filters {
-      width: 100%;
-    }
-    
-    .metrics-summary {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  .chart-container canvas {
-    filter: drop-shadow(0 2px 6px rgba(219, 31, 110, 0.05));
-  }
+}
+
+.chart-container canvas {
+  filter: drop-shadow(0 2px 6px rgba(219, 31, 110, 0.05));
+}

@@ -24,7 +24,10 @@ const SalesManagerPage = () => {
   const [selectedProductId, setSelectedProductId] = useState("");
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   const [chartData, setChartData] = useState(null);
-  
+  const [price, setPrice] = useState("");
+  const [updateMessage, setUpdateMessage] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
+
   const colors = {
     primary: "#DB1F6E",
     secondary: "#FF90B8",
@@ -32,6 +35,101 @@ const SalesManagerPage = () => {
     light: "#F5F5F5",
   };
 
+  // Fetch all products from backend
+  const fetchAllProducts = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/products/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) throw new Error("Failed to fetch products");
+  
+      const products = await response.json();
+      console.log("Fetched all products from backend:", products);
+      
+      setAllProducts(products);
+  
+      // Prepare all products for dropdown options
+      const options = products.map((product) => ({
+        id: product.id,
+        name: product.name,
+      }));
+      setProductOptions(options);
+    } catch (err) {
+      console.error("Product fetch error:", err);
+    }
+  };
+
+  const handlePriceUpdate = async () => {
+    if (!selectedProductId || !price) {
+      setUpdateMessage("Please select a product and enter a price.");
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/products/${selectedProductId}/update-price`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          price: parseFloat(price),
+        }),
+      });
+  
+      if (!response.ok) throw new Error("Failed to update price");
+  
+      const message = await response.text();
+      setUpdateMessage("✅ " + message);
+      setPrice("");
+      fetchAllProducts(); // Refresh products after update
+    } catch (err) {
+      console.error("Price update error:", err);
+      setUpdateMessage("❌ Error updating price");
+    }
+  };
+  
+
+  const handleIndividualPriceUpdate = async (id, newPrice) => {
+    if (!newPrice) {
+      alert("Please enter a price.");
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/products/${id}/update-price`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          price: parseFloat(newPrice),
+        }),
+      });
+  
+      if (!response.ok) throw new Error("Failed to update");
+  
+      alert("✅ Price updated successfully");
+      fetchAllProducts();
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error updating price");
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, []);
+  
   useEffect(() => {
     const timer = setTimeout(() => setShowWelcome(true), 1000);
     const hideTimer = setTimeout(() => setShowWelcome(false), 9000);
@@ -56,15 +154,6 @@ const SalesManagerPage = () => {
 
         const data = await response.json();
         setOrders(data);
-
-        const uniqueProducts = Array.from(
-          new Set(data.map((item) => item.productId))
-        ).map((id) => {
-          const product = data.find((item) => item.productId === id);
-          return { id, name: product.productName };
-        });
-
-        setProductOptions(uniqueProducts);
       } catch (err) {
         console.error("Order fetch error:", err);
       }
@@ -253,31 +342,28 @@ const SalesManagerPage = () => {
     },
   };
 
-
-
   return (
     <div className="salesman-page">
-
-<div className="salesman-header">
-  <div className="salesman-back-button2" onClick={() => navigate("/")}>
-    <div className="salesman-arrow-left2" />
-  </div>
-  <h1 className="salesman-title">Sales Manager Page</h1>
-  <div className="salesman-header-right">
-    <button
-      className="salesman-invoice-button"
-      onClick={() => navigate("/sales-invoices")}
-    >
-      Invoices
-    </button>
-    <img
-      src={sephoraLogo}
-      alt="Sephora Logo"
-      className="salesman-logo2"
-      onClick={() => navigate("/")}
-    />
-  </div>
-</div>
+      <div className="salesman-header">
+        <div className="salesman-back-button2" onClick={() => navigate("/")}>
+          <div className="salesman-arrow-left2" />
+        </div>
+        <h1 className="salesman-title">Sales Manager Page</h1>
+        <div className="salesman-header-right">
+          <button
+            className="salesman-invoice-button"
+            onClick={() => navigate("/sales-invoices")}
+          >
+            Invoices
+          </button>
+          <img
+            src={sephoraLogo}
+            alt="Sephora Logo"
+            className="salesman-logo2"
+            onClick={() => navigate("/")}
+          />
+        </div>
+      </div>
 
       {showWelcome && <div className="salesman-welcome">Welcome, Sales Manager 👋</div>}
 
@@ -303,7 +389,7 @@ const SalesManagerPage = () => {
               ))}
             </select>
           </div>
-
+          
           <div className="date-filters">
             <div className="date-filter-group">
               <label>Start Date:</label>
@@ -338,6 +424,74 @@ const SalesManagerPage = () => {
           </div>
         </div>
 
+        <div className="price-update-form">
+          <h3>Set Product Price</h3>
+          <select
+            value={selectedProductId}
+            onChange={(e) => setSelectedProductId(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Select Product</option>
+            {productOptions.map((prod) => (
+              <option key={prod.id} value={prod.id}>
+                {prod.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            placeholder="Enter price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="price-input"
+          />
+          <button onClick={handlePriceUpdate} className="update-button">
+            Set Price
+          </button>
+          {updateMessage && <p className="update-message">{updateMessage}</p>}
+        </div>
+
+        <div className="product-price-update-list">
+          <h2>Product Price Management</h2>
+          <div className="product-tabs">
+            <button className="tab-button active">All Products</button>
+          </div>
+          
+          {allProducts.length > 0 ? (
+            <div className="products-grid">
+              {allProducts.map((product) => (
+                <div key={product.id} className="product-card">
+                  <h4>{product.name}</h4>
+                  <p className="product-price-info">
+                    Current Price: {product.price ? `${product.price}₺` : "Not set"}
+                    {}
+                  </p>
+                  <div className="product-inputs">
+                    <input
+                      type="number"
+                      placeholder="Enter price"
+                      className="price-input"
+                      defaultValue={product.price || ""}
+                      onChange={(e) => {
+                        // Store as temporary value
+                        product.newPrice = e.target.value;
+                      }}
+                    />
+                  </div>
+                  <button
+                    className="update-button"
+                    onClick={() => handleIndividualPriceUpdate(product.id, product.newPrice || product.price)}
+                  >
+                    {product.price ? "Update Price" : "Set Price"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-products-message">No products available.</p>
+          )}
+        </div>
+
         {chartData && (
           <div className="metrics-summary">
             <div className="metric-card revenue">
@@ -355,7 +509,7 @@ const SalesManagerPage = () => {
             <div className="metric-card profit">
               <h3>Total Profit</h3>
               <p className="metric-value">
-               ₺{chartData.datasets[2].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
+                ₺{chartData.datasets[2].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
               </p>
             </div>
           </div>

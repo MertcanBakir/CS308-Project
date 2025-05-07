@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.math.BigDecimal;
 
 import java.util.*;
 
@@ -41,6 +42,7 @@ public class ProductController {
     }
 
 
+
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
@@ -60,6 +62,51 @@ public class ProductController {
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
         return productService.getProductsByCategoryId(categoryId);
+    }
+
+    @PutMapping("/{id}/update-price")
+    public ResponseEntity<String> updateProductPrice(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> payload,
+            @RequestHeader("Authorization") String token) {
+
+        try {
+            String jwt = token.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(jwt);
+
+            User user = userRepo.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (!jwtUtil.validateToken(jwt, email)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            }
+
+            if (user.getRole() != Role.salesManager) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
+            }
+
+            Product product = productService.getProductById(id);
+
+            if (payload.get("price") == null) {
+                return ResponseEntity.badRequest().body("Price is required.");
+            }
+
+            BigDecimal currentPrice = product.getPrice();
+            BigDecimal newPrice = new BigDecimal(payload.get("price").toString());
+            product.setPrice(newPrice);
+
+            // Eğer daha önce fiyat yoksa ve bu ilk defa fiyat ekleniyorsa
+            if (currentPrice == null) {
+                product.setApproved(true);
+            }
+
+            productService.save(product);
+
+            return ResponseEntity.ok("Product price updated successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating product price");
+        }
     }
 
     @PatchMapping("/{id}/update-basic-info")
@@ -122,3 +169,4 @@ public class ProductController {
         }
     }
 }
+

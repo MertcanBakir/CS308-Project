@@ -30,6 +30,8 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
 
     List<Product> findByApprovedTrue();
 
+    List<Product> findByApprovedFalse();
+
 
 
     List<Product> findAllByOrderByViewCountDesc();
@@ -39,3 +41,4 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
     List<Product> findByPopularity();
 
 }
+
