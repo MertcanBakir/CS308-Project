@@ -21,22 +21,22 @@ public class Product {
 
     private String model;
 
-    @Column(unique = true)
+    @Column(unique = true,nullable = false)
     private String serialNumber;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT",nullable = false)
     private String description;
 
     @Column(nullable = false)
     private int quantityInStock;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = true, precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(nullable = false)
-    private boolean warrantyStatus = false;
+    private boolean warrantyStatus;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT",nullable = false)
     private String distributorInfo;
 
     @ManyToMany
@@ -48,7 +48,7 @@ public class Product {
     @JsonIgnoreProperties("products")
     private Set<Category> categories;
 
-    @Column(columnDefinition = "TEXT", nullable = true)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String imageUrl;
 
 
@@ -57,6 +57,10 @@ public class Product {
 
     @Column(nullable = false)
     private int viewCount = 0;
+
+    @Column(nullable = false)
+    private boolean approved = false;
+
 
 
     @Transient

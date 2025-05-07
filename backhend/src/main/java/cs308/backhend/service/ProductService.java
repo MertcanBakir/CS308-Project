@@ -24,6 +24,12 @@ public class ProductService {
         return productRepo.findAll();
     }
 
+    public List<Product> getApprovedProducts() {
+        return productRepo.findByApprovedTrue();
+    }
+
+
+
     public List<Product> searchProducts(String query) {
         return productRepo.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
     }
@@ -31,6 +37,10 @@ public class ProductService {
     public List<Product> getProductsByCategoryId(Long categoryId) {
         return productRepo.findByCategories_Id(categoryId);
     }
+    public Product addProduct(Product product) {
+        return productRepo.save(product);
+    }
+
 
 
     @Transactional

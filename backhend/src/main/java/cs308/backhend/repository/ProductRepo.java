@@ -28,6 +28,9 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
 
     List<Product> findAllByOrderByWishlistCountDesc();
 
+    List<Product> findByApprovedTrue();
+
+
 
     List<Product> findAllByOrderByViewCountDesc();
 
