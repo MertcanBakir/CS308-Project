@@ -57,7 +57,7 @@ public class OrderService {
     @Value("${company.address:Istanbul, Turkey}")
     private String companyAddress;
 
-    public void generateInvoiceAndSendEmail(List<Order> orders, User user) throws Exception {
+    public void generateInvoiceAndSendEmail(List<Order> orders, User user, String statusType) throws Exception {
         if (orders == null || orders.isEmpty()) {
             throw new IllegalArgumentException("Orders list cannot be empty");
         }
@@ -352,81 +352,94 @@ public class OrderService {
         invoice.setOrders(orders);
         invoiceRepository.save(invoice);
 
-        sendInvoiceEmail(user, baos.toByteArray(), invoiceNumber, orders, total);
+        sendInvoiceEmail(user, baos.toByteArray(), invoiceNumber, orders, total, statusType);
     }
 
-    private void sendInvoiceEmail(User user, byte[] pdfBytes, String invoiceNumber, List<Order> orders, BigDecimal totalAmount) throws Exception {
+    private void sendInvoiceEmail(User user, byte[] pdfBytes, String invoiceNumber, List<Order> orders, BigDecimal totalAmount, String statusType) throws Exception {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setTo(user.getEmail());
-        helper.setSubject("Your Order Invoice #" + invoiceNumber + " - " + companyName);
-
         Order firstOrder = orders.get(0);
         Address deliveryAddress = firstOrder.getAddress();
         Card paymentCard = firstOrder.getCard();
 
+        String subject;
+        switch (statusType.toLowerCase()) {
+            case "cancelled" -> subject = "Your Order Has Been Cancelled - Invoice Attached";
+            case "refunded" -> subject = "Your Refund Has Been Processed - Invoice Attached";
+            default -> subject = "Your Order Invoice #" + invoiceNumber + " - " + companyName;
+        }
+        helper.setTo(user.getEmail());
+        helper.setSubject(subject);
+
+        String statusLine;
+        switch (statusType.toLowerCase()) {
+            case "cancelled" -> statusLine = "Your order has been <span class='highlight'>cancelled</span>.";
+            case "refunded" -> statusLine = "Your order has been <span class='highlight'>refunded</span>.";
+            default -> statusLine = "Your order has been <span class='highlight'>processed successfully</span>.";
+        }
+
         String emailTemplate = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; }
-                    .header { background-color: #DE2B8E; color: white; padding: 20px; text-align: center; }
-                    .content { padding: 20px; background-color: #f9f9f9; border: 1px solid #FFC0DA; }
-                    .footer { padding: 15px; text-align: center; font-size: 0.8em; color: #777; }
-                    .highlight { color: #333; font-weight: bold; }
-                    .contact-info { margin-top: 20px; background-color: #fff; padding: 10px; border: 1px solid #FFC0DA; }
-                    .order-summary { background-color: #FFF0F7; padding: 15px; margin: 15px 0; border-left: 3px solid #DE2B8E; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>Thank You For Your Order!</h1>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; }
+                .header { background-color: #DE2B8E; color: white; padding: 20px; text-align: center; }
+                .content { padding: 20px; background-color: #f9f9f9; border: 1px solid #FFC0DA; }
+                .footer { padding: 15px; text-align: center; font-size: 0.8em; color: #777; }
+                .highlight { color: #333; font-weight: bold; }
+                .contact-info { margin-top: 20px; background-color: #fff; padding: 10px; border: 1px solid #FFC0DA; }
+                .order-summary { background-color: #FFF0F7; padding: 15px; margin: 15px 0; border-left: 3px solid #DE2B8E; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Thank You For Your Order!</h1>
+                </div>
+                <div class="content">
+                    <p>Hello <span class="highlight">%s</span>,</p>
+                    
+                    <p>Thank you for shopping with us at <span class="highlight">%s</span>! 🛍️</p>
+                    
+                    <p>%s</p>
+                    <p>Please find your invoice (#%s) attached to this email as a PDF file.</p>
+                    
+                    <div class="order-summary">
+                        <h3>Order Summary:</h3>
+                        <ul>
+                            <li>Number of Items: <span class="highlight">%d</span></li>
+                            <li>Order Date: <span class="highlight">%s</span></li>
+                            <li>Total Amount: <span class="highlight">%.2f ₺</span></li>
+                            <li>Shipping Address: <span class="highlight">%s</span></li>
+                            <li>Payment Method: Credit Card ending in <span class="highlight">%s</span></li>
+                        </ul>
                     </div>
-                    <div class="content">
-                        <p>Hello <span class="highlight">%s</span>,</p>
-                        
-                        <p>Thank you for shopping with us at <span class="highlight">%s</span>! 🛍️</p>
-                        
-                        <p>We're pleased to confirm that your order has been processed successfully. Please find your invoice (#%s) attached to this email as a PDF file.</p>
-                        
-                        <div class="order-summary">
-                            <h3>Order Summary:</h3>
-                            <ul>
-                                <li>Number of Items: <span class="highlight">%d</span></li>
-                                <li>Order Date: <span class="highlight">%s</span></li>
-                                <li>Total Amount: <span class="highlight">%.2f ₺</span></li>
-                                <li>Shipping Address: <span class="highlight">%s</span></li>
-                                <li>Payment Method: Credit Card ending in <span class="highlight">%s</span></li>
-                            </ul>
-                        </div>
-                        
-                        <p>Your items will be shipped to the address provided during checkout.</p>
-                        
-                        <p>If you have any questions about your order, please don't hesitate to contact our customer service team.</p>
-                        
-                        <div class="contact-info">
-                            <h4>Customer Support</h4>
-                            <p>Email: %s<br>
-                            Phone: %s<br>
-                            Hours: Monday-Friday, 9:00 AM to 6:00 PM</p>
-                        </div>
-                    </div>
-                    <div class="footer">
-                        <p>&copy; %d %s. All rights reserved.<br>
-                        %s</p>
+                    
+                    <p>If you have any questions about your order, please don't hesitate to contact our customer service team.</p>
+                    
+                    <div class="contact-info">
+                        <h4>Customer Support</h4>
+                        <p>Email: %s<br>
+                        Phone: %s<br>
+                        Hours: Monday-Friday, 9:00 AM to 6:00 PM</p>
                     </div>
                 </div>
-            </body>
-            </html>
-            """;
+                <div class="footer">
+                    <p>&copy; %d %s. All rights reserved.<br>
+                    %s</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """;
 
         String formattedEmail = String.format(emailTemplate,
                 user.getFullName(),
                 companyName,
+                statusLine,
                 invoiceNumber,
                 orders.size(),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
@@ -446,6 +459,7 @@ public class OrderService {
 
         javaMailSender.send(message);
     }
+
 
     private String generateInvoiceNumber() {
         // Format: Current Year + Month + Random Alphanumeric String

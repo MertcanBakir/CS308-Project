@@ -125,3 +125,24 @@
     gap: 20px; 
     margin-top: 10px;
 }
+
+.cancel-button,
+.refund-button {
+  background-color: #d63384;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cancel-button:hover {
+  background-color: #d63384;
+}
+
+.refund-button:hover {
+  background-color: #d63384;
+}
