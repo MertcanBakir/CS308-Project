@@ -19,13 +19,32 @@ const ProductManagerPage = () => {
   const [orders, setOrders] = useState([]);
   const [comments, setComments] = useState([]);
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [error, setError] = useState("");
   const [showWelcome, setShowWelcome] = useState(false);
   const [activeTab, setActiveTab] = useState("orders");
-
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddCategoryForm, setShowAddCategoryForm] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    quantityInStock: 0,
+    description: "",
+    imageUrl: "",
+    warrantyStatus: false,
+    serialNumber: "",
+    model: "",
+    distributorInfo: "",
+    categoryIds: []
+  });
+  const [newCategory, setNewCategory] = useState({
+    name: ""
+  });
+  const [editingCategory, setEditingCategory] = useState(null);
+  
   const fetchOrders = useCallback(async () => {
     try {
       setIsLoadingOrders(true);
@@ -64,15 +83,33 @@ const ProductManagerPage = () => {
     try {
       setIsLoadingProducts(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/products", {
+      const response = await fetch("http://localhost:8080/products/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setProducts(data);
     } catch (err) {
       setError("Failed to fetch products");
     } finally {
       setIsLoadingProducts(false);
+    }
+  }, []);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      setIsLoadingCategories(true);
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/categories", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Failed to fetch categories");
+      const data = await response.json();
+      setCategories(data);
+    } catch (err) {
+      setError("Failed to fetch categories");
+    } finally {
+      setIsLoadingCategories(false);
     }
   }, []);
 
@@ -131,17 +168,138 @@ const ProductManagerPage = () => {
     }
   };
 
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/products/add", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newProduct),
+      });
+      
+      if (!response.ok) throw new Error("Add failed");
+
+      setShowAddForm(false);
+      setNewProduct({
+        name: "",
+        quantityInStock: 0,
+        description: "",
+        imageUrl: "",
+        warrantyStatus: false,
+        serialNumber: "",
+        model: "",
+        distributorInfo: "",
+        categoryIds: []
+      });
+      fetchProducts();
+    } catch (err) {
+      alert(`Add error: ${err.message}`);
+    }
+  };
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/categories/add", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCategory),
+      });
+      
+      if (!response.ok) throw new Error("Add category failed");
+
+      setShowAddCategoryForm(false);
+      setNewCategory({ name: "" });
+      fetchCategories();
+    } catch (err) {
+      alert(`Add category error: ${err.message}`);
+    }
+  };
+
+  const handleUpdateCategory = async (e) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/categories/${editingCategory.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editingCategory),
+      });
+      
+      if (!response.ok) throw new Error("Update category failed");
+
+      setEditingCategory(null);
+      fetchCategories();
+    } catch (err) {
+      alert(`Update category error: ${err.message}`);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    if (!window.confirm("Bu kategoriyi silmek istediğinizden emin misiniz?")) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/categories/${categoryId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) throw new Error("Delete category failed");
+      
+      const responseData = await response.json();
+      if (responseData.success) {
+        fetchCategories();
+      } else {
+        throw new Error(responseData.message || "Delete category failed");
+      }
+    } catch (err) {
+      alert(`Delete category error: ${err.message}`);
+    }
+  };
+
+  const handleCategoryChange = (categoryId) => {
+    setNewProduct(prev => {
+      const updatedCategoryIds = [...prev.categoryIds];
+      const index = updatedCategoryIds.indexOf(categoryId);
+      
+      if (index === -1) {
+        updatedCategoryIds.push(categoryId);
+      } else {
+        updatedCategoryIds.splice(index, 1);
+      }
+      
+      return { ...prev, categoryIds: updatedCategoryIds };
+    });
+  };
+
   useEffect(() => {
     fetchOrders();
     fetchComments();
     fetchProducts();
+    fetchCategories();
     const showTimer = setTimeout(() => setShowWelcome(true), 1000);
     const hideTimer = setTimeout(() => setShowWelcome(false), 9000);
     return () => {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
-  }, [fetchOrders, fetchComments, fetchProducts]);
+  }, [fetchOrders, fetchComments, fetchProducts, fetchCategories]);
 
   const handleNavigateHome = () => navigate("/");
 
@@ -184,6 +342,12 @@ const ProductManagerPage = () => {
             onClick={() => setActiveTab("products")}
           >
             Products
+          </button>
+          <button
+            className={classNames("productmanager-tab", { active: activeTab === "categories" })}
+            onClick={() => setActiveTab("categories")}
+          >
+            Categories
           </button>
         </div>
 
@@ -259,7 +423,7 @@ const ProductManagerPage = () => {
                       </p>
                     </div>
                     {comment.approved === null && (
-                      <div className="button-group">
+                      <div className="productmanager-button-group">
                         <button
                           className="productmanager-approve-button"
                           onClick={() => updateCommentApproval(comment.id, true)}
@@ -284,7 +448,157 @@ const ProductManagerPage = () => {
         {/* Products Tab */}
         {activeTab === "products" && (
           <section className="productmanager-products-section">
-            <h3 className="productmanager-orders-heading">Edit Products</h3>
+            <h3 className="productmanager-orders-heading">Manage Products</h3>
+
+            <button
+              className="productmanager-approve-button"
+              onClick={() => setShowAddForm(true)}
+              style={{ marginBottom: "16px", maxWidth: "150px" }}
+            >
+              Add Product
+            </button>
+
+            {showAddForm && (
+              <form
+                className="productmanager-add-product-form"
+                onSubmit={handleAddProduct}
+              >
+                <div className="productmanager-form-row">
+                  <div className="productmanager-form-group">
+                    <label>
+                      Name:
+                      <input
+                        required
+                        value={newProduct.name}
+                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                      />
+                    </label>
+                  </div>
+                  <div className="productmanager-form-group">
+                    <label>
+                      Stock:
+                      <input
+                        required
+                        type="number"
+                        value={newProduct.quantityInStock}
+                        onChange={(e) =>
+                          setNewProduct({ ...newProduct, quantityInStock: parseInt(e.target.value) })
+                        }
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="productmanager-form-row">
+                  <div className="productmanager-form-group">
+                    <label>
+                      Serial Number:
+                      <input
+                        required
+                        value={newProduct.serialNumber}
+                        onChange={(e) =>
+                          setNewProduct({ ...newProduct, serialNumber: e.target.value })
+                        }
+                      />
+                    </label>
+                  </div>
+                  <div className="productmanager-form-group">
+                    <label>
+                      Model:
+                      <input
+                        required
+                        value={newProduct.model}
+                        onChange={(e) =>
+                          setNewProduct({ ...newProduct, model: e.target.value })
+                        }
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="productmanager-form-group">
+                  <label>
+                    Description:
+                    <textarea
+                      value={newProduct.description}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, description: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="productmanager-form-group">
+                  <label>
+                    Distributor Info:
+                    <input
+                      value={newProduct.distributorInfo}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, distributorInfo: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="productmanager-form-group">
+                  <label>
+                    Image URL:
+                    <input
+                      type="text"
+                      value={newProduct.imageUrl}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, imageUrl: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="productmanager-form-group">
+                  <label className="productmanager-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={newProduct.warrantyStatus}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, warrantyStatus: e.target.checked })
+                      }
+                    />
+                    Warranty Status
+                  </label>
+                </div>
+
+                <div className="productmanager-form-group">
+                  <label>Categories:</label>
+                  <div className="productmanager-categories-list">
+                    {isLoadingCategories ? (
+                      <p>Loading categories...</p>
+                    ) : (
+                      categories.map((category) => (
+                        <label key={category.id} className="productmanager-category-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={newProduct.categoryIds.includes(category.id)}
+                            onChange={() => handleCategoryChange(category.id)}
+                          />
+                          {category.name}
+                        </label>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className="productmanager-button-group">
+                  <button className="productmanager-approve-button" type="submit">Submit</button>
+                  <button
+                    className="productmanager-reject-button"
+                    type="button"
+                    onClick={() => setShowAddForm(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
             {isLoadingProducts ? (
               <div className="productmanager-loading-indicator">Loading products...</div>
             ) : products.length === 0 ? (
@@ -310,10 +624,22 @@ const ProductManagerPage = () => {
                           onBlur={(e) => product.quantityInStock = parseInt(e.target.value)}
                         />
                       </label>
+                      {product.imageUrl && (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="productmanager-product-image"
+                        />
+                      )}
+                      <p><strong>Serial Number:</strong> {product.serialNumber}</p>
+                      <p><strong>Model:</strong> {product.model}</p>
+                      <p><strong>Status:</strong> {product.approved ? "Approved" : "Pending"}</p>
                     </div>
                     <button
                       className="productmanager-approve-button"
-                      onClick={() => handleProductUpdate(product.id, product.name, product.quantityInStock)}
+                      onClick={() =>
+                        handleProductUpdate(product.id, product.name, product.quantityInStock)
+                      }
                     >
                       Save Changes
                     </button>
@@ -323,6 +649,127 @@ const ProductManagerPage = () => {
             )}
           </section>
         )}
+
+        {/* Categories Tab */}
+        {activeTab === "categories" && (
+          <section className="productmanager-categories-section">
+            <h3 className="productmanager-orders-heading">Manage Categories</h3>
+
+            <button
+              className="productmanager-approve-button"
+              onClick={() => setShowAddCategoryForm(true)}
+              style={{ marginBottom: "16px", maxWidth: "170px" }}
+            >
+              Add New Category
+            </button>
+
+            {showAddCategoryForm && (
+              <form
+                className="productmanager-add-category-form"
+                onSubmit={handleAddCategory}
+              >
+                <div className="productmanager-form-group">
+                  <label>
+                    Category Name:
+                    <input
+                      required
+                      value={newCategory.name}
+                      onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                      placeholder="Enter category name"
+                    />
+                  </label>
+                </div>
+
+                <div className="productmanager-button-group">
+                  <button className="productmanager-approve-button" type="submit">Add Category</button>
+                  <button
+                    className="productmanager-reject-button"
+                    type="button"
+                    onClick={() => setShowAddCategoryForm(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {editingCategory && (
+              <form
+                className="productmanager-edit-category-form"
+                onSubmit={handleUpdateCategory}
+              >
+                <div className="productmanager-form-header">
+                  <h4>Edit Category</h4>
+                  <button 
+                    type="button" 
+                    className="productmanager-close-button"
+                    onClick={() => setEditingCategory(null)}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="productmanager-form-group">
+                  <label>
+                    Category Name:
+                    <input
+                      required
+                      value={editingCategory.name}
+                      onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                    />
+                  </label>
+                </div>
+
+                <div className="productmanager-button-group">
+                  <button className="productmanager-approve-button" type="submit">Update</button>
+                  <button
+                    className="productmanager-reject-button"
+                    type="button"
+                    onClick={() => setEditingCategory(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {isLoadingCategories ? (
+              <div className="productmanager-loading-indicator">Loading categories...</div>
+            ) : categories.length === 0 ? (
+              <p className="productmanager-no-data-message">No categories found.</p>
+            ) : (
+              <div className="productmanager-categories-grid">
+                {categories.map((category) => (
+                  <div className="productmanager-category-card" key={category.id}>
+                    <div className="productmanager-category-info">
+                      <h4>{category.name}</h4>
+                      <p className="productmanager-category-id">ID: {category.id}</p>
+                      {category.products && (
+                        <p className="productmanager-category-count">
+                          {category.products.length} Products
+                        </p>
+                      )}
+                    </div>
+                    <div className="productmanager-category-actions">
+                      <button
+                        className="productmanager-edit-button"
+                        onClick={() => setEditingCategory({...category})}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="productmanager-delete-button"
+                        onClick={() => handleDeleteCategory(category.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
       </main>
     </div>
   );
