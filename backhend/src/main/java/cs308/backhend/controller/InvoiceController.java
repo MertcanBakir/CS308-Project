@@ -72,6 +72,8 @@ public class InvoiceController {
         }
     }
 
+
+
     @GetMapping("/invoices")
     public ResponseEntity<List<InvoiceResponse>> getInvoicesByDateRange(
             @RequestHeader("Authorization") String token,
@@ -110,4 +112,33 @@ public class InvoiceController {
             return ResponseEntity.status(500).body(null);
         }
     }
+    @Transactional(readOnly = true)
+    @GetMapping("/admin/invoices/{orderId}/download")
+    public ResponseEntity<?> adminDownloadInvoice(@PathVariable Long orderId, @RequestHeader("Authorization") String token) {
+        try {
+            if (!jwtUtil.validateToken(token, jwtUtil.extractEmail(token))) {
+                return ResponseEntity.status(401).body("Invalid or expired token!");
+            }
+
+            String role = jwtUtil.extractRole(token);
+            if (!"productManager".equals(role)) {
+                return ResponseEntity.status(403).body("Only product managers can access all invoices.");
+            }
+
+            Invoice invoice = invoiceRepository.findByOrders_Id(orderId);
+            if (invoice == null) {
+                return ResponseEntity.status(404).body("Invoice not found for this order.");
+            }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + invoice.getInvoiceNumber() + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(invoice.getPdfData());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
 }
+

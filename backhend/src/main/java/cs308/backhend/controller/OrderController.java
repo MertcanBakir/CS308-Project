@@ -135,10 +135,11 @@ public class OrderController {
     @GetMapping("/all-order")
     public ResponseEntity<?> getAllOrders(@RequestHeader("Authorization") String token) {
         try {
-            String userEmail = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+            String jwt = token.replace("Bearer ", "");
+            String userEmail = jwtUtil.extractEmail(jwt);
             User user = userRepo.findByEmail(userEmail).orElseThrow();
 
-            if (!jwtUtil.validateToken(token.replace("Bearer ", ""), userEmail)) {
+            if (!jwtUtil.validateToken(jwt, userEmail)) {
                 return ResponseEntity.status(401).body(Map.of("success", false, "message", "Invalid token"));
             }
 
@@ -150,12 +151,25 @@ public class OrderController {
 
             List<Map<String, Object>> responseOrders = orders.stream().map(order -> {
                 Map<String, Object> orderMap = new HashMap<>();
-                orderMap.put("id", order.getId());
+                BigDecimal price = order.getProduct().getPrice();
+
+                orderMap.put("id", order.getId());  // Delivery ID
+                orderMap.put("userId", order.getUser() != null ? order.getUser().getId() : null);  // Customer ID
+
                 orderMap.put("product", Map.of(
                         "id", order.getProduct().getId(),
-                        "name", order.getProduct().getName()
+                        "name", order.getProduct().getName(),
+                        "price", price
                 ));
+
                 orderMap.put("quantity", order.getQuantity());
+                orderMap.put("totalPrice", price != null ? price.multiply(BigDecimal.valueOf(order.getQuantity())) : null);
+
+                orderMap.put("address", Map.of(
+                        "id", order.getAddress().getId(),
+                        "address", order.getAddress().getAddress()
+                ));
+
                 orderMap.put("status", order.getStatus().toString());
                 orderMap.put("createdAt", order.getCreatedAt());
                 return orderMap;
@@ -167,6 +181,8 @@ public class OrderController {
             return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
         }
     }
+
+
 
 
     @PatchMapping("/orders/{orderId}/refund")
