@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface RealWishlistRepo extends JpaRepository<RealWishlist, Long> {
     List<RealWishlist> findByUser(User user);
     Optional<RealWishlist> findByUserAndProduct(User user, Product product);
+    List<RealWishlist> findByProduct(Product product);
 }
