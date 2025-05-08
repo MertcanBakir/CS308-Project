@@ -113,6 +113,32 @@ const ProductManagerPage = () => {
     }
   }, []);
 
+  const downloadInvoice = async (orderId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:8080/admin/invoices/${orderId}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) throw new Error("Failed to download invoice");
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice_${orderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (err) {
+      alert(`Invoice download failed: ${err.message}`);
+    }
+  };
+  
+  
+
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
@@ -361,35 +387,51 @@ const ProductManagerPage = () => {
               <p className="productmanager-no-data-message">No orders found.</p>
             ) : (
               <div className="productmanager-order-cards-wrapper">
-                {orders.map(({ id, product, status }) => (
-                  <div className="productmanager-order-card" key={id}>
-                    <div className="productmanager-order-info">
-                      <p><strong>Order ID:</strong> #{id}</p>
-                      <p><strong>Product:</strong> {product?.name || "N/A"}</p>
-                      <p>
-                        <strong>Status:</strong>{" "}
-                        <span className={`productmanager-status-pill productmanager-${status?.toLowerCase()}`}>
-                          {STATUS_OPTIONS[status] || status}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="productmanager-status-change">
-                      <label htmlFor={`status-${id}`}>Change Status:</label>
-                      <select
-                        id={`status-${id}`}
-                        className="productmanager-status-dropdown"
-                        value={status}
-                        onChange={(e) => handleStatusChange(id, e.target.value)}
-                      >
-                        {Object.keys(STATUS_OPTIONS).map((option) => (
-                          <option key={option} value={option}>
-                            {STATUS_OPTIONS[option]}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                ))}
+               {orders.map((order) => (
+  <div className="productmanager-order-card" key={order.id}>
+    <div className="productmanager-order-info">
+      <p><strong>Delivery ID:</strong> #{order.id}</p>
+      <p><strong>Customer ID:</strong> {order.userId}</p>
+      <p><strong>Product ID:</strong> {order.product?.id}</p>
+      <p><strong>Product:</strong> {order.product?.name}</p>
+      <p><strong>Quantity:</strong> {order.quantity}</p>
+      <p><strong>Total Price:</strong> {order.totalPrice}₺</p>
+      <p><strong>Address:</strong> {order.address?.address}</p>
+      <p>
+        <strong>Status:</strong>{" "}
+        <span className={`productmanager-status-pill productmanager-${order.status.toLowerCase()}`}>
+          {STATUS_OPTIONS[order.status] || order.status}
+        </span>
+      </p>
+    </div>
+
+    <div className="productmanager-status-change">
+      <label htmlFor={`status-${order.id}`}>Change Status:</label>
+      <select
+        id={`status-${order.id}`}
+        className="productmanager-status-dropdown"
+        value={order.status}
+        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+      >
+        {Object.keys(STATUS_OPTIONS).map((option) => (
+          <option key={option} value={option}>
+            {STATUS_OPTIONS[option]}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <button
+      className="productmanager-approve-button"
+      onClick={() => downloadInvoice(order.id)}
+      style={{ marginTop: "10px" }}
+    >
+      Download Invoice
+    </button>
+  </div>
+))}
+
+
               </div>
             )}
           </section>
