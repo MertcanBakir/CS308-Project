@@ -264,4 +264,30 @@ public class OrderController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @Transactional(readOnly = true)
+    @GetMapping("/all-order-SL")
+    public ResponseEntity<?> getAllOrdersSalesManager(@RequestHeader("Authorization") String token) {
+        System.out.println("Extracted role: " + jwtUtil.extractRole(token));
+        if (!Role.valueOf(jwtUtil.extractRole(token)).equals(Role.salesManager)) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "You do not have permission to access this resource");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
+
+        List<Order> orders = orderRepo.findAll();
+        List<Map<String, Object>> responseList = new ArrayList<>();
+
+        for (Order order : orders) {
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("quantity", order.getQuantity());
+            orderMap.put("time", order.getCreatedAt());
+            orderMap.put("productId", order.getProduct().getId());
+            orderMap.put("productName", order.getProduct().getName());
+            orderMap.put("price", order.getProduct().getPrice());
+
+            responseList.add(orderMap);
+        }
+        return ResponseEntity.ok(responseList);
+    }
 }

@@ -238,6 +238,7 @@ const SalesManagerPage = () => {
         },
       ],
     });
+    
   }, [selectedProductId, dateRange, orders]);
 
   const chartOptions = {
@@ -414,15 +415,37 @@ const SalesManagerPage = () => {
 
         <div className="chart-card">
           <div className="chart-container">
-            {chartData ? (
+            {chartData && chartData.labels.length > 0 && chartData.datasets.some(ds => ds.data.some(val => val > 0)) ? (
               <Line data={chartData} options={chartOptions} />
             ) : (
               <div className="no-data-message">
-                <p>Please select filters to view performance data</p>
+                <p>No sales data available for the selected filters.</p>
               </div>
             )}
           </div>
         </div>
+                {chartData && (
+          <div className="metrics-summary">
+            <div className="metric-card revenue">
+              <h3>Total Revenue</h3>
+              <p className="metric-value">
+                ₺{chartData.datasets[0].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="metric-card cost">
+              <h3>Total Cost</h3>
+              <p className="metric-value">
+                ₺{chartData.datasets[1].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="metric-card profit">
+              <h3>Total Profit</h3>
+              <p className="metric-value">
+                ₺{chartData.datasets[2].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="price-update-form">
           <h3>Set Product Price</h3>
@@ -491,29 +514,6 @@ const SalesManagerPage = () => {
             <p className="no-products-message">No products available.</p>
           )}
         </div>
-
-        {chartData && (
-          <div className="metrics-summary">
-            <div className="metric-card revenue">
-              <h3>Total Revenue</h3>
-              <p className="metric-value">
-                ₺{chartData.datasets[0].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
-              </p>
-            </div>
-            <div className="metric-card cost">
-              <h3>Total Cost</h3>
-              <p className="metric-value">
-                ₺{chartData.datasets[1].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
-              </p>
-            </div>
-            <div className="metric-card profit">
-              <h3>Total Profit</h3>
-              <p className="metric-value">
-                ₺{chartData.datasets[2].data.reduce((sum, val) => sum + val, 0).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
