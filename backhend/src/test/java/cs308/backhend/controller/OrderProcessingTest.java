@@ -21,10 +21,23 @@ public class OrderProcessingTest {
     @Autowired private CardRepo cardRepo;
     @Autowired private AddressRepo addressRepo;
 
+    private Product createValidProduct(String name, String serial, BigDecimal price, int stock) {
+        Product p = new Product();
+        p.setName(name);
+        p.setSerialNumber(serial);
+        p.setDescription("Test product description");
+        p.setQuantityInStock(stock);
+        p.setPrice(price);
+        p.setWarrantyStatus(true);
+        p.setDistributorInfo("Test Distributor");
+        p.setImageUrl("http://example.com/image.jpg");
+        p.setApproved(true);
+        return p;
+    }
+
     @Test
     @DisplayName("should save order with PROCESSING status")
     void shouldSaveOrderWithProcessingStatus() {
-
         User user = new User();
         user.setFullName("Test User");
         user.setEmail("user@example.com");
@@ -32,13 +45,8 @@ public class OrderProcessingTest {
         user.setRole(Role.User);
         userRepo.save(user);
 
-
-        Product product = new Product();
-        product.setName("Test Product");
-        product.setPrice(new BigDecimal("29.99"));
-        product.setQuantityInStock(10);
+        Product product = createValidProduct("Test Product", "SN-001", new BigDecimal("29.99"), 10);
         productRepo.save(product);
-
 
         Card card = new Card();
         card.setCardNumber("1234567812345678");
@@ -49,12 +57,10 @@ public class OrderProcessingTest {
         card.setUser(user);
         cardRepo.save(card);
 
-
         Address address = new Address();
         address.setAddress("Test Address");
         address.setUser(user);
         addressRepo.save(address);
-
 
         Order order = new Order();
         order.setUser(user);
@@ -66,16 +72,14 @@ public class OrderProcessingTest {
         order.setCreatedAt(LocalDateTime.now());
         orderRepo.save(order);
 
-
         var found = orderRepo.findById(order.getId());
         assertThat(found).isPresent();
         assertThat(found.get().getStatus()).isEqualTo(OrderStatus.PROCESSING);
     }
 
     @Test
-    @DisplayName("Product manager should update order status to SHIPPED")
-    void productManagerShouldUpdateOrderStatusToShipped() {
-
+    @DisplayName("Product manager should update order status to INTRANSIT")
+    void productManagerShouldUpdateOrderStatusToInTransit() {
         User user = new User();
         user.setFullName("Manager");
         user.setEmail("manager@example.com");
@@ -83,10 +87,7 @@ public class OrderProcessingTest {
         user.setRole(Role.productManager);
         userRepo.save(user);
 
-        Product product = new Product();
-        product.setName("Boxed Item");
-        product.setPrice(new BigDecimal("59.99"));
-        product.setQuantityInStock(5);
+        Product product = createValidProduct("Boxed Item", "SN-002", new BigDecimal("59.99"), 5);
         productRepo.save(product);
 
         Card card = new Card();
@@ -113,11 +114,11 @@ public class OrderProcessingTest {
         order.setCreatedAt(LocalDateTime.now());
         orderRepo.save(order);
 
-        order.setStatus(OrderStatus.SHIPPED);
+        order.setStatus(OrderStatus.INTRANSIT);
         orderRepo.save(order);
 
         var updatedOrder = orderRepo.findById(order.getId());
         assertThat(updatedOrder).isPresent();
-        assertThat(updatedOrder.get().getStatus()).isEqualTo(OrderStatus.SHIPPED);
+        assertThat(updatedOrder.get().getStatus()).isEqualTo(OrderStatus.INTRANSIT);
     }
 }

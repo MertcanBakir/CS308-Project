@@ -13,7 +13,7 @@ const InvoiceListPage = () => {
 
   const fetchInvoices = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/invoices", {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoices`, {
         params: { start, end },
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -25,7 +25,7 @@ const InvoiceListPage = () => {
   };
 
   const fetchInvoiceBlobUrl = async (orderId) => {
-    const response = await fetch(`http://localhost:8080/invoices/${orderId}/download`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/invoices/${orderId}/download`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -35,7 +35,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/products/${id}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/products/${id}`);
         if (!response.ok) throw new Error("Could not get product information!");
         const data = await response.json();
         setProduct(data);
@@ -47,7 +47,7 @@ const ProductDetail = () => {
     };
 
     const fetchCommentsAndPermission = async () => {
-      const commentRes = await fetch(`http://localhost:8080/comments/product/${id}`);
+      const commentRes = await fetch(`${process.env.REACT_APP_API_URL}/comments/product/${id}`);
       if (commentRes.ok) {
         const commentData = await commentRes.json();
         setComments(commentData.comments);
@@ -61,7 +61,7 @@ const ProductDetail = () => {
       }
 
       const token = localStorage.getItem("token");
-      const permissionRes = await fetch(`http://localhost:8080/comments/can-comment/${id}`, {
+      const permissionRes = await fetch(`${process.env.REACT_APP_API_URL}/comments/can-comment/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -86,7 +86,7 @@ const ProductDetail = () => {
   const handleAddToWishlist = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/real-wishlist/add/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/real-wishlist/add/${id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -104,7 +104,7 @@ const ProductDetail = () => {
 
   const submitComment = async () => {
     const token = localStorage.getItem("token");
-    await fetch(`http://localhost:8080/comments/add`, {
+    await fetch(`${process.env.REACT_APP_API_URL}/comments/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

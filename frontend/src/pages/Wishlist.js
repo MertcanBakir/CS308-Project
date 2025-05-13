@@ -11,7 +11,7 @@ const Wishlist = () => {
     useEffect(() => {
         const fetchWishlist = async () => {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:8080/real-wishlist", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/real-wishlist`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -24,7 +24,7 @@ const Wishlist = () => {
 
     const handleRemove = async (productId) => {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:8080/real-wishlist/remove/${productId}`, {
+        await fetch(`${process.env.REACT_APP_API_URL}/real-wishlist/remove/${productId}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

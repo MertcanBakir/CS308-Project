@@ -26,7 +26,7 @@ const TrashButton = ({ productId, onDelete }) => {
     console.log("📤 Request to be sent:", requestBody);
 
     try {
-      const response = await fetch("http://localhost:8080/delete_from_cart", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/delete_from_cart`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

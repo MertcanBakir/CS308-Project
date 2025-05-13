@@ -9,7 +9,7 @@ const Categories = ({ setSelectedCategory }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:8080/categories");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/categories`);
         if (!response.ok) {
           throw new Error("Error loading categories!");
         }

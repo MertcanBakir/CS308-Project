@@ -40,7 +40,7 @@ const Checkout = () => {
     try {
       const wishlistIds = products.map((p) => p.wishlistId);
   
-      const response = await fetch("http://localhost:8080/add-order", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/add-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

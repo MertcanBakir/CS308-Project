@@ -18,23 +18,26 @@ public class ProductRepoDatabaseTest {
     @Autowired
     private ProductRepo productRepo;
 
+    private Product createValidProduct(String name, BigDecimal price, int stock, String serialSuffix) {
+        Product product = new Product();
+        product.setName(name);
+        product.setSerialNumber("SN-" + serialSuffix);
+        product.setDescription("Test description for " + name);
+        product.setQuantityInStock(stock);
+        product.setPrice(price);
+        product.setDistributorInfo("Test Distributor");
+        product.setImageUrl("http://example.com/image_" + serialSuffix + ".jpg");
+        product.setWarrantyStatus(true);
+        product.setApproved(true);
+        return product;
+    }
+
     @Test
     @DisplayName("should sort products by price descending")
     void shouldSortProductsByPriceDescending() {
-        Product p1 = new Product();
-        p1.setName("Cheap");
-        p1.setPrice(new BigDecimal("10.00"));
-        p1.setQuantityInStock(10);
-
-        Product p2 = new Product();
-        p2.setName("Mid");
-        p2.setPrice(new BigDecimal("50.00"));
-        p2.setQuantityInStock(10);
-
-        Product p3 = new Product();
-        p3.setName("Expensive");
-        p3.setPrice(new BigDecimal("100.00"));
-        p3.setQuantityInStock(10);
+        Product p1 = createValidProduct("Cheap", new BigDecimal("10.00"), 10, "001");
+        Product p2 = createValidProduct("Mid", new BigDecimal("50.00"), 10, "002");
+        Product p3 = createValidProduct("Expensive", new BigDecimal("100.00"), 10, "003");
 
         productRepo.saveAll(List.of(p1, p2, p3));
 
@@ -45,5 +48,15 @@ public class ProductRepoDatabaseTest {
 
         assertThat(sorted).extracting(Product::getName)
                 .containsExactly("Expensive", "Mid", "Cheap");
+    }
+
+    @Test
+    @DisplayName("database allows negative stock - this should be handled at service layer")
+    void databaseAllowsNegativeStockUnlessValidatedElsewhere() {
+        Product product = createValidProduct("Faulty Product", new BigDecimal("25.00"), -5, "004");
+        productRepo.save(product);
+
+        Product saved = productRepo.findById(product.getId()).orElseThrow();
+        assertThat(saved.getQuantityInStock()).isEqualTo(-5);
     }
 }

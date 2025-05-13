@@ -15,7 +15,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:8080/profile/full", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/profile/full`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -38,7 +38,7 @@ const Profile = () => {
   }, [token]);
 
   const fetchInvoiceBlobUrl = async (orderId) => {
-    const response = await fetch(`http://localhost:8080/invoices/${orderId}/download`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/invoices/${orderId}/download`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -80,7 +80,7 @@ const Profile = () => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      const res = await fetch(`http://localhost:8080/orders/${orderId}/cancel`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/orders/${orderId}/cancel`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ const Profile = () => {
 
   const handleRefundOrder = async (orderId) => {
     try {
-      const res = await fetch(`http://localhost:8080/orders/${orderId}/refund`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/orders/${orderId}/refund`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -18,7 +18,7 @@ const SearchBar = ({ setProducts }) => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-            `http://localhost:8080/products/search?query=${query}`
+            `${process.env.REACT_APP_API_URL}/products/search?query=${query}`
         );
         if (!response.ok) {
           throw new Error("Search failed!");
@@ -52,7 +52,7 @@ const SearchBar = ({ setProducts }) => {
 
     try {
       const response = await fetch(
-          `http://localhost:8080/products/search?query=${query}`
+          `${process.env.REACT_APP_API_URL}/products/search?query=${query}`
       );
       if (!response.ok) throw new Error("Search failed!");
 

@@ -29,7 +29,7 @@ const CardSection = ({ onSelectCard }) => {
 
   const fetchCards = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8080/cards", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/cards`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(`API error: ${res.status}`);
@@ -122,7 +122,7 @@ const CardSection = ({ onSelectCard }) => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:8080/add-card", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/add-card`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,7 +158,7 @@ const CardSection = ({ onSelectCard }) => {
   const handleDelete = async (id, e) => {
     e.stopPropagation();
     try {
-      const res = await fetch("http://localhost:8080/delete-card", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/delete-card`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

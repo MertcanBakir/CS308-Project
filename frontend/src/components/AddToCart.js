@@ -25,7 +25,7 @@ const AddToCart = ({ product }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/cart", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -68,7 +68,7 @@ const AddToCart = ({ product }) => {
 
       localStorage.setItem("cart", JSON.stringify(localCart));
     } else {
-      const addResponse = await fetch("http://localhost:8080/add_to_cart", {
+      const addResponse = await fetch(`${process.env.REACT_APP_API_URL}/add_to_cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

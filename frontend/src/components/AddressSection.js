@@ -22,7 +22,7 @@ const AddressSection = ({ onSelectAddress }) => {
         throw new Error("Authentication token not found");
       }
 
-      const response = await fetch("http://localhost:8080/addresses", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/addresses`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const AddressSection = ({ onSelectAddress }) => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:8080/add-address", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/add-address`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ const AddressSection = ({ onSelectAddress }) => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:8080/delete-address", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/delete-address`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

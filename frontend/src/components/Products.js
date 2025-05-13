@@ -14,16 +14,16 @@ const Products = ({ selectedCategory, searchResults }) => {
       try {
         setLoading(true);
 
-        let url = "http://localhost:8080/products";
+        let url = `${process.env.REACT_APP_API_URL}/products`;
 
         if (selectedCategory && selectedCategory !== 0) {
-          url = `http://localhost:8080/products/category/${selectedCategory}`;
+          url = `${process.env.REACT_APP_API_URL}/products/category/${selectedCategory}`;
           if (sortOrder === "popular") {
             url += "?sort=popular";
           }
         } else {
           if (sortOrder === "popular") {
-            url = "http://localhost:8080/products/popular";
+            url = `${process.env.REACT_APP_API_URL}/products/popular`;
           }
         }
 

@@ -16,7 +16,7 @@ const Cart = () => {
     const getCartProducts = async () => {
       if (isLoggedIn) {
         try {
-          const response = await fetch("http://localhost:8080/cart", {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/cart`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const Cart = () => {
             if (existingProduct) {
               const totalQuantity = (existingProduct.quantity || 0) + (localProduct.quantity || 0);
 
-              await fetch("http://localhost:8080/change_quantity", {
+              await fetch(`${process.env.REACT_APP_API_URL}/change_quantity`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const Cart = () => {
               });
             } else {
 
-              await fetch("http://localhost:8080/add_to_cart", {
+              await fetch(`${process.env.REACT_APP_API_URL}/add_to_cart`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -70,7 +70,7 @@ const Cart = () => {
 
           localStorage.removeItem("cart");
 
-          const updatedResponse = await fetch("http://localhost:8080/cart", {
+          const updatedResponse = await fetch(`${process.env.REACT_APP_API_URL}/cart`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -119,7 +119,7 @@ const Cart = () => {
 
     if (isLoggedIn) {
       try {
-        await fetch("http://localhost:8080/change_quantity", {
+        await fetch(`${process.env.REACT_APP_API_URL}/change_quantity`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

@@ -39,7 +39,7 @@ const SalesManagerPage = () => {
   const fetchAllProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/products/all", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const SalesManagerPage = () => {
   
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/products/${selectedProductId}/update-price`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/${selectedProductId}/update-price`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -104,7 +104,7 @@ const SalesManagerPage = () => {
   
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/products/${id}/update-price`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/${id}/update-price`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ const SalesManagerPage = () => {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8080/all-order-SL", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/all-order-SL`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
