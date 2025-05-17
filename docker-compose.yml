@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: proj
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 7362170Mm.
+      POSTGRES_PASSWORD: 18roterdam18
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -25,7 +25,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/proj
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 7362170Mm.
+      SPRING_DATASOURCE_PASSWORD: 18roterdam18
       ALLOWED_ORIGINS: http://localhost:3000
 
   frontend:

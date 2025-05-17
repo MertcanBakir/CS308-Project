@@ -15,4 +15,4 @@ COPY src/main/resources/application.properties /config/application.properties
 ENV SPRING_CONFIG_LOCATION=file:/config/application.properties
 
 # wait-for-postgres çalıştıktan sonra app başlasın
-ENTRYPOINT ["/wait-for-postgres.sh", "java", "-jar", "/app.jar"]
+ENTRYPOINT ["/wait-for-postgres.sh", "--", "java", "-jar", "/app.jar"]
