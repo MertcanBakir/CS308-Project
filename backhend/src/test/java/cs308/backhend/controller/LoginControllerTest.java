@@ -134,6 +134,56 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fullname").value("Efecan Kasapoğlu"));
     }
+    @Test
+    @DisplayName("Başarılı login sonrası email alanı doğru dönmeli")
+    void testLoginReturnsCorrectEmail() throws Exception {
+        User user = createMockUser("testuser@mail.com", "encodedpass", Role.User);
+
+        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("rawpass", "encodedpass")).thenReturn(true);
+        when(jwtUtil.generateToken(user.getEmail(), "User")).thenReturn("mocktoken");
+
+        String requestBody = objectMapper.writeValueAsString(createLoginRequest("testuser@mail.com", "rawpass"));
+
+        mockMvc.perform(post(LOGIN_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("testuser@mail.com"));
+    }
+    @Test
+    @DisplayName("Başarılı login sonrası success true olmalı")
+    void testLoginReturnsSuccessTrue() throws Exception {
+        User user = createMockUser("success@test.com", "encodedpass", Role.User);
+
+        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("rawpass", "encodedpass")).thenReturn(true);
+        when(jwtUtil.generateToken(user.getEmail(), "User")).thenReturn("sometoken");
+
+        String requestBody = objectMapper.writeValueAsString(createLoginRequest("success@test.com", "rawpass"));
+
+        mockMvc.perform(post(LOGIN_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+    }
+    @Test
+    @DisplayName("Hatalı şifre ile login sonrası token null olmalı")
+    void testWrongPasswordResultsInNoToken() throws Exception {
+        User user = createMockUser("fail@test.com", "encodedpass", Role.User);
+
+        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("wrongpass", "encodedpass")).thenReturn(false);
+
+        String requestBody = objectMapper.writeValueAsString(createLoginRequest("fail@test.com", "wrongpass"));
+
+        mockMvc.perform(post(LOGIN_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.token").doesNotExist());
+    }
 
     private User createMockUser(String email, String encodedPassword, Role role) {
         User user = new User();
