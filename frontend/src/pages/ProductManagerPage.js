@@ -407,6 +407,7 @@ const ProductManagerPage = () => {
           {activeTab === "orders" && (
               <section className="productmanager-orders-section">
                 {error && <p className="productmanager-error-message">{error}</p>}
+
                 {isLoadingOrders ? (
                     <div className="productmanager-loading-indicator">Loading orders...</div>
                 ) : orders.length === 0 ? (
@@ -426,55 +427,56 @@ const ProductManagerPage = () => {
                               <p>
                                 <strong>Status:</strong>{" "}
                                 <span className={`productmanager-status-pill productmanager-${order.status.toLowerCase()}`}>
-          {STATUS_OPTIONS[order.status] || order.status}
-        </span>
+                  {STATUS_OPTIONS[order.status] || order.status}
+                </span>
                               </p>
                             </div>
 
-                            <div className="productmanager-status-change">
-                              <label htmlFor={`status-${order.id}`}>Change Status:</label>
-                              <select
-                                  id={`status-${order.id}`}
-                                  className="productmanager-status-dropdown"
-                                  value={order.status}
-                                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                              >
-                                {Object.keys(STATUS_OPTIONS).map((option) => (
-                                    <option key={option} value={option}>
-                                      {STATUS_OPTIONS[option]}
-                                    </option>
-                                ))}
-                              </select>
-                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
+                              <div className="productmanager-status-change">
+                                <label htmlFor={`status-${order.id}`}>Change Status:</label>
+                                <select
+                                    id={`status-${order.id}`}
+                                    className="productmanager-status-dropdown"
+                                    value={order.status}
+                                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                >
+                                  {Object.keys(STATUS_OPTIONS).map((option) => (
+                                      <option key={option} value={option}>
+                                        {STATUS_OPTIONS[option]}
+                                      </option>
+                                  ))}
+                                </select>
+                              </div>
 
-                            <button
-                                className="productmanager-approve-button"
-                                onClick={() => downloadInvoice(order.id)}
-                                style={{ marginTop: "10px" }}
-                            >
-                              Download Invoice
-                            </button>
+                              <button
+                                  className="productmanager-approve-button"
+                                  onClick={() => downloadInvoice(order.id)}
+                                  style={{ alignSelf: "flex-start" }}
+                              >
+                                Download Invoice
+                              </button>
+                            </div>
                           </div>
                       ))}
-
-
                     </div>
                 )}
               </section>
           )}
 
+
           {/* Comments Tab */}
-          {activeTab === "comments" && (
-              <section className="productmanager-comments-section">
-                <h3 className="productmanager-orders-heading">Manage Comments</h3>
-                {isLoadingComments ? (
-                    <div className="productmanager-loading-indicator">Loading comments...</div>
-                ) : comments.length === 0 ? (
-                    <p className="productmanager-no-data-message">No comments found.</p>
-                ) : (
-                    <div className="productmanager-order-cards-wrapper">
-                      {comments.map((comment) => (
-                          <div className="productmanager-order-card" key={comment.id}>
+                {activeTab === "comments" && (
+                    <section className="productmanager-comments-section">
+                      <h3 className="productmanager-orders-heading">Manage Comments</h3>
+                      {isLoadingComments ? (
+                          <div className="productmanager-loading-indicator">Loading comments...</div>
+                      ) : comments.length === 0 ? (
+                          <p className="productmanager-no-data-message">No comments found.</p>
+                      ) : (
+                          <div className="productmanager-order-cards-wrapper">
+                            {comments.map((comment) => (
+                                <div className="productmanager-order-card" key={comment.id}>
                             <div className="productmanager-order-info">
                               <p><strong>Ürün:</strong> {comment.productName}</p>
                               <p><strong>Kullanıcı:</strong> {comment.userFullName} (ID: {comment.userId})</p>
