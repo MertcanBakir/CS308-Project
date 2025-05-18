@@ -105,7 +105,6 @@ const SalesManagerPage = () => {
   };
     
 
-  // Fetch all products from backend
   const fetchAllProducts = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -123,7 +122,6 @@ const SalesManagerPage = () => {
       
       setAllProducts(products);
   
-      // Prepare all products for dropdown options
       const options = products.map((product) => ({
         id: product.id,
         name: product.name,
@@ -158,10 +156,10 @@ const SalesManagerPage = () => {
       const message = await response.text();
       setUpdateMessage("✅ " + message);
       setPrice("");
-      fetchAllProducts(); // Refresh products after update
+      fetchAllProducts(); 
     } catch (err) {
       console.error("Price update error:", err);
-      setUpdateMessage("❌ Error updating price");
+      setUpdateMessage("Error updating price");
     }
   };
   
@@ -187,11 +185,11 @@ const SalesManagerPage = () => {
   
       if (!response.ok) throw new Error("Failed to update");
   
-      alert("✅ Price updated successfully");
+      alert("Price updated successfully");
       fetchAllProducts();
     } catch (err) {
       console.error(err);
-      alert("❌ Error updating price");
+      alert("Error updating price");
     }
   };
   
@@ -566,7 +564,6 @@ const SalesManagerPage = () => {
                       className="price-input"
                       defaultValue={product.price || ""}
                       onChange={(e) => {
-                        // Store as temporary value
                         product.newPrice = e.target.value;
                       }}
                     />

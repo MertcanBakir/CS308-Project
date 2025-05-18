@@ -31,7 +31,7 @@
 }
 
 .profile-page .logo2 {
-    height: 40px;  /* Ekran görüntüsüne göre daha uygun bir boyut */
+    height: 40px;  
     cursor: pointer;
 }
 
@@ -100,7 +100,6 @@
     color: white;
 }
 
-/* Sipariş bölümü */
 .profile-page .order-header-horizontal {
     display: flex;
     justify-content: space-between;
@@ -130,7 +129,6 @@
     transform: scale(1.2);
 }
 
-/* Butonlar */
 .invoice-button {
     background-color: #d63384;
     color: white;
@@ -168,7 +166,6 @@
     background-color: #b0276e;
 }
 
-/* Şifre değiştirme bölümü */
 .change-password-container {
     background-color: white;
     border-radius: 16px;
@@ -208,7 +205,6 @@
     border-radius: 3px;
 }
 
-/* Ekran görüntüsüne uygun şekilde inline form ayarı */
 .password-form-inline {
     display: flex;
     flex-wrap: wrap;
@@ -227,7 +223,6 @@
     min-width: 150px;
 }
 
-/* Orijinal form grid düzeni */
 .password-form-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -318,7 +313,6 @@
     border: 1px solid rgba(220, 53, 69, 0.2);
 }
 
-/* Responsive düzenlemeler */
 @media (max-width: 768px) {
     .profile-page {
         padding: 15px;

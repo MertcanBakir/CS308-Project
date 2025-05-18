@@ -478,18 +478,18 @@ const ProductManagerPage = () => {
                             {comments.map((comment) => (
                                 <div className="productmanager-order-card" key={comment.id}>
                             <div className="productmanager-order-info">
-                              <p><strong>Ürün:</strong> {comment.productName}</p>
-                              <p><strong>Kullanıcı:</strong> {comment.userFullName} (ID: {comment.userId})</p>
+                              <p><strong>Product:</strong> {comment.productName}</p>
+                              <p><strong>User:</strong> {comment.userFullName} (ID: {comment.userId})</p>
                               <p><strong>Rating:</strong> {comment.rating} ⭐</p>
-                              <p><strong>İçerik:</strong> {comment.content}</p>
-                              <p><strong>Tarih:</strong> {new Date(comment.createdAt).toLocaleString()}</p>
+                              <p><strong>Content:</strong> {comment.content}</p>
+                              <p><strong>Date:</strong> {new Date(comment.createdAt).toLocaleString()}</p>
                               <p>
-                                <strong>Durum:</strong>{" "}
+                                <strong>Status:</strong>{" "}
                                 {comment.approved === true
-                                    ? "✅ Approved"
+                                    ? "Approved"
                                     : comment.approved === false
-                                        ? "❌ Rejected"
-                                        : "⏳ Pending"}
+                                        ? "Rejected"
+                                        : "Pending"}
                               </p>
                             </div>
                             {comment.approved === null && (
@@ -498,13 +498,13 @@ const ProductManagerPage = () => {
                                       className="productmanager-approve-button"
                                       onClick={() => updateCommentApproval(comment.id, true)}
                                   >
-                                    Onayla
+                                    Approve
                                   </button>
                                   <button
                                       className="productmanager-reject-button"
                                       onClick={() => updateCommentApproval(comment.id, false)}
                                   >
-                                    Reddet
+                                    Reject
                                   </button>
                                 </div>
                             )}

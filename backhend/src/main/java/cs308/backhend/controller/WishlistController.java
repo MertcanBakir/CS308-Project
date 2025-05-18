@@ -20,7 +20,6 @@ public class WishlistController {
     private final UserRepo userRepo;
     private final JwtUtil jwtUtil;
 
-    // Ürünü wishlist'e ekle
     @PostMapping("/add/{productId}")
     public ResponseEntity<?> addToWishlist(@PathVariable Long productId,
                                            @RequestHeader("Authorization") String authHeader) {
@@ -32,7 +31,6 @@ public class WishlistController {
         return ResponseEntity.ok(wishlist);
     }
 
-    // Kullanıcının tüm wishlist öğelerini getir
     @GetMapping
     public ResponseEntity<List<Wishlist>> getWishlist(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
@@ -43,7 +41,6 @@ public class WishlistController {
         return ResponseEntity.ok(wishlist);
     }
 
-    // Ürünü wishlist'ten çıkar
     @DeleteMapping("/remove/{productId}")
     public ResponseEntity<String> removeFromWishlist(@PathVariable Long productId,
                                                      @RequestHeader("Authorization") String authHeader) {

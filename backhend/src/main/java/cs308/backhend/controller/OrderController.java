@@ -154,7 +154,7 @@ public class OrderController {
                 BigDecimal price = order.getProduct().getPrice();
 
                 orderMap.put("id", order.getId());  // Delivery ID
-                orderMap.put("userId", order.getUser() != null ? order.getUser().getId() : null);  // Customer ID
+                orderMap.put("userId", order.getUser() != null ? order.getUser().getId() : null);
 
                 orderMap.put("product", Map.of(
                         "id", order.getProduct().getId(),

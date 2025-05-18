@@ -94,9 +94,6 @@ public class UserController {
             userData.put("passwordInfo", "******** (hidden for security)");
 
 
-
-
-            // Orders
             List<Order> orders = orderRepo.findByUser_Id(user.getId());
             List<Map<String, Object>> ordersList = orders.stream().map(order -> {
                 Map<String, Object> orderMap = new HashMap<>();

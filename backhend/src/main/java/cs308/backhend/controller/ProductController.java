@@ -98,32 +98,24 @@ public class ProductController {
             BigDecimal currentPrice = product.getPrice();
             BigDecimal newPrice = new BigDecimal(payload.get("price").toString());
 
-            // Don't proceed if the price hasn't actually changed
             if (currentPrice != null && currentPrice.compareTo(newPrice) == 0) {
                 return ResponseEntity.ok("Price unchanged - no update needed.");
             }
 
-            // Store the old price before updating
             BigDecimal oldPrice = currentPrice != null ? currentPrice : BigDecimal.ZERO;
 
-            // Update the product price
             product.setPrice(newPrice);
 
-            // If this is the first time setting a price, mark as approved
             if (currentPrice == null) {
                 product.setApproved(true);
             }
 
-            // Save the updated product
             productService.save(product);
 
-            // Notify users who have this product in their wishlist
-            // This is done asynchronously to not block the response
             CompletableFuture.runAsync(() -> {
                 try {
                     wishlistNotificationService.notifyUsersOfPriceChange(product, oldPrice, newPrice);
                 } catch (Exception e) {
-                    // Log the error but don't affect the API response
                     e.printStackTrace();
                 }
             });

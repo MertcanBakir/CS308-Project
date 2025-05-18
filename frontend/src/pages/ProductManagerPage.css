@@ -27,7 +27,6 @@
   --transition-speed: 0.3s;
 }
 
-/* Responsive design */
 @media (max-width: 992px) {
   .productmanager-order-card {
     flex-direction: column;
@@ -42,7 +41,6 @@
   }
 }
 
-/* Status pills styling */
 .productmanager-status-pill {
   display: inline-block;
   padding: 4px 8px;
@@ -78,7 +76,6 @@
   color: var(--white);
 }
 
-/* Dashboard heading */
 .productmanager-dashboard-heading {
   color: var(--text-primary);
   font-size: 24px;
@@ -498,7 +495,6 @@
   border: 1px solid var(--gray-medium);
 }
 
-/* Categories Tab Specific Styles */
 .productmanager-categories-section {
   margin-top: var(--spacing-xl);
 }
@@ -652,7 +648,6 @@
   transform: translateY(-2px);
 }
 
-/* Responsive styles for categories grid */
 @media (max-width: 768px) {
   .productmanager-categories-grid {
     grid-template-columns: 1fr;
@@ -663,7 +658,6 @@
   }
 }
 
-/* Category form input styling */
 .productmanager-add-category-form .productmanager-form-group input,
 .productmanager-edit-category-form .productmanager-form-group input {
   width: 100%;

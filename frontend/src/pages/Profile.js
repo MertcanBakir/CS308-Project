@@ -177,7 +177,7 @@ const Profile = () => {
             orders.map((order, index) => {
               const orderDate = new Date(order.createdAt);
               const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-              console.log("Refund status:", order.refundStatus); // debug
+              console.log("Refund status:", order.refundStatus); 
 
               return (
                 <div key={index} className="order-item">

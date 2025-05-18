@@ -73,7 +73,6 @@ public class OrderService {
         PdfWriter.getInstance(document, baos);
         document.open();
 
-        // Add styling - Updated with Sephora colors
         Font titleFont = new Font(Font.HELVETICA, 22, Font.BOLD, sephoraPink);
         Font headingFont = new Font(Font.HELVETICA, 14, Font.BOLD, sephoraPink);
         Font normalFont = new Font(Font.HELVETICA, 10, Font.NORMAL);
@@ -209,16 +208,13 @@ public class OrderService {
 
         PdfPCell shippingInfo = new PdfPCell(new Phrase(deliveryAddress.getAddress(), normalFont));
         shippingInfo.setBorder(Rectangle.NO_BORDER);
-        shippingInfo.setVerticalAlignment(Element.ALIGN_MIDDLE); // 🔧 Bu olmazsa aşağı kayıyor
-        shippingInfo.setFixedHeight(20); // 🔧 İkonla aynı hizaya gelmesi için
+        shippingInfo.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        shippingInfo.setFixedHeight(20);
         shippingTable.addCell(shippingInfo);
 
         document.add(shippingTable);
 
 
-
-
-        // Order Details Table
         document.add(new Paragraph("ORDER DETAILS:", headingFont));
         document.add(new Paragraph(" ", smallFont));
 
@@ -230,7 +226,6 @@ public class OrderService {
             throw new RuntimeException("Error setting table widths", e);
         }
 
-        // Table headers with updated Sephora pink color
         PdfPCell headerCell = new PdfPCell();
         headerCell.setBackgroundColor(sephoraPink);
         headerCell.setPadding(5);
@@ -462,13 +457,10 @@ public class OrderService {
 
 
     private String generateInvoiceNumber() {
-        // Format: Current Year + Month + Random Alphanumeric String
         LocalDateTime now = LocalDateTime.now();
         String yearMonth = now.format(DateTimeFormatter.ofPattern("yyMM"));
         String randomPart = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         return "INV" + yearMonth + "-" + randomPart;
     }
-
-
 
 }

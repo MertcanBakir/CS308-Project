@@ -45,23 +45,19 @@ public class WishlistNotificationService {
      * @param newPrice The new price after update
      */
     public void notifyUsersOfPriceChange(Product product, BigDecimal oldPrice, BigDecimal newPrice) {
-        // Find all wishlist items containing this product
         List<RealWishlist> wishlistItems = realWishlistRepo.findByProduct(product);
 
         if (wishlistItems.isEmpty()) {
-            return; // No users have this product in their wishlist
+            return;
         }
 
-        // Calculate price change percentage for better user communication
         BigDecimal priceChangePercentage = calculatePriceChangePercentage(oldPrice, newPrice);
         boolean isPriceIncrease = newPrice.compareTo(oldPrice) > 0;
 
-        // Send email notification to each user who has this product in their wishlist
         for (RealWishlist item : wishlistItems) {
             try {
                 sendPriceChangeEmail(item.getUser(), product, oldPrice, newPrice, priceChangePercentage, isPriceIncrease);
             } catch (Exception e) {
-                // Log the error but continue with other notifications
                 System.err.println("Failed to send price change notification to user: " + item.getUser().getEmail());
                 e.printStackTrace();
             }
@@ -73,7 +69,7 @@ public class WishlistNotificationService {
      */
     private BigDecimal calculatePriceChangePercentage(BigDecimal oldPrice, BigDecimal newPrice) {
         if (oldPrice.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.valueOf(100); // If old price was 0, consider it 100% change
+            return BigDecimal.valueOf(100);
         }
 
         return newPrice.subtract(oldPrice)
@@ -94,11 +90,9 @@ public class WishlistNotificationService {
         String changeColor = isPriceIncrease ? "#ff4c4c" : "#4caf50";
         String arrowIcon = isPriceIncrease ? "↑" : "↓";
 
-        // Set email recipient and subject
         helper.setTo(user.getEmail());
         helper.setSubject("Price Change Alert for " + product.getName() + " - " + companyName);
 
-        // Create HTML email template with professional design similar to OrderService
         String emailTemplate = """
         <!DOCTYPE html>
         <html>
@@ -171,13 +165,11 @@ public class WishlistNotificationService {
         </html>
         """;
 
-        // Format the product image placeholder or actual image if available
         String productImageHtml = "📸";
         if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
             productImageHtml = "<img src='" + product.getImageUrl() + "' alt='" + product.getName() + "' style='max-width: 100px; max-height: 100px;'>";
         }
 
-        // Suggestion based on price change
         String suggestion = isPriceIncrease ? "consider alternatives to" : "purchase";
 
         String formattedEmail = String.format(emailTemplate,
@@ -201,10 +193,8 @@ public class WishlistNotificationService {
                 companyName,
                 companyAddress);
 
-        // Set the HTML content
         helper.setText(formattedEmail, true);
 
-        // Send the email
         javaMailSender.send(message);
     }
 }

@@ -20,7 +20,6 @@ public class RealWishlistController {
     private final JwtUtil jwtUtil;
     private final UserRepo userRepo;
 
-    // GET /real-wishlist → Kullanıcının tüm wishlist ürünleri
     @GetMapping
     public ResponseEntity<List<RealWishlist>> getRealWishlist(
             @RequestHeader("Authorization") String authHeader) {
@@ -33,7 +32,6 @@ public class RealWishlistController {
         return ResponseEntity.ok(list);
     }
 
-    // POST /real-wishlist/add/{productId}
     @PostMapping("/add/{productId}")
     public ResponseEntity<?> addToRealWishlist(
             @PathVariable Long productId,
@@ -47,7 +45,6 @@ public class RealWishlistController {
         return ResponseEntity.ok(added);
     }
 
-    // DELETE /real-wishlist/remove/{productId}
     @DeleteMapping("/remove/{productId}")
     public ResponseEntity<?> removeFromRealWishlist(
             @PathVariable Long productId,

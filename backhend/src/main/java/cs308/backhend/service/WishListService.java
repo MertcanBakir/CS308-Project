@@ -39,7 +39,6 @@ public class WishListService {
             throw new RuntimeException("Product is already in the wishlist");
         }
 
-        // Ürünün popülerlik sayacını artır
         product.incrementWishlistCount();
         productRepo.save(product);
 

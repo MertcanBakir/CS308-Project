@@ -67,7 +67,6 @@ public class Card {
         return "Card{" +
                 "cardNumber='" + getCardNumber() + '\'' +
                 ", cardName='" + Name + '\'' +
-                // user nesnesinin sadece id'sini veya null kontrolü
                 ", userId=" + (user != null ? user.getId() : "null") +
                 '}';
     }

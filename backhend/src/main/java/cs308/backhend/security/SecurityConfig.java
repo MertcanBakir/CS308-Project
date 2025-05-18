@@ -53,8 +53,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of(
-            "http://localhost:3000",     // Yerel geliştirme için
-            "http://cs308-frontend:3000" // Docker container içi iletişim için
+            "http://localhost:3000",
+            "http://cs308-frontend:3000"
         ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
