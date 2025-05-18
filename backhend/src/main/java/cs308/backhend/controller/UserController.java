@@ -108,6 +108,8 @@ public class UserController {
                 orderMap.put("status", order.getStatus().toString());
                 orderMap.put("createdAt", order.getCreatedAt());
                 orderMap.put("productImageUrl", order.getProduct().getImageUrl());
+                orderMap.put("refundRequestStatus", order.getRefundRequestStatus() != null ? order.getRefundRequestStatus().toString() : "NONE");
+
 
                 Invoice invoice = order.getInvoice();
                 orderMap.put("invoiceId", invoice != null ? invoice.getId() : null);

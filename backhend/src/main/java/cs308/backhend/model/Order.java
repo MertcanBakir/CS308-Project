@@ -45,4 +45,8 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
+
+    @Enumerated(EnumType.STRING)
+    private RefundStatus refundRequestStatus;
+
 }

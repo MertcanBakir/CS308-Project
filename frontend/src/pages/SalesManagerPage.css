@@ -462,3 +462,92 @@
 .chart-container canvas {
   filter: drop-shadow(0 2px 6px rgba(219, 31, 110, 0.05));
 }
+
+.refund-request-list {
+  padding: 24px;
+  background-color: #fff0f5;
+  border-radius: 16px;
+  margin-top: 30px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.refund-request-list h2 {
+  color: #333;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.refund-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding-left: 0;
+  max-width: 1200px;
+  margin: 0 auto; 
+}
+
+
+.refund-card {
+  background-color: #ffe4ec;
+  border: 1px solid #f8c8dc;
+  border-radius: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: left;
+  font-size: 14px;
+  color: #444;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+
+.refund-card p {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+.approve-button,
+.reject-button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+}
+
+.approve-button {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.reject-button {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.approve-button:hover {
+  background-color: #c3e6cb;
+}
+
+.reject-button:hover {
+  background-color: #f5c6cb;
+}
+
+@media (max-width: 768px) {
+  .refund-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .refund-request-list {
+    padding: 16px;
+  }
+}

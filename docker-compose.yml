@@ -6,9 +6,9 @@ services:
     container_name: cs308-db
     restart: always
     environment:
-      POSTGRES_DB: proj
+      POSTGRES_DB: 
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 9396
+      POSTGRES_PASSWORD: 70730306
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -23,9 +23,9 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/proj
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 9396
+      SPRING_DATASOURCE_PASSWORD: 70730306
       ALLOWED_ORIGINS: http://localhost:3000
 
   frontend:

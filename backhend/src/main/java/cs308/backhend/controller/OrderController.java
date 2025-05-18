@@ -183,10 +183,8 @@ public class OrderController {
     }
 
 
-
-
-    @PatchMapping("/orders/{orderId}/refund")
-    public ResponseEntity<?> refundOrder(@PathVariable Long orderId, @RequestHeader("Authorization") String token) {
+    @PatchMapping("/orders/{orderId}/request-refund")
+    public ResponseEntity<?> requestRefund(@PathVariable Long orderId, @RequestHeader("Authorization") String token) {
         try {
             String email = jwtUtil.extractEmail(token.replace("Bearer ", ""));
             User user = userRepo.findByEmail(email).orElseThrow();
@@ -201,21 +199,115 @@ public class OrderController {
                 return ResponseEntity.status(400).body(Map.of("message", "Refund not allowed."));
             }
 
-            order.setStatus(OrderStatus.REFUNDED);
+            order.setRefundRequestStatus(RefundStatus.PENDING);
             orderRepo.save(order);
+            return ResponseEntity.ok(Map.of("message", "Refund request submitted."));
 
-            Product product = order.getProduct();
-            product.setQuantityInStock(product.getQuantityInStock() + order.getQuantity());
-            productRepo.save(product);
-
-            orderService.generateInvoiceAndSendEmail(List.of(order), user, "refunded");
-
-            BigDecimal refundAmount = product.getPrice().multiply(BigDecimal.valueOf(order.getQuantity()));
-            return ResponseEntity.ok(Map.of("message", "Refunded", "amount", refundAmount));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
+
+    @PatchMapping("/orders/{orderId}/review-refund")
+    public ResponseEntity<?> reviewRefund(@PathVariable Long orderId,
+                                          @RequestParam("approved") boolean approved,
+                                          @RequestHeader("Authorization") String token) {
+        try {
+            String email = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+            User user = userRepo.findByEmail(email).orElseThrow();
+
+            if (user.getRole() != Role.salesManager) {
+                return ResponseEntity.status(403).body(Map.of("message", "Only sales managers can approve refunds."));
+            }
+
+            Order order = orderRepo.findById(orderId).orElseThrow();
+            if (order.getRefundRequestStatus() != RefundStatus.PENDING) {
+                return ResponseEntity.status(400).body(Map.of("message", "No pending refund request."));
+            }
+
+            if (approved) {
+                order.setStatus(OrderStatus.REFUNDED);
+                order.setRefundRequestStatus(RefundStatus.APPROVED);
+
+                Product product = order.getProduct();
+                product.setQuantityInStock(product.getQuantityInStock() + order.getQuantity());
+                productRepo.save(product);
+
+                orderRepo.save(order);
+                orderService.generateInvoiceAndSendEmail(List.of(order), order.getUser(), "refunded");
+
+                return ResponseEntity.ok(Map.of("message", "Refund approved and processed."));
+            } else {
+                order.setRefundRequestStatus(RefundStatus.REJECTED);
+                orderRepo.save(order);
+                return ResponseEntity.ok(Map.of("message", "Refund request rejected."));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+    @GetMapping("/refund-requests")
+    public ResponseEntity<?> getPendingRefunds(@RequestHeader("Authorization") String token) {
+        try {
+            String email = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+            User user = userRepo.findByEmail(email).orElseThrow();
+
+            if (user.getRole() != Role.salesManager) {
+                return ResponseEntity.status(403).body(Map.of("message", "Unauthorized"));
+            }
+
+            List<Order> pendingRefunds = orderRepo.findAll().stream()
+                    .filter(order -> order.getRefundRequestStatus() == RefundStatus.PENDING)
+                    .toList();
+
+            List<Map<String, Object>> responseList = pendingRefunds.stream().map(order -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("orderId", order.getId());
+                map.put("productName", order.getProduct().getName());
+                map.put("userEmail", order.getUser().getEmail());
+                map.put("quantity", order.getQuantity());
+                map.put("orderDate", order.getCreatedAt());
+                map.put("status", order.getStatus().toString());
+                return map;
+            }).toList();
+
+            return ResponseEntity.ok(responseList);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+    @GetMapping("/refund-history")
+    public ResponseEntity<?> getAllRefunds(@RequestHeader("Authorization") String token) {
+        try {
+            String email = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+            User user = userRepo.findByEmail(email).orElseThrow();
+
+            if (user.getRole() != Role.salesManager) {
+                return ResponseEntity.status(403).body(Map.of("message", "Unauthorized"));
+            }
+
+            List<Order> allRefunds = orderRepo.findAll().stream()
+                    .filter(order -> order.getRefundRequestStatus() != null)
+                    .toList();
+
+            List<Map<String, Object>> responseList = allRefunds.stream().map(order -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("orderId", order.getId());
+                map.put("productName", order.getProduct().getName());
+                map.put("userEmail", order.getUser().getEmail());
+                map.put("quantity", order.getQuantity());
+                map.put("orderDate", order.getCreatedAt());
+                map.put("status", order.getStatus().toString());
+                map.put("refundStatus", order.getRefundRequestStatus().toString());
+                return map;
+            }).toList();
+
+            return ResponseEntity.ok(responseList);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatus(
             @PathVariable Long orderId,

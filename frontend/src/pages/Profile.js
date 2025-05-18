@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
 import "./Profile.css";
 
-
 const Profile = () => {
   const navigate = useNavigate();
   const { logout, token } = useAuth();
@@ -20,41 +19,29 @@ const Profile = () => {
   const [passwordMessage, setPasswordMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
-
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/profile/full`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!response.ok) throw new Error("Failed to fetch profile data");
 
         const data = await response.json();
-        console.log("PROFILE DATA:", data);
-
         setProfile({
           id: data.id,
           passwordInfo: data.passwordInfo,
           email: data.email,
           fullName: data.fullName,
         });
-        
         setAddresses(data.addresses || []);
         setCards(data.cards || []);
         setOrders(data.orders || []);
-        console.log("Gelen profil verisi:", data);
-
       } catch (err) {
         console.error("Error fetching full profile:", err);
       }
     };
-    
-
-
     fetchProfile();
   }, [token]);
 
@@ -95,57 +82,77 @@ const Profile = () => {
     }
   };
 
-  // 🔽 ... diğer fonksiyonlar (handleInvoice, cancel, refund) aynı kalıyor
+  const handleRefundRequest = async (orderId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/orders/${orderId}/request-refund`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      let message = "Refund request failed.";
+      try {
+        const data = await response.json();
+        message = data.message || message;
+      } catch (jsonErr) {
+        console.warn("Non-JSON response received.");
+      }
+
+      if (response.ok) {
+        alert("Refund request submitted.");
+        window.location.reload();
+      } else {
+        alert(`${message}`);
+      }
+
+    } catch (error) {
+      console.error("Refund request error:", error);
+      alert("An error occurred while requesting a refund.");
+    }
+  };
+
+  const handleCancel = async (orderId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/orders/${orderId}/cancel`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Order cancelled.");
+        window.location.reload();
+      } else {
+        alert(data.message || "Failed to cancel order.");
+      }
+    } catch (err) {
+      console.error("Cancel error:", err);
+      alert("An error occurred while cancelling the order.");
+    }
+  };
 
   return (
     <div className="profile-page">
-     <div className="header-bar">
-  <button onClick={() => navigate(-1)} title="Go Back" className="back-button2">
-    <i className="arrow-left2"></i>
-  </button>
-  <img src={sephoraLogo} alt="Sephora Logo" className="logo2" onClick={() => navigate("/")} />
-</div>
-
-
+      <div className="header-bar">
+        <button onClick={() => navigate(-1)} title="Go Back" className="back-button2">
+          <i className="arrow-left2"></i>
+        </button>
+        <img src={sephoraLogo} alt="Sephora Logo" className="logo2" onClick={() => navigate("/")} />
+      </div>
 
       <div className="profile-content">
         <h2>Change Password</h2>
-        {/* Password change section - Moved to the top based on screenshot */}
         <div className="change-password-container">
           <form onSubmit={handlePasswordChange} className="password-form-inline">
-            <input
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              placeholder="Old Password"
-              required
-            />
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New Password"
-              required
-            />
-            <input
-  type="password"
-  value={confirmPassword}
-  onChange={(e) => setConfirmPassword(e.target.value)}
-  placeholder="Confirm New Password"
-  required
-/>
-            <button type="submit" className="change-password-btn">
-              Change Password
-            </button>
-
-            {passwordMessage && (
-              <div className={`password-message ${messageType}`}>
-                {passwordMessage}
-              </div>
-            )}
+            <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Old Password" required />
+            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New Password" required />
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm New Password" required />
+            <button type="submit" className="change-password-btn">Change Password</button>
+            {passwordMessage && <div className={`password-message ${messageType}`}>{passwordMessage}</div>}
           </form>
         </div>
-        
+
         <h2>Profile</h2>
         <div className="profile-info">
           <p><strong>Name Surname:</strong> {profile.fullName || "Not set"}</p>
@@ -156,39 +163,68 @@ const Profile = () => {
 
         <h3>Addresses:</h3>
         <div className="addresses-section">
-          {addresses.length > 0 ? 
-            addresses.map((addr, i) => <p key={i}>{addr}</p>) : 
-            <p>No addresses found.</p>
-          }
+          {addresses.length > 0 ? addresses.map((addr, i) => <p key={i}>{addr}</p>) : <p>No addresses found.</p>}
         </div>
 
         <h3>Cards:</h3>
         <div className="cards-section">
-          {cards.length > 0 ? 
-            cards.map((c, i) => <p key={i}>**** **** **** {c}</p>) : 
-            <p>No cards found.</p>
-          }
+          {cards.length > 0 ? cards.map((c, i) => <p key={i}>**** **** **** {c}</p>) : <p>No cards found.</p>}
         </div>
 
-        {/* Past Orders */}
         <h3>Past Orders:</h3>
         <div className="orders-section">
           {orders.length > 0 ? (
-            orders.map((order, index) => (
-              <div key={index} className="order-item">
-                <div className="order-details">
-                <p><strong>Transaction Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-<p><strong>Order Status:</strong> {order.status}</p>
-<p><strong>Product:</strong> {order.productName}</p>
+            orders.map((order, index) => {
+              const orderDate = new Date(order.createdAt);
+              const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+              console.log("Refund status:", order.refundStatus); // debug
 
-                </div>
-                {order.productImageUrl && (
-                  <div className="order-image">
-                    <img src={order.productImageUrl} alt={order.productName} />
+              return (
+                <div key={index} className="order-item">
+                  <div className="order-details">
+                    <p><strong>Transaction Date:</strong> {orderDate.toLocaleString()}</p>
+                    <p><strong>Order Status:</strong> {order.status}</p>
+                    <p><strong>Product:</strong> {order.productName}</p>
+
+                    {order.status === "PROCESSING" && (
+                      <button onClick={() => handleCancel(order.id)} className="cancel-button">
+                        Cancel Order
+                      </button>
+                    )}
+
+{order.status === "DELIVERED" &&
+  new Date(order.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) && (
+    <>
+      {(!order.refundRequestStatus || order.refundRequestStatus === "NONE") && (
+        <button
+          onClick={() => handleRefundRequest(order.id)}
+          className="refund-button"
+        >
+          Request Refund
+        </button>
+      )}
+      {order.refundRequestStatus === "PENDING" && (
+        <p className="refund-pending">Refund request pending.</p>
+      )}
+      {order.refundRequestStatus === "REJECTED" && (
+        <p className="refund-rejected">Refund request was not approved.</p>
+      )}
+      {order.refundRequestStatus === "APPROVED" && (
+        <p className="refund-approved">Refund approved.</p>
+      )}
+    </>
+)}
+
+
                   </div>
-                )}
-              </div>
-            ))
+                  {order.productImageUrl && (
+                    <div className="order-image">
+                      <img src={order.productImageUrl} alt={order.productName} />
+                    </div>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p>No orders found.</p>
           )}

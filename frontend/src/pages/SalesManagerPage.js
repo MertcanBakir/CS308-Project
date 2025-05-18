@@ -27,6 +27,10 @@ const SalesManagerPage = () => {
   const [price, setPrice] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
   const [allProducts, setAllProducts] = useState([]);
+  const [pendingRefunds, setPendingRefunds] = useState([]);
+  const [refundMessage, setRefundMessage] = useState("");
+  const [refundHistory, setRefundHistory] = useState([]);
+
 
   const colors = {
     primary: "#DB1F6E",
@@ -34,6 +38,72 @@ const SalesManagerPage = () => {
     accent: "#000000",
     light: "#F5F5F5",
   };
+  useEffect(() => {
+    const fetchRefundRequests = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/refund-requests`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (!response.ok) throw new Error("Failed to fetch refund requests");
+  
+        const data = await response.json();
+        setPendingRefunds(data);
+      } catch (err) {
+        console.error("Refund fetch error:", err);
+      }
+    };
+  
+    fetchRefundRequests();
+  }, []);
+
+  useEffect(() => {
+    const fetchRefundHistory = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/refund-history`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (!response.ok) throw new Error("Failed to fetch refund history");
+  
+        const data = await response.json();
+        setRefundHistory(data);
+      } catch (err) {
+        console.error("Refund history fetch error:", err);
+      }
+    };
+  
+    fetchRefundHistory();
+  }, []);
+  
+  const handleRefundDecision = async (orderId, approved) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/orders/${orderId}/review-refund?approved=${approved}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) throw new Error(result.message || "Error reviewing refund");
+  
+      setRefundMessage(result.message);
+      setPendingRefunds(pendingRefunds.filter((order) => order.orderId !== orderId));
+    } catch (err) {
+      console.error("Refund review error:", err);
+      setRefundMessage("Error processing refund decision.");
+    }
+  };
+    
 
   // Fetch all products from backend
   const fetchAllProducts = async () => {
@@ -515,6 +585,53 @@ const SalesManagerPage = () => {
           )}
         </div>
       </div>
+      <div className="refund-request-list">
+  <h2>Refund Requests</h2>
+  {refundMessage && <p className="update-message">{refundMessage}</p>}
+
+  <div className="refund-history-list">
+  {refundHistory.length > 0 ? (
+    <ul>
+      {refundHistory
+        .filter(order => order.refundStatus !== "PENDING")
+        .map((order) => (
+          <li key={order.orderId} className="refund-history-card">
+            <p><strong>Order ID:</strong> {order.orderId}</p>
+            <p><strong>Product:</strong> {order.productName}</p>
+            <p><strong>User:</strong> {order.userEmail}</p>
+            <p><strong>Quantity:</strong> {order.quantity}</p>
+            <p><strong>Order Date:</strong> {new Date(order.orderDate).toLocaleString()}</p>
+            <p><strong>Status:</strong> {order.status}</p>
+            <p><strong>Refund Status:</strong> {order.refundStatus}</p>
+          </li>
+        ))}
+    </ul>
+  ) : (
+    <p>No refund history available.</p>
+  )}
+</div>
+
+
+  {pendingRefunds.length > 0 ? (
+    <ul>
+      {pendingRefunds.map((order) => (
+        <li key={order.orderId} className="refund-request-card">
+          <p><strong>Order ID:</strong> {order.orderId}</p>
+          <p><strong>Product:</strong> {order.productName}</p>
+          <p><strong>User:</strong> {order.userEmail}</p>
+          <p><strong>Quantity:</strong> {order.quantity}</p>
+          <p><strong>Order Date:</strong> {new Date(order.orderDate).toLocaleString()}</p>
+          <button onClick={() => handleRefundDecision(order.orderId, true)} className="approve-button">Approve</button>
+          <button onClick={() => handleRefundDecision(order.orderId, false)} className="reject-button">Reject</button>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No pending refund requests.</p>
+  )}
+  <div style={{ height: "60px" }}></div>
+</div>
+
     </div>
   );
 };

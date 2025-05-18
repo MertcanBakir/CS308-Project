@@ -372,3 +372,17 @@
         width: 100%;
     }
 }
+.profile-page .order-item {
+    margin-bottom: 24px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .profile-page .order-item:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
+  
