@@ -2,17 +2,19 @@ package cs308.backhend;
 
 import cs308.backhend.model.*;
 import cs308.backhend.repository.*;
+import cs308.backhend.service.OrderService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
+@SpringBootTest
 public class OrderCancelRefundTest {
 
     @Autowired private ProductRepo productRepo;
@@ -20,6 +22,7 @@ public class OrderCancelRefundTest {
     @Autowired private OrderRepo orderRepo;
     @Autowired private CardRepo cardRepo;
     @Autowired private AddressRepo addressRepo;
+    @Autowired private OrderService orderService;
 
     private User createUser(String email) {
         User user = new User();
@@ -33,7 +36,7 @@ public class OrderCancelRefundTest {
     private Product createProduct(int stock) {
         Product p = new Product();
         p.setName("Test Product");
-        p.setSerialNumber("SN-001");
+        p.setSerialNumber("SN-" + System.nanoTime());
         p.setDescription("Test product");
         p.setQuantityInStock(stock);
         p.setPrice(new BigDecimal("100"));
@@ -81,8 +84,7 @@ public class OrderCancelRefundTest {
         Product product = createProduct(5);
         Order order = createOrder(user, product, OrderStatus.PROCESSING, LocalDateTime.now());
 
-        order.setStatus(OrderStatus.CANCELLED);
-        orderRepo.save(order);
+        orderService.cancelOrder(order);
 
         assertThat(orderRepo.findById(order.getId()).get().getStatus()).isEqualTo(OrderStatus.CANCELLED);
     }
@@ -94,10 +96,9 @@ public class OrderCancelRefundTest {
         Product product = createProduct(5);
         Order order = createOrder(user, product, OrderStatus.DELIVERED, LocalDateTime.now());
 
-        order.setStatus(OrderStatus.CANCELLED);
-        orderRepo.save(order);
-
-        assertThat(orderRepo.findById(order.getId()).get().getStatus()).isNotEqualTo(OrderStatus.CANCELLED);
+        assertThatThrownBy(() -> orderService.cancelOrder(order))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Cannot cancel delivered order");
     }
 
     @Test
@@ -107,8 +108,7 @@ public class OrderCancelRefundTest {
         Product product = createProduct(5);
         Order order = createOrder(user, product, OrderStatus.DELIVERED, LocalDateTime.now().minusDays(10));
 
-        order.setStatus(OrderStatus.REFUNDED);
-        orderRepo.save(order);
+        orderService.refundOrder(order);
 
         assertThat(orderRepo.findById(order.getId()).get().getStatus()).isEqualTo(OrderStatus.REFUNDED);
     }
@@ -120,10 +120,9 @@ public class OrderCancelRefundTest {
         Product product = createProduct(5);
         Order order = createOrder(user, product, OrderStatus.DELIVERED, LocalDateTime.now().minusDays(35));
 
-        order.setStatus(OrderStatus.REFUNDED);
-        orderRepo.save(order);
-
-        assertThat(orderRepo.findById(order.getId()).get().getStatus()).isNotEqualTo(OrderStatus.REFUNDED);
+        assertThatThrownBy(() -> orderService.refundOrder(order))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Order too old for refund");
     }
 
     @Test
@@ -134,9 +133,9 @@ public class OrderCancelRefundTest {
         Order order = createOrder(user, product, OrderStatus.DELIVERED, LocalDateTime.now().minusDays(5));
 
         int before = product.getQuantityInStock();
-        product.setQuantityInStock(before + order.getQuantity());
-        productRepo.save(product);
+        orderService.refundOrder(order);
 
-        assertThat(productRepo.findById(product.getId()).get().getQuantityInStock()).isEqualTo(before + 2);
+        int after = productRepo.findById(product.getId()).get().getQuantityInStock();
+        assertThat(after).isEqualTo(before + order.getQuantity());
     }
 }
