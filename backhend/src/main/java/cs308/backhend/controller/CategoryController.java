@@ -68,41 +68,15 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+        boolean deleted = categoryService.deleteCategory(id);
         Map<String, Object> response = new HashMap<>();
-
-        try {
-            String jwt = token.replace("Bearer ", "");
-            String email = jwtUtil.extractEmail(jwt);
-
-            User user = userRepo.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            if (!jwtUtil.validateToken(jwt, email)) {
-                response.put("success", false);
-                response.put("message", "Invalid or expired token");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-
-            if (user.getRole() != Role.productManager) {
-                response.put("success", false);
-                response.put("message", "Only product managers can delete categories");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-
-            boolean deleted = categoryService.deleteCategory(id);
-            response.put("success", deleted);
-
-            if (deleted) {
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("message", "Category not found");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "An error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        response.put("success", deleted);
+        if (deleted) {
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Category not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 

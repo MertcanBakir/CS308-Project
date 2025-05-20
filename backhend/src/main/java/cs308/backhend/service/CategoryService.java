@@ -1,19 +1,25 @@
 package cs308.backhend.service;
 
 import cs308.backhend.model.Category;
+import cs308.backhend.model.Product;
 import cs308.backhend.repository.CategoryRepo;
+import cs308.backhend.repository.ProductRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CategoryService {
     private final CategoryRepo categoryRepo;
+    private final ProductRepo productRepo;
 
-    public CategoryService(CategoryRepo categoryRepo) {
+    public CategoryService(CategoryRepo categoryRepo, ProductRepo productRepo) {
         this.categoryRepo = categoryRepo;
+        this.productRepo = productRepo;
+
     }
 
     public List<Category> getAllCategories() {
@@ -34,11 +40,16 @@ public class CategoryService {
         if (categoryOptional.isPresent()) {
             Category category = categoryOptional.get();
 
-            if (category.getProducts() != null && !category.getProducts().isEmpty()) {
-                category.getProducts().forEach(product -> product.getCategories().remove(category));
+            List<Product> productsWithThisCategory = new ArrayList<>(productRepo.findByCategories_Id(id));
+            for (Product product : productsWithThisCategory) {
+                product.getCategories().remove(category);
+                productRepo.save(product);
+            }
+            if (category.getProducts() != null) {
+                category.getProducts().clear();
             }
 
-            categoryRepo.deleteById(id);
+            categoryRepo.delete(category);
             return true;
         }
         return false;
