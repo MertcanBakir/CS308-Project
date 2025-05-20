@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import TopBanner from "../components/TopBanner";
@@ -7,7 +6,6 @@ import sephoraLogo from "../assets/images/sephoraLogo.png";
 import LoginImage from "../assets/images/LoginImage.png";
 import CartImage from "../assets/images/cart.png";
 import "./ProductDetail.css";
-import AddToCart from "../components/AddToCart";
 import { useAuth } from "../context/AuthContext";
 import Modal from "react-modal";
 import {AiOutlineHeart} from "react-icons/ai";
@@ -74,15 +72,9 @@ const ProductDetail = () => {
       }
     };
 
-
-
-
     fetchProduct();
     fetchCommentsAndPermission();
   }, [id]);
-
-
-
 
   const handleAddToWishlist = async () => {
     const token = localStorage.getItem("token");
@@ -184,7 +176,17 @@ const ProductDetail = () => {
         <div className="product-info-container">
           <h1 className="product-title">{product.name}</h1>
           <p className="product-description">{product.description}</p>
-          <p><strong>Price:</strong> {product.price}₺</p>
+          {product.discountedPrice && product.discountedPrice > product.price ? (
+            <div className="price-section">
+              <div className="discount-badge-detail">
+                %{Math.round(((product.discountedPrice - product.price) / product.discountedPrice) * 100)} OFF
+              </div>
+              <p><strong>Price:</strong> <s>{product.discountedPrice.toFixed(2)}₺</s> <span className="new-price">{product.price.toFixed(2)}₺</span></p>
+            </div>
+          ) : (
+            <p><strong>Price:</strong> {product.price.toFixed(2)}₺</p>
+          )}
+
           {averageRating && (
             <p><strong>Rating:</strong> {"⭐".repeat(Math.floor(averageRating))} ({averageRating})</p>
           )}
@@ -196,12 +198,31 @@ const ProductDetail = () => {
           {product.quantityInStock === 0 ? (
             <button className="out-of-stock-button" disabled>Stokta Yok</button>
           ) : (
-            <AddToCart product={product} />
+            <button className="add-to-cart-button" onClick={() => {
+              const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+              const existingProductIndex = existingCart.findIndex(item => item.id === product.id);
+              
+              if (existingProductIndex !== -1) {
+                existingCart[existingProductIndex].quantity += 1;
+              } else {
+                existingCart.push({
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  imageUrl: product.imageUrl,
+                  quantity: 1
+                });
+              }
+              
+              localStorage.setItem("cart", JSON.stringify(existingCart));
+              alert("Product added to cart!");
+            }}>
+              Add to Cart
+            </button>
           )}
           <button className="wishlist-button" onClick={handleAddToWishlist}>
             ❤ Add to Wishlist
           </button>
-
 
           {canComment && (
             <button

@@ -21,6 +21,10 @@ public class Product {
 
     private String model;
 
+
+    @Column(nullable = true, precision = 10, scale = 2)
+    private BigDecimal discountedPrice;
+
     @Column(unique = true,nullable = false)
     private String serialNumber;
 

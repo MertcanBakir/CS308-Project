@@ -63,6 +63,7 @@ public class ProductController {
         return productService.searchProducts(query);
     }
 
+
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
         return productService.getProductsByCategoryId(categoryId);
@@ -104,6 +105,11 @@ public class ProductController {
 
             BigDecimal oldPrice = currentPrice != null ? currentPrice : BigDecimal.ZERO;
 
+
+            if (currentPrice != null) {
+                product.setDiscountedPrice(currentPrice);
+            }
+
             product.setPrice(newPrice);
 
             if (currentPrice == null) {
@@ -127,6 +133,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating product price: " + e.getMessage());
         }
     }
+
 
     @PatchMapping("/{id}/update-basic-info")
     public ResponseEntity<Product> updateProductBasicInfo(@PathVariable Long id, @RequestBody Product updatedProduct) {

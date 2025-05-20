@@ -81,22 +81,47 @@ const Products = ({ selectedCategory, searchResults }) => {
         {productList.length > 0 ? (
           productList.map((product) => (
             <div
-        key={product.id}
-        className="product-card"
-        onClick={() => navigate(`/product/${product.id}`)}
-        style={{ cursor: "pointer" }}
-      >
-        <div className="product-image-container">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="product-image"
-          />
-        </div>
-        <p className="product-name">{product.name}</p>
-        <p className="product-price">{product.price.toFixed(2)}₺</p>
-        <button className="add-to-cart-button">Product Details</button>
-      </div>
+              key={product.id}
+              className="product-card"
+              onClick={() => navigate(`/product/${product.id}`)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="product-image-container">
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="product-image"
+                />
+              </div>
+              <div className="product-info">
+                <h3 className="product-name">{product.name}</h3>
+                <p className="product-model">{product.model}</p>
+
+                {product.discountedPrice && product.discountedPrice > product.price ? (
+                  <div className="price-section">
+                    <div className="discount-badge">
+                      %{Math.round(
+                        ((product.discountedPrice - product.price) / product.discountedPrice) * 100
+                      )} OFF
+                    </div>
+                    <p className="product-price">
+                      <s className="old-price">
+                        {product.discountedPrice.toFixed(2)}₺
+                      </s>{" "}
+                      <span className="new-price">{product.price.toFixed(2)}₺</span>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="product-price">{product.price.toFixed(2)}₺</p>
+                )}
+
+                {product.quantityInStock <= 0 && (
+                  <span className="out-of-stock">Out of Stock</span>
+                )}
+
+                <button className="product-details-button">Product Details</button>
+              </div>
+            </div>
           ))
         ) : (
           <p>There are no products in this category.</p>

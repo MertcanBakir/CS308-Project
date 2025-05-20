@@ -24,6 +24,11 @@ public class ProductService {
         return productRepo.findAll();
     }
 
+    public List<Product> getDiscountedProducts() {
+        return productRepo.findByDiscountedPriceNotNull();
+    }
+
+
     public List<Product> getApprovedProducts() {
         return productRepo.findByApprovedTrue();
     }

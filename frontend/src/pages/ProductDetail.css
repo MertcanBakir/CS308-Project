@@ -110,7 +110,7 @@ textarea {
 .add-to-cart-button {
   background-color: black;
   color: white;
-  padding: 12px 24px;
+  padding: 12px 300px;
   font-size: 16px;
   border: none;
   cursor: pointer;
@@ -205,7 +205,7 @@ textarea {
   background-color: #ff91a4;
   color: white;
   border: none;
-  padding: 10px 300px;
+  padding: 10px 330px;
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
@@ -215,5 +215,30 @@ textarea {
   background-color: #ff6f8f;
 }
 
+
+.discount-badge-detail {
+  display: inline-block;
+  background-color: #DB1F6E;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.price-section {
+  margin-bottom: 10px;
+}
+
+.price-section s {
+  color: #888;
+  margin-right: 6px;
+}
+
+.new-price {
+  color: #DB1F6E;
+  font-weight: bold;
+}
 
 
