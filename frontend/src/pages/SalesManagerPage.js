@@ -24,12 +24,14 @@ const SalesManagerPage = () => {
   const [selectedProductId, setSelectedProductId] = useState("");
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   const [chartData, setChartData] = useState(null);
-  const [price, setPrice] = useState("");
+  const [percentage, setPercentage] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
   const [allProducts, setAllProducts] = useState([]);
   const [pendingRefunds, setPendingRefunds] = useState([]);
   const [refundMessage, setRefundMessage] = useState("");
   const [refundHistory, setRefundHistory] = useState([]);
+  
+
 
 
   const colors = {
@@ -133,12 +135,21 @@ const SalesManagerPage = () => {
   };
 
   const handlePriceUpdate = async () => {
-    if (!selectedProductId || !price) {
-      setUpdateMessage("Please select a product and enter a price.");
+    if (!selectedProductId || !percentage) {
+      setUpdateMessage("Please select a product and enter a percentage.");
       return;
     }
   
     try {
+      const selectedProduct = allProducts.find(p => p.id === parseInt(selectedProductId));
+      if (!selectedProduct || !selectedProduct.price) {
+        setUpdateMessage("Selected product not found or has no price.");
+        return;
+      }
+  
+      const percentValue = parseFloat(percentage);
+      const newPrice = selectedProduct.price * (1 + percentValue / 100);
+  
       const token = localStorage.getItem("token");
       const response = await fetch(`${process.env.REACT_APP_API_URL}/products/${selectedProductId}/update-price`, {
         method: "PUT",
@@ -147,7 +158,7 @@ const SalesManagerPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          price: parseFloat(price),
+          price: newPrice.toFixed(2),
         }),
       });
   
@@ -155,13 +166,14 @@ const SalesManagerPage = () => {
   
       const message = await response.text();
       setUpdateMessage("✅ " + message);
-      setPrice("");
-      fetchAllProducts(); 
+      setPercentage("");
+      fetchAllProducts();
     } catch (err) {
       console.error("Price update error:", err);
       setUpdateMessage("Error updating price");
     }
   };
+  
   
 
   const handleIndividualPriceUpdate = async (id, newPrice) => {
@@ -531,11 +543,12 @@ const SalesManagerPage = () => {
           </select>
           <input
             type="number"
-            placeholder="Enter price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Enter % change (e.g. -20 for 20% discount)"
+            value={percentage}
+            onChange={(e) => setPercentage(e.target.value)}
             className="price-input"
           />
+
           <button onClick={handlePriceUpdate} className="update-button">
             Set Price
           </button>
