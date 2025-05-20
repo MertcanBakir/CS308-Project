@@ -11,6 +11,7 @@ import AddToCart from "../components/AddToCart";
 import { useAuth } from "../context/AuthContext";
 import Modal from "react-modal";
 import {AiOutlineHeart} from "react-icons/ai";
+import { toast } from "react-toastify";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -95,10 +96,10 @@ const ProductDetail = () => {
 
       if (!response.ok) throw new Error("Failed to add to real wishlist");
 
-      alert("Ürün wishlist'e eklendi!");
+      toast.success("Product is added to Wishlist")
     } catch (err) {
       console.error("RealWishlist error:", err);
-      alert("Wishlist'e eklenirken bir hata oluştu.");
+      toast.error("Product is already in Wishlist");
     }
   };
 
