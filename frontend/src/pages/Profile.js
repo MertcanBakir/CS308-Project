@@ -218,10 +218,11 @@ const Profile = () => {
 
                   </div>
                   {order.productImageUrl && (
-                    <div className="order-image">
-                      <img src={order.productImageUrl} alt={order.productName} />
-                    </div>
+                      <div className="order-image">
+                        <img src={order.productImageUrl} alt={order.productName} className="profile-order-img" />
+                      </div>
                   )}
+
                 </div>
               );
             })

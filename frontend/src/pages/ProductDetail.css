@@ -180,6 +180,8 @@ textarea {
   border-top: 2px solid #DB1F6E;
   border-left: 2px solid #DB1F6E;
   transform: rotate(-45deg);
+  margin-left: -35px;
+  margin-top: 5px;
 }
 
 .logologin {

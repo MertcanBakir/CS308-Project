@@ -98,3 +98,51 @@
 }
 
 
+/* Daha şık AddToCart butonu */
+.add-to-cart-btn, .wishlist-info .add-to-cart-btn {
+    background: linear-gradient(90deg, #d63384 0%, #db1f6e 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(219,31,110,0.08);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
+    margin-top: 8px;
+    margin-right: 10px;
+    letter-spacing: 1px;
+}
+
+.add-to-cart-btn:hover, .wishlist-info .add-to-cart-btn:hover {
+    background: linear-gradient(90deg, #db1f6e 0%, #d63384 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(219,31,110,0.18);
+}
+
+/* Daha modern Remove butonu */
+.remove-btn {
+    margin-top: 10px;
+    padding: 7px 18px;
+    background: linear-gradient(90deg, #ff5858 0%, #ff9393 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(255,88,88,0.08);
+    transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
+    letter-spacing: 1px;
+}
+
+.remove-btn:hover {
+    background: linear-gradient(90deg, #db1f6e 0%, #ff5858 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(255,88,88,0.16);
+}
+
+
+
+

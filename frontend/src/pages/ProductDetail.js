@@ -77,6 +77,12 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToWishlist = async () => {
+
+    if (!isLoggedIn) {
+      toast.error("Please login to add products to your Wishlist!");
+      return;
+    }
+
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/real-wishlist/add/${id}`, {

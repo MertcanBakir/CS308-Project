@@ -4,6 +4,7 @@ import AddToCart from "../components/AddToCart";
 import { useNavigate } from "react-router-dom";
 import sephoraLogo from "../assets/images/sephoraLogo.png";
 
+
 const Wishlist = () => {
     const [wishlist, setWishlist] = useState([]);
     const navigate = useNavigate();
@@ -68,7 +69,7 @@ const Wishlist = () => {
                                     className="remove-btn"
                                     onClick={() => handleRemove(item.product.id)}
                                 >
-                                    Remove
+                                    Remove from Wishlist
                                 </button>
                             </div>
                         </div>

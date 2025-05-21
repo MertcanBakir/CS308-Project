@@ -26,12 +26,10 @@
     color: #d63384;
 }
 
-.profile-page .arrow-left2:before {
-    content: "←";
-}
+
 
 .profile-page .logo2 {
-    height: 40px;  
+    height: 75px;
     cursor: pointer;
 }
 
@@ -374,9 +372,30 @@
     background-color: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.3s ease;
-  }
+    display: flex;
+    justify-content: space-between; /* Sağa ve sola yaslar */
+    align-items: center;
+}
   
   .profile-page .order-item:hover {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   }
+
+
+
+.profile-page .profile-order-img {
+    margin-right: 75px;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(214,51,132,0.08);
+    transition: transform 0.2s;
+
+}
+
+.profile-page .profile-order-img:hover {
+    transform: scale(1.09);
+}
+
   
