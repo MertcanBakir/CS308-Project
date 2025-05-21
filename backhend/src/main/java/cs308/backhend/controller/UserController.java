@@ -73,7 +73,7 @@ public class UserController {
             User user = userOptional.get();
 
             Map<String, Object> userData = new HashMap<>();
-            userData.put("id", user.getId());  // 👈 Kullanıcı ID eklendi
+            userData.put("id", user.getId());
             userData.put("email", user.getEmail());
             userData.put("fullName", user.getFullName());
 

@@ -5,22 +5,31 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   background: white;
   padding: 30px;
   width: 400px;
+  max-width: 90%;
   border-radius: 8px;
-  box-shadow: 0 0 10px #00000033;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   gap: 15px;
+  z-index: 2001;
+}
+
+.modal h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 24px;
 }
 
 .star-rating {
@@ -47,6 +56,19 @@ textarea {
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 6px;
+}
+
+.modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.modal .add-to-cart-button {
+  padding: 12px 20px;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .comment-section {
@@ -108,18 +130,19 @@ textarea {
 }
 
 .add-to-cart-button {
-  background-color: black;
+  background-color: #000000;
   color: white;
-  padding: 12px 300px;
-  font-size: 16px;
   border: none;
-  cursor: pointer;
+  padding: 10px 330px;
   border-radius: 5px;
-  margin-top: 15px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: auto; 
+  width: 100%;
 }
 
 .add-to-cart-button:hover {
-  background-color: #333;
+  background-color: #ff0f83;
 }
 
 .out-of-stock-button {
@@ -217,7 +240,6 @@ textarea {
   background-color: #ff6f8f;
 }
 
-
 .discount-badge-detail {
   display: inline-block;
   background-color: #DB1F6E;
@@ -242,5 +264,3 @@ textarea {
   color: #DB1F6E;
   font-weight: bold;
 }
-
-

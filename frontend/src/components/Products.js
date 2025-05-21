@@ -41,7 +41,34 @@ const Products = ({ selectedCategory, searchResults }) => {
           sortedData.sort((a, b) => b.price - a.price);
         }
 
-        setProducts(sortedData);
+        const productsWithRank = await Promise.all(
+          sortedData.map(async (product) => {
+            try {
+              const commentRes = await fetch(
+                `${process.env.REACT_APP_API_URL}/comments/product/${product.id}`
+              );
+              if (commentRes.ok) {
+                const commentData = await commentRes.json();
+                if (commentData.comments.length > 0) {
+                  const total = commentData.comments.reduce(
+                    (sum, c) => sum + c.rating,
+                    0
+                  );
+                  product.rank = total / commentData.comments.length;
+                } else {
+                  product.rank = null;
+                }
+              } else {
+                product.rank = null;
+              }
+            } catch {
+              product.rank = null;
+            }
+            return product;
+          })
+        );
+
+        setProducts(productsWithRank);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -95,7 +122,6 @@ const Products = ({ selectedCategory, searchResults }) => {
               </div>
               <div className="product-info">
                 <h3 className="product-name">{product.name}</h3>
-                <p className="product-model">{product.model}</p>
 
                 {product.discountedPrice && product.discountedPrice > product.price ? (
                   <div className="price-section">
@@ -115,11 +141,30 @@ const Products = ({ selectedCategory, searchResults }) => {
                   <p className="product-price">{product.price.toFixed(2)}₺</p>
                 )}
 
-                {product.quantityInStock <= 0 && (
-                  <span className="out-of-stock">Out of Stock</span>
-                )}
+                <p
+                  className="product-stock"
+                  style={{
+                    color:
+                      product.quantityInStock && product.quantityInStock > 0
+                        ? "green"
+                        : "red",
+                  }}
+                >
+                  {product.quantityInStock && product.quantityInStock > 0
+                    ? "In Stock"
+                    : "Out of Stock"}
+                </p>
 
-                <button className="product-details-button">Product Details</button>
+                <p className="product-rank">
+                  Rank:{" "}
+                  {product.rank !== undefined && product.rank !== null
+                    ? product.rank.toFixed(1) + " / 5"
+                    : "Not rated yet"}
+                </p>
+
+                <div className="button-container">
+                  <button className="product-details-button">Product Details</button>
+                </div>
               </div>
             </div>
           ))

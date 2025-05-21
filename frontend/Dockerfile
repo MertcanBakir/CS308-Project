@@ -1,0 +1,14 @@
+FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+RUN cp .env.production .env && npm run build
+
+RUN npm install -g serve
+
+CMD ["serve", "-s", "build", "-l", "3000"]

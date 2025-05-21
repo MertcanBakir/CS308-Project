@@ -185,6 +185,7 @@ const Profile = () => {
                     <p><strong>Transaction Date:</strong> {orderDate.toLocaleString()}</p>
                     <p><strong>Order Status:</strong> {order.status}</p>
                     <p><strong>Product:</strong> {order.productName}</p>
+                    <p><strong>Address:</strong> {order.addressText}</p>
 
                     {order.status === "PROCESSING" && (
                       <button onClick={() => handleCancel(order.id)} className="cancel-button">

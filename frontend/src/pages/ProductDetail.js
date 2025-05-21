@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import Modal from "react-modal";
 import {AiOutlineHeart} from "react-icons/ai";
 import { toast } from "react-toastify";
+import AddToCart from "../components/AddToCart";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -204,27 +205,7 @@ const ProductDetail = () => {
           {product.quantityInStock === 0 ? (
             <button className="out-of-stock-button" disabled>Stokta Yok</button>
           ) : (
-            <button className="add-to-cart-button" onClick={() => {
-              const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-              const existingProductIndex = existingCart.findIndex(item => item.id === product.id);
-              
-              if (existingProductIndex !== -1) {
-                existingCart[existingProductIndex].quantity += 1;
-              } else {
-                existingCart.push({
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  imageUrl: product.imageUrl,
-                  quantity: 1
-                });
-              }
-              
-              localStorage.setItem("cart", JSON.stringify(existingCart));
-              alert("Product added to cart!");
-            }}>
-              Add to Cart
-            </button>
+            <AddToCart product={product} />
           )}
           <button className="wishlist-button" onClick={handleAddToWishlist}>
             ❤ Add to Wishlist

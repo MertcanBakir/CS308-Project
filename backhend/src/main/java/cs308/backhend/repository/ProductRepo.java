@@ -24,7 +24,7 @@ public interface ProductRepo extends JpaRepository<Product, Long>{
 
     List<Product> findByCategories_Id(Long categoryId);
 
-    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
+    List<Product> findByApprovedTrueAndNameContainingIgnoreCaseOrApprovedTrueAndDescriptionContainingIgnoreCase(String name, String description);
 
 
     List<Product> findAllByOrderByWishlistCountDesc();

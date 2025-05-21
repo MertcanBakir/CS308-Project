@@ -209,4 +209,48 @@ class CartControllerTest {
         verify(productRepo, times(1)).save(product);
         verify(wishListRepo, times(1)).delete(wishlist);
     }
+    @Test
+    @DisplayName("Token olmadan sepete ürün eklenemez – 400 Bad Request")
+    void testAddToCartWithoutTokenReturns400() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String requestBody = mapper.writeValueAsString(
+                new java.util.HashMap<>() {{
+                    put("product_id", 1);
+                    put("quantity", 2);
+                }}
+        );
+
+        mockMvc.perform(post("/add_to_cart")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    @DisplayName("Geçersiz token ile sepete ürün eklenemez – 401")
+    void testAddToCartWithInvalidTokenReturns401() throws Exception {
+        String token = "Bearer faketoken";
+        String email = "user@example.com";
+
+        User user = new User();
+        user.setEmail(email);
+
+        when(jwtUtil.extractEmail(token)).thenReturn(email);
+        when(jwtUtil.validateToken(token, email)).thenReturn(false);
+
+        when(userRepo.findByEmail(email)).thenReturn(Optional.of(user));
+
+        ObjectMapper mapper = new ObjectMapper();
+        String requestBody = mapper.writeValueAsString(
+                new java.util.HashMap<>() {{
+                    put("product_id", 1);
+                    put("quantity", 2);
+                }}
+        );
+
+        mockMvc.perform(post("/add_to_cart")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized());
+    }
 }

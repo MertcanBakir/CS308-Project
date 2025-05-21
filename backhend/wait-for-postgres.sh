@@ -1,12 +1,11 @@
-#!/bin/bash
-set -e
+#!/bin/sh
 
-host="db"
-shift
-until pg_isready -h "$host" -U postgres; do
-  echo "Waiting for PostgreSQL at $host..."
-  sleep 2
+echo "🔁 Waiting for PostgreSQL to be ready..."
+
+while ! pg_isready -h postgres -p 5432 -U postgres > /dev/null 2>&1; do
+  echo "⏳ PostgreSQL not ready yet. Retrying in 1 second..."
+  sleep 1
 done
 
+echo "✅ PostgreSQL is ready. Starting the app..."
 exec "$@"
-

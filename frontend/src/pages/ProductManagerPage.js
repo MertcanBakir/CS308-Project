@@ -49,7 +49,7 @@ const ProductManagerPage = () => {
     try {
       setIsLoadingOrders(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/all-order", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/all-order`, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch orders");
@@ -66,7 +66,7 @@ const ProductManagerPage = () => {
     try {
       setIsLoadingComments(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/comments/all", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/comments/all`, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch comments");
@@ -83,7 +83,7 @@ const ProductManagerPage = () => {
     try {
       setIsLoadingProducts(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/products/all", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Failed to fetch products");
@@ -100,7 +100,7 @@ const ProductManagerPage = () => {
     try {
       setIsLoadingCategories(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/categories", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/categories`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Failed to fetch categories");
@@ -116,7 +116,7 @@ const ProductManagerPage = () => {
   const downloadInvoice = async (orderId) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/admin/invoices/${orderId}/download`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/admin/invoices/${orderId}/download`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -142,7 +142,7 @@ const ProductManagerPage = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/${orderId}/status`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/${orderId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: newStatus }),
@@ -159,7 +159,7 @@ const ProductManagerPage = () => {
   const updateCommentApproval = async (commentId, approvedStatus) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/comments/approve/${commentId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/comments/approve/${commentId}`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ approved: approvedStatus }),
@@ -178,7 +178,7 @@ const ProductManagerPage = () => {
   const handleProductUpdate = async (productId, updatedName, updatedStock) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/products/${productId}/update-basic-info`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/${productId}/update-basic-info`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -198,7 +198,7 @@ const ProductManagerPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/products/add", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/add`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -231,7 +231,7 @@ const ProductManagerPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/categories/add", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/categories/add`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -256,7 +256,7 @@ const ProductManagerPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/categories/${editingCategory.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/categories/${editingCategory.id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -279,7 +279,7 @@ const ProductManagerPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/products/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/products/${productId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`
@@ -305,7 +305,7 @@ const ProductManagerPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/categories/${categoryId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/categories/${categoryId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -45,7 +45,7 @@ public class ProductService {
 
 
     public List<Product> searchProducts(String query) {
-        return productRepo.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+        return productRepo.findByApprovedTrueAndNameContainingIgnoreCaseOrApprovedTrueAndDescriptionContainingIgnoreCase(query, query);
     }
 
     public List<Product> getProductsByCategoryId(Long categoryId) {
